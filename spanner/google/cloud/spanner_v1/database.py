@@ -15,7 +15,6 @@
 """User friendly container for Cloud Spanner Database."""
 
 import copy
-import functools
 import re
 import threading
 
@@ -35,9 +34,7 @@ from google.cloud.spanner_v1.keyset import KeySet
 from google.cloud.spanner_v1.pool import BurstyPool
 from google.cloud.spanner_v1.pool import SessionCheckout
 from google.cloud.spanner_v1.session import Session
-from google.cloud.spanner_v1.snapshot import _restart_on_unavailable
 from google.cloud.spanner_v1.snapshot import Snapshot
-from google.cloud.spanner_v1.streamed import StreamedResultSet
 from google.cloud.spanner_v1.proto.transaction_pb2 import (
     TransactionSelector, TransactionOptions)
 # pylint: enable=ungrouped-imports

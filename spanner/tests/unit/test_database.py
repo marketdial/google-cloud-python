@@ -1550,21 +1550,3 @@ class _Session(object):
             func(*args, **kw)
         self._retried = (func, args, kw)
         return self._committed
-
-
-class _MockIterator(object):
-
-    def __init__(self, *values, **kw):
-        self._iter_values = iter(values)
-        self._fail_after = kw.pop('fail_after', False)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        try:
-            return next(self._iter_values)
-        except StopIteration:
-            raise
-
-    next = __next__
