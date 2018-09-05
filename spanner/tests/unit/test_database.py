@@ -644,7 +644,7 @@ class TestDatabase(_BaseTest):
             self, dml, params=None, param_types=None):
         from google.protobuf.struct_pb2 import Struct
         from google.cloud.spanner_v1.proto.result_set_pb2 import (
-            PartialResultSet, ResultSetStats)
+            ResultSet, ResultSetStats)
         from google.cloud.spanner_v1.proto.transaction_pb2 import (
             Transaction as TransactionPB,
             TransactionSelector, TransactionOptions)
@@ -653,10 +653,7 @@ class TestDatabase(_BaseTest):
         transaction_pb = TransactionPB(id=self.TRANSACTION_ID)
 
         stats_pb = ResultSetStats(row_count_lower_bound=2)
-        result_sets = [
-            PartialResultSet(stats=stats_pb),
-        ]
-        iterator = _MockIterator(*result_sets)
+        result_set = ResultSet(stats=stats_pb)
 
         client = _Client()
         instance = _Instance(self.INSTANCE_NAME, client=client)
@@ -666,7 +663,7 @@ class TestDatabase(_BaseTest):
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
         api = database._spanner_api = self._make_spanner_api()
         api.begin_transaction.return_value = transaction_pb
-        api.execute_streaming_sql.return_value = iterator
+        api.execute_sql.return_value = result_set
 
         row_count = database.execute_partitioned_dml(
             dml, params, param_types)
@@ -690,7 +687,7 @@ class TestDatabase(_BaseTest):
 
         expected_transaction = TransactionSelector(id=self.TRANSACTION_ID)
 
-        api.execute_streaming_sql.assert_called_once_with(
+        api.execute_sql.assert_called_once_with(
             self.SESSION_NAME,
             dml,
             transaction=expected_transaction,

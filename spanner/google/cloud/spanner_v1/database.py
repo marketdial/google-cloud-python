@@ -321,19 +321,13 @@ class Database(object):
 
             txn_selector = TransactionSelector(id=txn.id)
 
-            restart = functools.partial(
-                api.execute_streaming_sql,
+            result_set = api.execute_sql(
                 session.name,
                 dml,
                 transaction=txn_selector,
                 params=params_pb,
                 param_types=param_types,
                 metadata=metadata)
-
-            iterator = _restart_on_unavailable(restart)
-
-            result_set = StreamedResultSet(iterator)
-            list(result_set)  # consume all partials
 
             return result_set.stats.row_count_lower_bound
 
