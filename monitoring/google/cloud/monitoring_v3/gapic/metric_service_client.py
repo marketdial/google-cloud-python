@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +47,8 @@ from google.protobuf import empty_pb2
 from google.protobuf import field_mask_pb2
 
 _GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-monitoring', ).version
+    "google-cloud-monitoring"
+).version
 
 
 class MetricServiceClient(object):
@@ -54,12 +57,12 @@ class MetricServiceClient(object):
     time series data.
     """
 
-    SERVICE_ADDRESS = 'monitoring.googleapis.com:443'
+    SERVICE_ADDRESS = "monitoring.googleapis.com:443"
     """The default address of the service."""
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.monitoring.v3.MetricService'
+    _INTERFACE_NAME = "google.monitoring.v3.MetricService"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -75,9 +78,8 @@ class MetricServiceClient(object):
         Returns:
             MetricServiceClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
@@ -86,35 +88,35 @@ class MetricServiceClient(object):
     def project_path(cls, project):
         """Return a fully-qualified project string."""
         return google.api_core.path_template.expand(
-            'projects/{project}',
-            project=project,
+            "projects/{project}", project=project
         )
 
     @classmethod
     def metric_descriptor_path(cls, project, metric_descriptor):
         """Return a fully-qualified metric_descriptor string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/metricDescriptors/{metric_descriptor=**}',
+            "projects/{project}/metricDescriptors/{metric_descriptor=**}",
             project=project,
             metric_descriptor=metric_descriptor,
         )
 
     @classmethod
-    def monitored_resource_descriptor_path(cls, project,
-                                           monitored_resource_descriptor):
+    def monitored_resource_descriptor_path(cls, project, monitored_resource_descriptor):
         """Return a fully-qualified monitored_resource_descriptor string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/monitoredResourceDescriptors/{monitored_resource_descriptor}',
+            "projects/{project}/monitoredResourceDescriptors/{monitored_resource_descriptor}",
             project=project,
             monitored_resource_descriptor=monitored_resource_descriptor,
         )
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=metric_service_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -146,13 +148,21 @@ class MetricServiceClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = metric_service_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -161,25 +171,26 @@ class MetricServiceClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=metric_service_grpc_transport.
-                    MetricServiceGrpcTransport,
+                    default_class=metric_service_grpc_transport.MetricServiceGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
-        self.transport = metric_service_grpc_transport.MetricServiceGrpcTransport(
-            address=self.SERVICE_ADDRESS,
-            channel=channel,
-            credentials=credentials,
-        )
+        else:
+            self.transport = metric_service_grpc_transport.MetricServiceGrpcTransport(
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
+            )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -187,7 +198,8 @@ class MetricServiceClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -197,13 +209,14 @@ class MetricServiceClient(object):
 
     # Service calls
     def list_monitored_resource_descriptors(
-            self,
-            name,
-            filter_=None,
-            page_size=None,
-            retry=google.api_core.gapic_v1.method.DEFAULT,
-            timeout=google.api_core.gapic_v1.method.DEFAULT,
-            metadata=None):
+        self,
+        name,
+        filter_=None,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists monitored resource descriptors that match a filter. This method does not require a Stackdriver account.
 
@@ -223,23 +236,23 @@ class MetricServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_monitored_resource_descriptors(name, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_monitored_resource_descriptors(name).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
             name (str): The project on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}\"``.
-            filter_ (str): An optional `filter <https://cloud.google.com/monitoring/api/v3/filters>`_ describing
-                the descriptors to be returned.  The filter can reference
-                the descriptor's type and labels. For example, the
-                following filter returns only Google Compute Engine descriptors
-                that have an ``id`` label:
+                ``"projects/{project_id_or_number}"``.
+            filter_ (str): An optional
+                `filter <https://cloud.google.com/monitoring/api/v3/filters>`__
+                describing the descriptors to be returned. The filter can reference the
+                descriptor's type and labels. For example, the following filter returns
+                only Google Compute Engine descriptors that have an ``id`` label:
 
                 ::
 
-                    resource.type = starts_with(\"gce_\") AND resource.label:id
+                     resource.type = starts_with("gce_") AND resource.label:id
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
@@ -271,42 +284,45 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_monitored_resource_descriptors' not in self._inner_api_calls:
+        if "list_monitored_resource_descriptors" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_monitored_resource_descriptors'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_monitored_resource_descriptors,
-                    default_retry=self._method_configs[
-                        'ListMonitoredResourceDescriptors'].retry,
-                    default_timeout=self._method_configs[
-                        'ListMonitoredResourceDescriptors'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_monitored_resource_descriptors"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_monitored_resource_descriptors,
+                default_retry=self._method_configs[
+                    "ListMonitoredResourceDescriptors"
+                ].retry,
+                default_timeout=self._method_configs[
+                    "ListMonitoredResourceDescriptors"
+                ].timeout,
+                client_info=self._client_info,
+            )
 
         request = metric_service_pb2.ListMonitoredResourceDescriptorsRequest(
-            name=name,
-            filter=filter_,
-            page_size=page_size,
+            name=name, filter=filter_, page_size=page_size
         )
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_monitored_resource_descriptors'],
+                self._inner_api_calls["list_monitored_resource_descriptors"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='resource_descriptors',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="resource_descriptors",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
     def get_monitored_resource_descriptor(
-            self,
-            name,
-            retry=google.api_core.gapic_v1.method.DEFAULT,
-            timeout=google.api_core.gapic_v1.method.DEFAULT,
-            metadata=None):
+        self,
+        name,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets a single monitored resource descriptor. This method does not require a Stackdriver account.
 
@@ -320,8 +336,8 @@ class MetricServiceClient(object):
             >>> response = client.get_monitored_resource_descriptor(name)
 
         Args:
-            name (str): The monitored resource descriptor to get.  The format is
-                ``\"projects/{project_id_or_number}/monitoredResourceDescriptors/{resource_type}\"``.
+            name (str): The monitored resource descriptor to get. The format is
+                ``"projects/{project_id_or_number}/monitoredResourceDescriptors/{resource_type}"``.
                 The ``{resource_type}`` is a predefined type, such as
                 ``cloudsql_database``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -347,30 +363,34 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_monitored_resource_descriptor' not in self._inner_api_calls:
+        if "get_monitored_resource_descriptor" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_monitored_resource_descriptor'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_monitored_resource_descriptor,
-                    default_retry=self._method_configs[
-                        'GetMonitoredResourceDescriptor'].retry,
-                    default_timeout=self._method_configs[
-                        'GetMonitoredResourceDescriptor'].timeout,
-                    client_info=self._client_info,
-                )
+                "get_monitored_resource_descriptor"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_monitored_resource_descriptor,
+                default_retry=self._method_configs[
+                    "GetMonitoredResourceDescriptor"
+                ].retry,
+                default_timeout=self._method_configs[
+                    "GetMonitoredResourceDescriptor"
+                ].timeout,
+                client_info=self._client_info,
+            )
 
-        request = metric_service_pb2.GetMonitoredResourceDescriptorRequest(
-            name=name, )
-        return self._inner_api_calls['get_monitored_resource_descriptor'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = metric_service_pb2.GetMonitoredResourceDescriptorRequest(name=name)
+        return self._inner_api_calls["get_monitored_resource_descriptor"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
     def list_metric_descriptors(
-            self,
-            name,
-            filter_=None,
-            page_size=None,
-            retry=google.api_core.gapic_v1.method.DEFAULT,
-            timeout=google.api_core.gapic_v1.method.DEFAULT,
-            metadata=None):
+        self,
+        name,
+        filter_=None,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists metric descriptors that match a filter. This method does not require a Stackdriver account.
 
@@ -390,24 +410,24 @@ class MetricServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_metric_descriptors(name, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_metric_descriptors(name).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
             name (str): The project on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}\"``.
-            filter_ (str): If this field is empty, all custom and
-                system-defined metric descriptors are returned.
-                Otherwise, the `filter <https://cloud.google.com/monitoring/api/v3/filters>`_
-                specifies which metric descriptors are to be
-                returned. For example, the following filter matches all
-                `custom metrics <https://cloud.google.com/monitoring/custom-metrics>`_:
+                ``"projects/{project_id_or_number}"``.
+            filter_ (str): If this field is empty, all custom and system-defined metric descriptors
+                are returned. Otherwise, the
+                `filter <https://cloud.google.com/monitoring/api/v3/filters>`__
+                specifies which metric descriptors are to be returned. For example, the
+                following filter matches all `custom
+                metrics <https://cloud.google.com/monitoring/custom-metrics>`__:
 
                 ::
 
-                    metric.type = starts_with(\"custom.googleapis.com/\")
+                     metric.type = starts_with("custom.googleapis.com/")
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
@@ -439,41 +459,41 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_metric_descriptors' not in self._inner_api_calls:
+        if "list_metric_descriptors" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_metric_descriptors'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_metric_descriptors,
-                    default_retry=self._method_configs['ListMetricDescriptors']
-                    .retry,
-                    default_timeout=self._method_configs[
-                        'ListMetricDescriptors'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_metric_descriptors"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_metric_descriptors,
+                default_retry=self._method_configs["ListMetricDescriptors"].retry,
+                default_timeout=self._method_configs["ListMetricDescriptors"].timeout,
+                client_info=self._client_info,
+            )
 
         request = metric_service_pb2.ListMetricDescriptorsRequest(
-            name=name,
-            filter=filter_,
-            page_size=page_size,
+            name=name, filter=filter_, page_size=page_size
         )
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_metric_descriptors'],
+                self._inner_api_calls["list_metric_descriptors"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='metric_descriptors',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="metric_descriptors",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def get_metric_descriptor(self,
-                              name,
-                              retry=google.api_core.gapic_v1.method.DEFAULT,
-                              timeout=google.api_core.gapic_v1.method.DEFAULT,
-                              metadata=None):
+    def get_metric_descriptor(
+        self,
+        name,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets a single metric descriptor. This method does not require a Stackdriver account.
 
@@ -488,9 +508,9 @@ class MetricServiceClient(object):
 
         Args:
             name (str): The metric descriptor on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}/metricDescriptors/{metric_id}\"``.
-                An example value of ``{metric_id}`` is
-                ``\"compute.googleapis.com/instance/disk/read_bytes_count\"``.
+                ``"projects/{project_id_or_number}/metricDescriptors/{metric_id}"``. An
+                example value of ``{metric_id}`` is
+                ``"compute.googleapis.com/instance/disk/read_bytes_count"``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -514,32 +534,32 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_metric_descriptor' not in self._inner_api_calls:
+        if "get_metric_descriptor" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_metric_descriptor'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_metric_descriptor,
-                    default_retry=self._method_configs[
-                        'GetMetricDescriptor'].retry,
-                    default_timeout=self._method_configs['GetMetricDescriptor']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "get_metric_descriptor"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_metric_descriptor,
+                default_retry=self._method_configs["GetMetricDescriptor"].retry,
+                default_timeout=self._method_configs["GetMetricDescriptor"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = metric_service_pb2.GetMetricDescriptorRequest(name=name, )
-        return self._inner_api_calls['get_metric_descriptor'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = metric_service_pb2.GetMetricDescriptorRequest(name=name)
+        return self._inner_api_calls["get_metric_descriptor"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
     def create_metric_descriptor(
-            self,
-            name,
-            metric_descriptor,
-            retry=google.api_core.gapic_v1.method.DEFAULT,
-            timeout=google.api_core.gapic_v1.method.DEFAULT,
-            metadata=None):
+        self,
+        name,
+        metric_descriptor,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Creates a new metric descriptor.
-        User-created metric descriptors define
-        `custom metrics <https://cloud.google.com/monitoring/custom-metrics>`_.
+        Creates a new metric descriptor. User-created metric descriptors define
+        `custom metrics <https://cloud.google.com/monitoring/custom-metrics>`__.
 
         Example:
             >>> from google.cloud import monitoring_v3
@@ -548,16 +568,18 @@ class MetricServiceClient(object):
             >>>
             >>> name = client.project_path('[PROJECT]')
             >>>
-            >>> # TODO: Initialize ``metric_descriptor``:
+            >>> # TODO: Initialize `metric_descriptor`:
             >>> metric_descriptor = {}
             >>>
             >>> response = client.create_metric_descriptor(name, metric_descriptor)
 
         Args:
             name (str): The project on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}\"``.
-            metric_descriptor (Union[dict, ~google.cloud.monitoring_v3.types.MetricDescriptor]): The new `custom metric <https://cloud.google.com/monitoring/custom-metrics>`_
+                ``"projects/{project_id_or_number}"``.
+            metric_descriptor (Union[dict, ~google.cloud.monitoring_v3.types.MetricDescriptor]): The new `custom
+                metric <https://cloud.google.com/monitoring/custom-metrics>`__
                 descriptor.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.MetricDescriptor`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -583,33 +605,34 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'create_metric_descriptor' not in self._inner_api_calls:
+        if "create_metric_descriptor" not in self._inner_api_calls:
             self._inner_api_calls[
-                'create_metric_descriptor'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.create_metric_descriptor,
-                    default_retry=self._method_configs[
-                        'CreateMetricDescriptor'].retry,
-                    default_timeout=self._method_configs[
-                        'CreateMetricDescriptor'].timeout,
-                    client_info=self._client_info,
-                )
+                "create_metric_descriptor"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.create_metric_descriptor,
+                default_retry=self._method_configs["CreateMetricDescriptor"].retry,
+                default_timeout=self._method_configs["CreateMetricDescriptor"].timeout,
+                client_info=self._client_info,
+            )
 
         request = metric_service_pb2.CreateMetricDescriptorRequest(
-            name=name,
-            metric_descriptor=metric_descriptor,
+            name=name, metric_descriptor=metric_descriptor
         )
-        return self._inner_api_calls['create_metric_descriptor'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["create_metric_descriptor"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
     def delete_metric_descriptor(
-            self,
-            name,
-            retry=google.api_core.gapic_v1.method.DEFAULT,
-            timeout=google.api_core.gapic_v1.method.DEFAULT,
-            metadata=None):
+        self,
+        name,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Deletes a metric descriptor. Only user-created
-        `custom metrics <https://cloud.google.com/monitoring/custom-metrics>`_ can be deleted.
+        Deletes a metric descriptor. Only user-created `custom
+        metrics <https://cloud.google.com/monitoring/custom-metrics>`__ can be
+        deleted.
 
         Example:
             >>> from google.cloud import monitoring_v3
@@ -622,9 +645,9 @@ class MetricServiceClient(object):
 
         Args:
             name (str): The metric descriptor on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}/metricDescriptors/{metric_id}\"``.
-                An example of ``{metric_id}`` is:
-                ``\"custom.googleapis.com/my_test_metric\"``.
+                ``"projects/{project_id_or_number}/metricDescriptors/{metric_id}"``. An
+                example of ``{metric_id}`` is:
+                ``"custom.googleapis.com/my_test_metric"``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -645,32 +668,34 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'delete_metric_descriptor' not in self._inner_api_calls:
+        if "delete_metric_descriptor" not in self._inner_api_calls:
             self._inner_api_calls[
-                'delete_metric_descriptor'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.delete_metric_descriptor,
-                    default_retry=self._method_configs[
-                        'DeleteMetricDescriptor'].retry,
-                    default_timeout=self._method_configs[
-                        'DeleteMetricDescriptor'].timeout,
-                    client_info=self._client_info,
-                )
+                "delete_metric_descriptor"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.delete_metric_descriptor,
+                default_retry=self._method_configs["DeleteMetricDescriptor"].retry,
+                default_timeout=self._method_configs["DeleteMetricDescriptor"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = metric_service_pb2.DeleteMetricDescriptorRequest(name=name, )
-        self._inner_api_calls['delete_metric_descriptor'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = metric_service_pb2.DeleteMetricDescriptorRequest(name=name)
+        self._inner_api_calls["delete_metric_descriptor"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def list_time_series(self,
-                         name,
-                         filter_,
-                         interval,
-                         view,
-                         aggregation=None,
-                         order_by=None,
-                         page_size=None,
-                         retry=google.api_core.gapic_v1.method.DEFAULT,
-                         timeout=google.api_core.gapic_v1.method.DEFAULT,
-                         metadata=None):
+    def list_time_series(
+        self,
+        name,
+        filter_,
+        interval,
+        view,
+        aggregation=None,
+        order_by=None,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists time series that match a filter. This method does not require a Stackdriver account.
 
@@ -682,13 +707,13 @@ class MetricServiceClient(object):
             >>>
             >>> name = client.project_path('[PROJECT]')
             >>>
-            >>> # TODO: Initialize ``filter_``:
+            >>> # TODO: Initialize `filter_`:
             >>> filter_ = ''
             >>>
-            >>> # TODO: Initialize ``interval``:
+            >>> # TODO: Initialize `interval`:
             >>> interval = {}
             >>>
-            >>> # TODO: Initialize ``view``:
+            >>> # TODO: Initialize `view`:
             >>> view = enums.ListTimeSeriesRequest.TimeSeriesView.FULL
             >>>
             >>> # Iterate over all results
@@ -700,37 +725,39 @@ class MetricServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_time_series(name, filter_, interval, view, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_time_series(name, filter_, interval, view).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
             name (str): The project on which to execute the request. The format is
-                \"projects/{project_id_or_number}\".
-            filter_ (str): A `monitoring filter <https://cloud.google.com/monitoring/api/v3/filters>`_ that specifies which time
-                series should be returned.  The filter must specify a single metric type,
-                and can additionally specify metric labels and other information. For
-                example:
+                "projects/{project\_id\_or\_number}".
+            filter_ (str): A `monitoring
+                filter <https://cloud.google.com/monitoring/api/v3/filters>`__ that
+                specifies which time series should be returned. The filter must specify
+                a single metric type, and can additionally specify metric labels and
+                other information. For example:
 
                 ::
 
-                    metric.type = \"compute.googleapis.com/instance/cpu/usage_time\" AND
-                        metric.label.instance_name = \"my-instance-name\"
+                     metric.type = "compute.googleapis.com/instance/cpu/usage_time" AND
+                         metric.label.instance_name = "my-instance-name"
             interval (Union[dict, ~google.cloud.monitoring_v3.types.TimeInterval]): The time interval for which results should be returned. Only time series
                 that contain data points in the specified interval are included
                 in the response.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.TimeInterval`
             view (~google.cloud.monitoring_v3.types.TimeSeriesView): Specifies which information is returned about the time series.
             aggregation (Union[dict, ~google.cloud.monitoring_v3.types.Aggregation]): By default, the raw time series data is returned.
                 Use this field to combine multiple time series for different
                 views of the data.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.Aggregation`
-            order_by (str): Specifies the order in which the points of the time series should
-                be returned.  By default, results are not ordered.  Currently,
-                this field must be left blank.
+            order_by (str): Unsupported: must be left blank. The points in each time series are
+                returned in reverse time order.
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
@@ -762,15 +789,15 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_time_series' not in self._inner_api_calls:
+        if "list_time_series" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_time_series'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_time_series,
-                    default_retry=self._method_configs['ListTimeSeries'].retry,
-                    default_timeout=self._method_configs['ListTimeSeries']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "list_time_series"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_time_series,
+                default_retry=self._method_configs["ListTimeSeries"].retry,
+                default_timeout=self._method_configs["ListTimeSeries"].timeout,
+                client_info=self._client_info,
+            )
 
         request = metric_service_pb2.ListTimeSeriesRequest(
             name=name,
@@ -784,23 +811,26 @@ class MetricServiceClient(object):
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_time_series'],
+                self._inner_api_calls["list_time_series"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='time_series',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="time_series",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def create_time_series(self,
-                           name,
-                           time_series,
-                           retry=google.api_core.gapic_v1.method.DEFAULT,
-                           timeout=google.api_core.gapic_v1.method.DEFAULT,
-                           metadata=None):
+    def create_time_series(
+        self,
+        name,
+        time_series,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Creates or adds data to one or more time series.
         The response is empty if all time series in the request were written.
@@ -814,19 +844,20 @@ class MetricServiceClient(object):
             >>>
             >>> name = client.project_path('[PROJECT]')
             >>>
-            >>> # TODO: Initialize ``time_series``:
+            >>> # TODO: Initialize `time_series`:
             >>> time_series = []
             >>>
             >>> client.create_time_series(name, time_series)
 
         Args:
             name (str): The project on which to execute the request. The format is
-                ``\"projects/{project_id_or_number}\"``.
-            time_series (list[Union[dict, ~google.cloud.monitoring_v3.types.TimeSeries]]): The new data to be added to a list of time series.
-                Adds at most one data point to each of several time series.  The new data
-                point must be more recent than any other point in its time series.  Each
-                ``TimeSeries`` value must fully specify a unique time series by supplying
-                all label values for the metric and the monitored resource.
+                ``"projects/{project_id_or_number}"``.
+            time_series (list[Union[dict, ~google.cloud.monitoring_v3.types.TimeSeries]]): The new data to be added to a list of time series. Adds at most one data
+                point to each of several time series. The new data point must be more
+                recent than any other point in its time series. Each ``TimeSeries``
+                value must fully specify a unique time series by supplying all label
+                values for the metric and the monitored resource.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.TimeSeries`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -849,20 +880,19 @@ class MetricServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'create_time_series' not in self._inner_api_calls:
+        if "create_time_series" not in self._inner_api_calls:
             self._inner_api_calls[
-                'create_time_series'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.create_time_series,
-                    default_retry=self._method_configs[
-                        'CreateTimeSeries'].retry,
-                    default_timeout=self._method_configs['CreateTimeSeries']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "create_time_series"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.create_time_series,
+                default_retry=self._method_configs["CreateTimeSeries"].retry,
+                default_timeout=self._method_configs["CreateTimeSeries"].timeout,
+                client_info=self._client_info,
+            )
 
         request = metric_service_pb2.CreateTimeSeriesRequest(
-            name=name,
-            time_series=time_series,
+            name=name, time_series=time_series
         )
-        self._inner_api_calls['create_time_series'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        self._inner_api_calls["create_time_series"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )

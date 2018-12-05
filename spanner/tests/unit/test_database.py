@@ -18,12 +18,25 @@ import unittest
 import mock
 
 
+DML_WO_PARAM = """
+DELETE FROM citizens
+"""
+
+DML_W_PARAM = """
+INSERT INTO citizens(first_name, last_name, age)
+VALUES ("Phred", "Phlyntstone", @age)
+"""
+PARAMS = {"age": 30}
+PARAM_TYPES = {"age": "INT64"}
+MODE = 2  # PROFILE
+
+
 def _make_credentials():  # pragma: NO COVER
     import google.auth.credentials
 
     class _CredentialsWithScopes(
-            google.auth.credentials.Credentials,
-            google.auth.credentials.Scoped):
+        google.auth.credentials.Credentials, google.auth.credentials.Scoped
+    ):
         pass
 
     return mock.Mock(spec=_CredentialsWithScopes)
@@ -31,15 +44,15 @@ def _make_credentials():  # pragma: NO COVER
 
 class _BaseTest(unittest.TestCase):
 
-    PROJECT_ID = 'project-id'
-    PARENT = 'projects/' + PROJECT_ID
-    INSTANCE_ID = 'instance-id'
-    INSTANCE_NAME = PARENT + '/instances/' + INSTANCE_ID
-    DATABASE_ID = 'database_id'
-    DATABASE_NAME = INSTANCE_NAME + '/databases/' + DATABASE_ID
-    SESSION_ID = 'session_id'
-    SESSION_NAME = DATABASE_NAME + '/sessions/' + SESSION_ID
-    TRANSACTION_ID = 'transaction_id'
+    PROJECT_ID = "project-id"
+    PARENT = "projects/" + PROJECT_ID
+    INSTANCE_ID = "instance-id"
+    INSTANCE_NAME = PARENT + "/instances/" + INSTANCE_ID
+    DATABASE_ID = "database_id"
+    DATABASE_NAME = INSTANCE_NAME + "/databases/" + DATABASE_ID
+    SESSION_ID = "session_id"
+    SESSION_NAME = DATABASE_NAME + "/sessions/" + SESSION_ID
+    TRANSACTION_ID = b"transaction_id"
 
     def _make_one(self, *args, **kwargs):
         return self._get_target_class()(*args, **kwargs)
@@ -59,11 +72,24 @@ class _BaseTest(unittest.TestCase):
 
 
 class TestDatabase(_BaseTest):
-
     def _get_target_class(self):
         from google.cloud.spanner_v1.database import Database
 
         return Database
+
+    @staticmethod
+    def _make_database_admin_api():
+        from google.cloud.spanner_v1.client import DatabaseAdminClient
+
+        return mock.create_autospec(DatabaseAdminClient, instance=True)
+
+    @staticmethod
+    def _make_spanner_api():
+        import google.cloud.spanner_v1.gapic.spanner_client
+
+        return mock.create_autospec(
+            google.cloud.spanner_v1.gapic.spanner_client.SpannerClient, instance=True
+        )
 
     def test_ctor_defaults(self):
         from google.cloud.spanner_v1.pool import BurstyPool
@@ -93,15 +119,17 @@ class TestDatabase(_BaseTest):
 
         with self.assertRaises(ValueError):
             self._make_one(
-                self.DATABASE_ID, instance=object(),
-                ddl_statements=[object()])
+                self.DATABASE_ID, instance=object(), ddl_statements=[object()]
+            )
 
     def test_ctor_w_ddl_statements_w_create_database(self):
 
         with self.assertRaises(ValueError):
             self._make_one(
-                self.DATABASE_ID, instance=object(),
-                ddl_statements=['CREATE DATABASE foo'])
+                self.DATABASE_ID,
+                instance=object(),
+                ddl_statements=["CREATE DATABASE foo"],
+            )
 
     def test_ctor_w_ddl_statements_ok(self):
         from tests._fixtures import DDL_STATEMENTS
@@ -109,17 +137,18 @@ class TestDatabase(_BaseTest):
         instance = _Instance(self.INSTANCE_NAME)
         pool = _Pool()
         database = self._make_one(
-            self.DATABASE_ID, instance, ddl_statements=DDL_STATEMENTS,
-            pool=pool)
+            self.DATABASE_ID, instance, ddl_statements=DDL_STATEMENTS, pool=pool
+        )
         self.assertEqual(database.database_id, self.DATABASE_ID)
         self.assertIs(database._instance, instance)
         self.assertEqual(list(database.ddl_statements), DDL_STATEMENTS)
 
     def test_from_pb_bad_database_name(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
 
-        database_name = 'INCORRECT_FORMAT'
+        database_name = "INCORRECT_FORMAT"
         database_pb = admin_v1_pb2.Database(name=database_name)
         klass = self._get_target_class()
 
@@ -128,9 +157,10 @@ class TestDatabase(_BaseTest):
 
     def test_from_pb_project_mistmatch(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
 
-        ALT_PROJECT = 'ALT_PROJECT'
+        ALT_PROJECT = "ALT_PROJECT"
         client = _Client(project=ALT_PROJECT)
         instance = _Instance(self.INSTANCE_NAME, client)
         database_pb = admin_v1_pb2.Database(name=self.DATABASE_NAME)
@@ -141,10 +171,10 @@ class TestDatabase(_BaseTest):
 
     def test_from_pb_instance_mistmatch(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
 
-        ALT_INSTANCE = '/projects/%s/instances/ALT-INSTANCE' % (
-            self.PROJECT_ID,)
+        ALT_INSTANCE = "/projects/%s/instances/ALT-INSTANCE" % (self.PROJECT_ID,)
         client = _Client()
         instance = _Instance(ALT_INSTANCE, client)
         database_pb = admin_v1_pb2.Database(name=self.DATABASE_NAME)
@@ -155,7 +185,8 @@ class TestDatabase(_BaseTest):
 
     def test_from_pb_success_w_explicit_pool(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
 
         client = _Client()
         instance = _Instance(self.INSTANCE_NAME, client)
@@ -172,12 +203,12 @@ class TestDatabase(_BaseTest):
 
     def test_from_pb_success_w_hyphen_w_default_pool(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
         from google.cloud.spanner_v1.pool import BurstyPool
 
-        DATABASE_ID_HYPHEN = 'database-id'
-        DATABASE_NAME_HYPHEN = (
-            self.INSTANCE_NAME + '/databases/' + DATABASE_ID_HYPHEN)
+        DATABASE_ID_HYPHEN = "database-id"
+        DATABASE_NAME_HYPHEN = self.INSTANCE_NAME + "/databases/" + DATABASE_ID_HYPHEN
         client = _Client()
         instance = _Instance(self.INSTANCE_NAME, client)
         database_pb = admin_v1_pb2.Database(name=DATABASE_NAME_HYPHEN)
@@ -208,7 +239,7 @@ class TestDatabase(_BaseTest):
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
-        patch = mock.patch('google.cloud.spanner_v1.database.SpannerClient')
+        patch = mock.patch("google.cloud.spanner_v1.database.SpannerClient")
 
         with patch as spanner_client:
             api = database.spanner_api
@@ -220,17 +251,14 @@ class TestDatabase(_BaseTest):
         self.assertIs(again, api)
 
         spanner_client.assert_called_once_with(
-            credentials=credentials,
-            client_info=_CLIENT_INFO)
+            credentials=credentials, client_info=_CLIENT_INFO
+        )
 
     def test_spanner_api_w_scoped_creds(self):
         import google.auth.credentials
-        from google.cloud.spanner_v1.database import (
-            _CLIENT_INFO, SPANNER_DATA_SCOPE)
+        from google.cloud.spanner_v1.database import _CLIENT_INFO, SPANNER_DATA_SCOPE
 
-        class _CredentialsWithScopes(
-                google.auth.credentials.Scoped):
-
+        class _CredentialsWithScopes(google.auth.credentials.Scoped):
             def __init__(self, scopes=(), source=None):
                 self._scopes = scopes
                 self._source = source
@@ -248,7 +276,7 @@ class TestDatabase(_BaseTest):
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
-        patch = mock.patch('google.cloud.spanner_v1.database.SpannerClient')
+        patch = mock.patch("google.cloud.spanner_v1.database.SpannerClient")
 
         with patch as spanner_client:
             api = database.spanner_api
@@ -262,8 +290,8 @@ class TestDatabase(_BaseTest):
         self.assertEqual(len(spanner_client.call_args_list), 1)
         called_args, called_kw = spanner_client.call_args
         self.assertEqual(called_args, ())
-        self.assertEqual(called_kw['client_info'], _CLIENT_INFO)
-        scoped = called_kw['credentials']
+        self.assertEqual(called_kw["client_info"], _CLIENT_INFO)
+        scoped = called_kw["credentials"]
         self.assertEqual(scoped._scopes, expected_scopes)
         self.assertIs(scoped._source, credentials)
 
@@ -285,21 +313,23 @@ class TestDatabase(_BaseTest):
         pool1, pool2 = _Pool(), _Pool()
         database1 = self._make_one(self.DATABASE_ID, instance, pool=pool1)
         database2 = self._make_one(self.DATABASE_ID, instance, pool=pool2)
-        comparison_val = (database1 != database2)
+        comparison_val = database1 != database2
         self.assertFalse(comparison_val)
 
     def test___ne__(self):
         pool1, pool2 = _Pool(), _Pool()
-        database1 = self._make_one('database_id1', 'instance1', pool=pool1)
-        database2 = self._make_one('database_id2', 'instance2', pool=pool2)
+        database1 = self._make_one("database_id1", "instance1", pool=pool1)
+        database2 = self._make_one("database_id2", "instance2", pool=pool2)
         self.assertNotEqual(database1, database2)
 
     def test_create_grpc_error(self):
         from google.api_core.exceptions import GoogleAPICallError
+        from google.api_core.exceptions import Unknown
 
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _rpc_error=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.create_database.side_effect = Unknown("testing")
+
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -307,22 +337,20 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(GoogleAPICallError):
             database.create()
 
-        (parent, create_statement, extra_statements,
-         metadata) = api._created_database
-        self.assertEqual(parent, self.INSTANCE_NAME)
-        self.assertEqual(create_statement,
-                         'CREATE DATABASE %s' % self.DATABASE_ID)
-        self.assertEqual(extra_statements, [])
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.create_database.assert_called_once_with(
+            parent=self.INSTANCE_NAME,
+            create_statement="CREATE DATABASE {}".format(self.DATABASE_ID),
+            extra_statements=[],
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_create_already_exists(self):
         from google.cloud.exceptions import Conflict
 
-        DATABASE_ID_HYPHEN = 'database-id'
+        DATABASE_ID_HYPHEN = "database-id"
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _create_database_conflict=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.create_database.side_effect = Conflict("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(DATABASE_ID_HYPHEN, instance, pool=pool)
@@ -330,70 +358,63 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(Conflict):
             database.create()
 
-        (parent, create_statement, extra_statements,
-         metadata) = api._created_database
-        self.assertEqual(parent, self.INSTANCE_NAME)
-        self.assertEqual(create_statement,
-                         'CREATE DATABASE `%s`' % DATABASE_ID_HYPHEN)
-        self.assertEqual(extra_statements, [])
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.create_database.assert_called_once_with(
+            parent=self.INSTANCE_NAME,
+            create_statement="CREATE DATABASE `{}`".format(DATABASE_ID_HYPHEN),
+            extra_statements=[],
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_create_instance_not_found(self):
         from google.cloud.exceptions import NotFound
 
-        DATABASE_ID_HYPHEN = 'database-id'
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _database_not_found=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.create_database.side_effect = NotFound("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
-        database = self._make_one(DATABASE_ID_HYPHEN, instance, pool=pool)
+        database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
         with self.assertRaises(NotFound):
             database.create()
 
-        (parent, create_statement, extra_statements,
-         metadata) = api._created_database
-        self.assertEqual(parent, self.INSTANCE_NAME)
-        self.assertEqual(create_statement,
-                         'CREATE DATABASE `%s`' % DATABASE_ID_HYPHEN)
-        self.assertEqual(extra_statements, [])
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.create_database.assert_called_once_with(
+            parent=self.INSTANCE_NAME,
+            create_statement="CREATE DATABASE {}".format(self.DATABASE_ID),
+            extra_statements=[],
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_create_success(self):
         from tests._fixtures import DDL_STATEMENTS
 
-        op_future = _FauxOperationFuture()
+        op_future = object()
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _create_database_response=op_future)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.create_database.return_value = op_future
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(
-            self.DATABASE_ID, instance, ddl_statements=DDL_STATEMENTS,
-            pool=pool)
+            self.DATABASE_ID, instance, ddl_statements=DDL_STATEMENTS, pool=pool
+        )
 
         future = database.create()
 
         self.assertIs(future, op_future)
 
-        (parent, create_statement, extra_statements,
-         metadata) = api._created_database
-        self.assertEqual(parent, self.INSTANCE_NAME)
-        self.assertEqual(create_statement,
-                         'CREATE DATABASE %s' % self.DATABASE_ID)
-        self.assertEqual(extra_statements, DDL_STATEMENTS)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.create_database.assert_called_once_with(
+            parent=self.INSTANCE_NAME,
+            create_statement="CREATE DATABASE {}".format(self.DATABASE_ID),
+            extra_statements=DDL_STATEMENTS,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_exists_grpc_error(self):
         from google.api_core.exceptions import Unknown
 
         client = _Client()
-        client.database_admin_api = _FauxDatabaseAdminAPI(
-            _rpc_error=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.side_effect = Unknown("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -401,48 +422,55 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(Unknown):
             database.exists()
 
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
     def test_exists_not_found(self):
+        from google.cloud.exceptions import NotFound
+
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _database_not_found=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.side_effect = NotFound("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
         self.assertFalse(database.exists())
 
-        name, metadata = api._got_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_exists_success(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
         from tests._fixtures import DDL_STATEMENTS
 
         client = _Client()
-        ddl_pb = admin_v1_pb2.GetDatabaseDdlResponse(
-            statements=DDL_STATEMENTS)
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _get_database_ddl_response=ddl_pb)
+        ddl_pb = admin_v1_pb2.GetDatabaseDdlResponse(statements=DDL_STATEMENTS)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.return_value = ddl_pb
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
         self.assertTrue(database.exists())
 
-        name, metadata = api._got_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_reload_grpc_error(self):
         from google.api_core.exceptions import Unknown
 
         client = _Client()
-        client.database_admin_api = _FauxDatabaseAdminAPI(
-            _rpc_error=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.side_effect = Unknown("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -450,12 +478,17 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(Unknown):
             database.reload()
 
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
     def test_reload_not_found(self):
         from google.cloud.exceptions import NotFound
 
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _database_not_found=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.side_effect = NotFound("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -463,21 +496,21 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(NotFound):
             database.reload()
 
-        name, metadata = api._got_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_reload_success(self):
         from google.cloud.spanner_admin_database_v1.proto import (
-            spanner_database_admin_pb2 as admin_v1_pb2)
+            spanner_database_admin_pb2 as admin_v1_pb2,
+        )
         from tests._fixtures import DDL_STATEMENTS
 
         client = _Client()
-        ddl_pb = admin_v1_pb2.GetDatabaseDdlResponse(
-            statements=DDL_STATEMENTS)
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _get_database_ddl_response=ddl_pb)
+        ddl_pb = admin_v1_pb2.GetDatabaseDdlResponse(statements=DDL_STATEMENTS)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.get_database_ddl.return_value = ddl_pb
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -486,18 +519,18 @@ class TestDatabase(_BaseTest):
 
         self.assertEqual(database._ddl_statements, tuple(DDL_STATEMENTS))
 
-        name, metadata = api._got_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.get_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_update_ddl_grpc_error(self):
         from google.api_core.exceptions import Unknown
         from tests._fixtures import DDL_STATEMENTS
 
         client = _Client()
-        client.database_admin_api = _FauxDatabaseAdminAPI(
-            _rpc_error=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.update_database_ddl.side_effect = Unknown("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -505,13 +538,20 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(Unknown):
             database.update_ddl(DDL_STATEMENTS)
 
+        api.update_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            DDL_STATEMENTS,
+            "",
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
     def test_update_ddl_not_found(self):
         from google.cloud.exceptions import NotFound
         from tests._fixtures import DDL_STATEMENTS
 
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _database_not_found=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.update_database_ddl.side_effect = NotFound("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -519,20 +559,20 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(NotFound):
             database.update_ddl(DDL_STATEMENTS)
 
-        name, statements, op_id, metadata = api._updated_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(statements, DDL_STATEMENTS)
-        self.assertEqual(op_id, '')
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.update_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            DDL_STATEMENTS,
+            "",
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_update_ddl(self):
         from tests._fixtures import DDL_STATEMENTS
 
-        op_future = _FauxOperationFuture()
+        op_future = object()
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _update_database_ddl_response=op_future)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.update_database_ddl.return_value = op_future
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -541,19 +581,41 @@ class TestDatabase(_BaseTest):
 
         self.assertIs(future, op_future)
 
-        name, statements, op_id, metadata = api._updated_database_ddl
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(statements, DDL_STATEMENTS)
-        self.assertEqual(op_id, '')
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.update_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            DDL_STATEMENTS,
+            "",
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
+    def test_update_ddl_w_operation_id(self):
+        from tests._fixtures import DDL_STATEMENTS
+
+        op_future = object()
+        client = _Client()
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.update_database_ddl.return_value = op_future
+        instance = _Instance(self.INSTANCE_NAME, client=client)
+        pool = _Pool()
+        database = self._make_one(self.DATABASE_ID, instance, pool=pool)
+
+        future = database.update_ddl(DDL_STATEMENTS, operation_id="someOperationId")
+
+        self.assertIs(future, op_future)
+
+        api.update_database_ddl.assert_called_once_with(
+            self.DATABASE_NAME,
+            DDL_STATEMENTS,
+            "someOperationId",
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_drop_grpc_error(self):
         from google.api_core.exceptions import Unknown
 
         client = _Client()
-        client.database_admin_api = _FauxDatabaseAdminAPI(
-            _rpc_error=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.drop_database.side_effect = Unknown("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -561,12 +623,17 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(Unknown):
             database.drop()
 
+        api.drop_database.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
     def test_drop_not_found(self):
         from google.cloud.exceptions import NotFound
 
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _database_not_found=True)
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.drop_database.side_effect = NotFound("testing")
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
@@ -574,27 +641,100 @@ class TestDatabase(_BaseTest):
         with self.assertRaises(NotFound):
             database.drop()
 
-        name, metadata = api._dropped_database
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.drop_database.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_drop_success(self):
         from google.protobuf.empty_pb2 import Empty
 
         client = _Client()
-        api = client.database_admin_api = _FauxDatabaseAdminAPI(
-            _drop_database_response=Empty())
+        api = client.database_admin_api = self._make_database_admin_api()
+        api.drop_database.return_value = Empty()
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
         database.drop()
 
-        name, metadata = api._dropped_database
-        self.assertEqual(name, self.DATABASE_NAME)
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+        api.drop_database.assert_called_once_with(
+            self.DATABASE_NAME,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
+    def _execute_partitioned_dml_helper(self, dml, params=None, param_types=None):
+        from google.protobuf.struct_pb2 import Struct
+        from google.cloud.spanner_v1.proto.result_set_pb2 import (
+            PartialResultSet,
+            ResultSetStats,
+        )
+        from google.cloud.spanner_v1.proto.transaction_pb2 import (
+            Transaction as TransactionPB,
+            TransactionSelector,
+            TransactionOptions,
+        )
+        from google.cloud.spanner_v1._helpers import _make_value_pb
+
+        transaction_pb = TransactionPB(id=self.TRANSACTION_ID)
+
+        stats_pb = ResultSetStats(row_count_lower_bound=2)
+        result_sets = [PartialResultSet(stats=stats_pb)]
+        iterator = _MockIterator(*result_sets)
+
+        client = _Client()
+        instance = _Instance(self.INSTANCE_NAME, client=client)
+        pool = _Pool()
+        session = _Session()
+        pool.put(session)
+        database = self._make_one(self.DATABASE_ID, instance, pool=pool)
+        api = database._spanner_api = self._make_spanner_api()
+        api.begin_transaction.return_value = transaction_pb
+        api.execute_streaming_sql.return_value = iterator
+
+        row_count = database.execute_partitioned_dml(dml, params, param_types)
+
+        self.assertEqual(row_count, 2)
+
+        txn_options = TransactionOptions(
+            partitioned_dml=TransactionOptions.PartitionedDml()
+        )
+
+        api.begin_transaction.assert_called_once_with(
+            session.name,
+            txn_options,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
+        if params:
+            expected_params = Struct(
+                fields={key: _make_value_pb(value) for (key, value) in params.items()}
+            )
+        else:
+            expected_params = None
+
+        expected_transaction = TransactionSelector(id=self.TRANSACTION_ID)
+
+        api.execute_streaming_sql.assert_called_once_with(
+            self.SESSION_NAME,
+            dml,
+            transaction=expected_transaction,
+            params=expected_params,
+            param_types=param_types,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
+
+    def test_execute_partitioned_dml_wo_params(self):
+        self._execute_partitioned_dml_helper(dml=DML_WO_PARAM)
+
+    def test_execute_partitioned_dml_w_params_wo_param_types(self):
+        with self.assertRaises(ValueError):
+            self._execute_partitioned_dml_helper(dml=DML_W_PARAM, params=PARAMS)
+
+    def test_execute_partitioned_dml_w_params_and_param_types(self):
+        self._execute_partitioned_dml_helper(
+            dml=DML_W_PARAM, params=PARAMS, param_types=PARAM_TYPES
+        )
 
     def test_session_factory_defaults(self):
         from google.cloud.spanner_v1.session import Session
@@ -617,7 +757,7 @@ class TestDatabase(_BaseTest):
         client = _Client()
         instance = _Instance(self.INSTANCE_NAME, client=client)
         pool = _Pool()
-        labels = {'foo': 'bar'}
+        labels = {"foo": "bar"}
         database = self._make_one(self.DATABASE_ID, instance, pool=pool)
 
         session = database.session(labels=labels)
@@ -659,8 +799,7 @@ class TestDatabase(_BaseTest):
 
         self.assertIsInstance(checkout, SnapshotCheckout)
         self.assertIs(checkout._database, database)
-        self.assertEqual(
-            checkout._kw, {'read_timestamp': now, 'multi_use': True})
+        self.assertEqual(checkout._kw, {"read_timestamp": now, "multi_use": True})
 
     def test_batch(self):
         from google.cloud.spanner_v1.database import BatchCheckout
@@ -679,8 +818,7 @@ class TestDatabase(_BaseTest):
     def test_batch_snapshot(self):
         from google.cloud.spanner_v1.database import BatchSnapshot
 
-        database = self._make_one(
-            self.DATABASE_ID, instance=object(), pool=_Pool())
+        database = self._make_one(self.DATABASE_ID, instance=object(), pool=_Pool())
 
         batch_txn = database.batch_snapshot()
         self.assertIsInstance(batch_txn, BatchSnapshot)
@@ -691,8 +829,7 @@ class TestDatabase(_BaseTest):
     def test_batch_snapshot_w_read_timestamp(self):
         from google.cloud.spanner_v1.database import BatchSnapshot
 
-        database = self._make_one(
-            self.DATABASE_ID, instance=object(), pool=_Pool())
+        database = self._make_one(self.DATABASE_ID, instance=object(), pool=_Pool())
         timestamp = self._make_timestamp()
 
         batch_txn = database.batch_snapshot(read_timestamp=timestamp)
@@ -704,8 +841,7 @@ class TestDatabase(_BaseTest):
     def test_batch_snapshot_w_exact_staleness(self):
         from google.cloud.spanner_v1.database import BatchSnapshot
 
-        database = self._make_one(
-            self.DATABASE_ID, instance=object(), pool=_Pool())
+        database = self._make_one(self.DATABASE_ID, instance=object(), pool=_Pool())
         duration = self._make_duration()
 
         batch_txn = database.batch_snapshot(exact_staleness=duration)
@@ -749,12 +885,10 @@ class TestDatabase(_BaseTest):
 
         _unit_of_work = object()
 
-        committed = database.run_in_transaction(
-            _unit_of_work, SINCE, until=UNTIL)
+        committed = database.run_in_transaction(_unit_of_work, SINCE, until=UNTIL)
 
         self.assertEqual(committed, NOW)
-        self.assertEqual(session._retried,
-                         (_unit_of_work, (SINCE,), {'until': UNTIL}))
+        self.assertEqual(session._retried, (_unit_of_work, (SINCE,), {"until": UNTIL}))
 
     def test_run_in_transaction_nested(self):
         from datetime import datetime
@@ -781,11 +915,16 @@ class TestDatabase(_BaseTest):
 
 
 class TestBatchCheckout(_BaseTest):
-
     def _get_target_class(self):
         from google.cloud.spanner_v1.database import BatchCheckout
 
         return BatchCheckout
+
+    @staticmethod
+    def _make_spanner_client():
+        from google.cloud.spanner_v1.gapic.spanner_client import SpannerClient
+
+        return mock.create_autospec(SpannerClient)
 
     def test_ctor(self):
         database = _Database(self.DATABASE_NAME)
@@ -795,8 +934,7 @@ class TestBatchCheckout(_BaseTest):
     def test_context_mgr_success(self):
         import datetime
         from google.cloud.spanner_v1.proto.spanner_pb2 import CommitResponse
-        from google.cloud.spanner_v1.proto.transaction_pb2 import (
-            TransactionOptions)
+        from google.cloud.spanner_v1.proto.transaction_pb2 import TransactionOptions
         from google.cloud._helpers import UTC
         from google.cloud._helpers import _datetime_to_pb_timestamp
         from google.cloud.spanner_v1.batch import Batch
@@ -805,8 +943,8 @@ class TestBatchCheckout(_BaseTest):
         now_pb = _datetime_to_pb_timestamp(now)
         response = CommitResponse(commit_timestamp=now_pb)
         database = _Database(self.DATABASE_NAME)
-        api = database.spanner_api = _FauxSpannerClient()
-        api._commit_response = response
+        api = database.spanner_api = self._make_spanner_client()
+        api.commit.return_value = response
         pool = database._pool = _Pool()
         session = _Session(database)
         pool.put(session)
@@ -819,14 +957,15 @@ class TestBatchCheckout(_BaseTest):
 
         self.assertIs(pool._session, session)
         self.assertEqual(batch.committed, now)
-        (session_name, mutations, single_use_txn,
-         metadata) = api._committed
-        self.assertIs(session_name, self.SESSION_NAME)
-        self.assertEqual(mutations, [])
-        self.assertIsInstance(single_use_txn, TransactionOptions)
-        self.assertTrue(single_use_txn.HasField('read_write'))
-        self.assertEqual(
-            metadata, [('google-cloud-resource-prefix', database.name)])
+
+        expected_txn_options = TransactionOptions(read_write={})
+
+        api.commit.assert_called_once_with(
+            self.SESSION_NAME,
+            [],
+            single_use_transaction=expected_txn_options,
+            metadata=[("google-cloud-resource-prefix", database.name)],
+        )
 
     def test_context_mgr_failure(self):
         from google.cloud.spanner_v1.batch import Batch
@@ -852,7 +991,6 @@ class TestBatchCheckout(_BaseTest):
 
 
 class TestSnapshotCheckout(_BaseTest):
-
     def _get_target_class(self):
         from google.cloud.spanner_v1.database import SnapshotCheckout
 
@@ -892,8 +1030,7 @@ class TestSnapshotCheckout(_BaseTest):
 
         checkout = self._make_one(database, read_timestamp=now, multi_use=True)
         self.assertIs(checkout._database, database)
-        self.assertEqual(checkout._kw,
-                         {'read_timestamp': now, 'multi_use': True})
+        self.assertEqual(checkout._kw, {"read_timestamp": now, "multi_use": True})
 
         with checkout as snapshot:
             self.assertIsNone(pool._session)
@@ -927,10 +1064,10 @@ class TestSnapshotCheckout(_BaseTest):
 
 
 class TestBatchSnapshot(_BaseTest):
-    TABLE = 'table_name'
-    COLUMNS = ['column_one', 'column_two']
-    TOKENS = [b'TOKEN1', b'TOKEN2']
-    INDEX = 'index'
+    TABLE = "table_name"
+    COLUMNS = ["column_one", "column_two"]
+    TOKENS = [b"TOKEN1", b"TOKEN2"]
+    INDEX = "index"
 
     def _get_target_class(self):
         from google.cloud.spanner_v1.database import BatchSnapshot
@@ -1006,8 +1143,8 @@ class TestBatchSnapshot(_BaseTest):
         session = database.session.return_value = self._make_session()
         snapshot = session.snapshot.return_value = self._make_snapshot()
         api_repr = {
-            'session_id': self.SESSION_ID,
-            'transaction_id': self.TRANSACTION_ID,
+            "session_id": self.SESSION_ID,
+            "transaction_id": self.TRANSACTION_ID,
         }
 
         batch_txn = klass.from_dict(database, api_repr)
@@ -1021,14 +1158,12 @@ class TestBatchSnapshot(_BaseTest):
     def test_to_dict(self):
         database = self._make_database()
         batch_txn = self._make_one(database)
-        batch_txn._session = self._make_session(
-            _session_id=self.SESSION_ID)
-        batch_txn._snapshot = self._make_snapshot(
-            transaction_id=self.TRANSACTION_ID)
+        batch_txn._session = self._make_session(_session_id=self.SESSION_ID)
+        batch_txn._snapshot = self._make_snapshot(transaction_id=self.TRANSACTION_ID)
 
         expected = {
-            'session_id': self.SESSION_ID,
-            'transaction_id': self.TRANSACTION_ID,
+            "session_id": self.SESSION_ID,
+            "transaction_id": self.TRANSACTION_ID,
         }
         self.assertEqual(batch_txn.to_dict(), expected)
 
@@ -1059,7 +1194,8 @@ class TestBatchSnapshot(_BaseTest):
         snapshot = session.snapshot.return_value = self._make_snapshot()
         self.assertIs(batch_txn._get_snapshot(), snapshot)
         session.snapshot.assert_called_once_with(
-            read_timestamp=None, exact_staleness=None, multi_use=True)
+            read_timestamp=None, exact_staleness=None, multi_use=True
+        )
         snapshot.begin.assert_called_once_with()
 
     def test__get_snapshot_w_read_timestamp(self):
@@ -1070,7 +1206,8 @@ class TestBatchSnapshot(_BaseTest):
         snapshot = session.snapshot.return_value = self._make_snapshot()
         self.assertIs(batch_txn._get_snapshot(), snapshot)
         session.snapshot.assert_called_once_with(
-            read_timestamp=timestamp, exact_staleness=None, multi_use=True)
+            read_timestamp=timestamp, exact_staleness=None, multi_use=True
+        )
         snapshot.begin.assert_called_once_with()
 
     def test__get_snapshot_w_exact_staleness(self):
@@ -1081,7 +1218,8 @@ class TestBatchSnapshot(_BaseTest):
         snapshot = session.snapshot.return_value = self._make_snapshot()
         self.assertIs(batch_txn._get_snapshot(), snapshot)
         session.snapshot.assert_called_once_with(
-            read_timestamp=None, exact_staleness=duration, multi_use=True)
+            read_timestamp=None, exact_staleness=duration, multi_use=True
+        )
         snapshot.begin.assert_called_once_with()
 
     def test_read(self):
@@ -1090,20 +1228,19 @@ class TestBatchSnapshot(_BaseTest):
         batch_txn = self._make_one(database)
         snapshot = batch_txn._snapshot = self._make_snapshot()
 
-        rows = batch_txn.read(
-            self.TABLE, self.COLUMNS, keyset, self.INDEX)
+        rows = batch_txn.read(self.TABLE, self.COLUMNS, keyset, self.INDEX)
 
         self.assertIs(rows, snapshot.read.return_value)
         snapshot.read.assert_called_once_with(
-            self.TABLE, self.COLUMNS, keyset, self.INDEX)
+            self.TABLE, self.COLUMNS, keyset, self.INDEX
+        )
 
     def test_execute_sql(self):
         sql = (
-            "SELECT first_name, last_name, email FROM citizens "
-            "WHERE age <= @max_age"
+            "SELECT first_name, last_name, email FROM citizens " "WHERE age <= @max_age"
         )
-        params = {'max_age': 30}
-        param_types = {'max_age': 'INT64'}
+        params = {"max_age": 30}
+        param_types = {"max_age": "INT64"}
         database = self._make_database()
         batch_txn = self._make_one(database)
         snapshot = batch_txn._snapshot = self._make_snapshot()
@@ -1111,8 +1248,7 @@ class TestBatchSnapshot(_BaseTest):
         rows = batch_txn.execute_sql(sql, params, param_types)
 
         self.assertIs(rows, snapshot.execute_sql.return_value)
-        snapshot.execute_sql.assert_called_once_with(
-            sql, params, param_types)
+        snapshot.execute_sql.assert_called_once_with(sql, params, param_types)
 
     def test_generate_read_batches_w_max_partitions(self):
         max_partitions = len(self.TOKENS)
@@ -1124,23 +1260,29 @@ class TestBatchSnapshot(_BaseTest):
 
         batches = list(
             batch_txn.generate_read_batches(
-                self.TABLE, self.COLUMNS, keyset,
-                max_partitions=max_partitions))
+                self.TABLE, self.COLUMNS, keyset, max_partitions=max_partitions
+            )
+        )
 
         expected_read = {
-            'table': self.TABLE,
-            'columns': self.COLUMNS,
-            'keyset': {'all': True},
-            'index': '',
+            "table": self.TABLE,
+            "columns": self.COLUMNS,
+            "keyset": {"all": True},
+            "index": "",
         }
         self.assertEqual(len(batches), len(self.TOKENS))
         for batch, token in zip(batches, self.TOKENS):
-            self.assertEqual(batch['partition'], token)
-            self.assertEqual(batch['read'], expected_read)
+            self.assertEqual(batch["partition"], token)
+            self.assertEqual(batch["read"], expected_read)
 
         snapshot.partition_read.assert_called_once_with(
-            table=self.TABLE, columns=self.COLUMNS, keyset=keyset,
-            index='', partition_size_bytes=None, max_partitions=max_partitions)
+            table=self.TABLE,
+            columns=self.COLUMNS,
+            keyset=keyset,
+            index="",
+            partition_size_bytes=None,
+            max_partitions=max_partitions,
+        )
 
     def test_generate_read_batches_w_index_w_partition_size_bytes(self):
         size = 1 << 20
@@ -1152,34 +1294,44 @@ class TestBatchSnapshot(_BaseTest):
 
         batches = list(
             batch_txn.generate_read_batches(
-                self.TABLE, self.COLUMNS, keyset, index=self.INDEX,
-                partition_size_bytes=size))
+                self.TABLE,
+                self.COLUMNS,
+                keyset,
+                index=self.INDEX,
+                partition_size_bytes=size,
+            )
+        )
 
         expected_read = {
-            'table': self.TABLE,
-            'columns': self.COLUMNS,
-            'keyset': {'all': True},
-            'index': self.INDEX,
+            "table": self.TABLE,
+            "columns": self.COLUMNS,
+            "keyset": {"all": True},
+            "index": self.INDEX,
         }
         self.assertEqual(len(batches), len(self.TOKENS))
         for batch, token in zip(batches, self.TOKENS):
-            self.assertEqual(batch['partition'], token)
-            self.assertEqual(batch['read'], expected_read)
+            self.assertEqual(batch["partition"], token)
+            self.assertEqual(batch["read"], expected_read)
 
         snapshot.partition_read.assert_called_once_with(
-            table=self.TABLE, columns=self.COLUMNS, keyset=keyset,
-            index=self.INDEX, partition_size_bytes=size, max_partitions=None)
+            table=self.TABLE,
+            columns=self.COLUMNS,
+            keyset=keyset,
+            index=self.INDEX,
+            partition_size_bytes=size,
+            max_partitions=None,
+        )
 
     def test_process_read_batch(self):
         keyset = self._make_keyset()
-        token = b'TOKEN'
+        token = b"TOKEN"
         batch = {
-            'partition': token,
-            'read': {
-                'table': self.TABLE,
-                'columns': self.COLUMNS,
-                'keyset': {'all': True},
-                'index': self.INDEX,
+            "partition": token,
+            "read": {
+                "table": self.TABLE,
+                "columns": self.COLUMNS,
+                "keyset": {"all": True},
+                "index": self.INDEX,
             },
         }
         database = self._make_database()
@@ -1200,7 +1352,7 @@ class TestBatchSnapshot(_BaseTest):
         )
 
     def test_generate_query_batches_w_max_partitions(self):
-        sql = 'SELECT COUNT(*) FROM table_name'
+        sql = "SELECT COUNT(*) FROM table_name"
         max_partitions = len(self.TOKENS)
         database = self._make_database()
         batch_txn = self._make_one(database)
@@ -1208,28 +1360,29 @@ class TestBatchSnapshot(_BaseTest):
         snapshot.partition_query.return_value = self.TOKENS
 
         batches = list(
-            batch_txn.generate_query_batches(
-                sql, max_partitions=max_partitions))
+            batch_txn.generate_query_batches(sql, max_partitions=max_partitions)
+        )
 
-        expected_query = {
-            'sql': sql,
-        }
+        expected_query = {"sql": sql}
         self.assertEqual(len(batches), len(self.TOKENS))
         for batch, token in zip(batches, self.TOKENS):
-            self.assertEqual(batch['partition'], token)
-            self.assertEqual(batch['query'], expected_query)
+            self.assertEqual(batch["partition"], token)
+            self.assertEqual(batch["query"], expected_query)
 
         snapshot.partition_query.assert_called_once_with(
-            sql=sql, params=None, param_types=None,
-            partition_size_bytes=None, max_partitions=max_partitions)
+            sql=sql,
+            params=None,
+            param_types=None,
+            partition_size_bytes=None,
+            max_partitions=max_partitions,
+        )
 
     def test_generate_query_batches_w_params_w_partition_size_bytes(self):
         sql = (
-            "SELECT first_name, last_name, email FROM citizens "
-            "WHERE age <= @max_age"
+            "SELECT first_name, last_name, email FROM citizens " "WHERE age <= @max_age"
         )
-        params = {'max_age': 30}
-        param_types = {'max_age': 'INT64'}
+        params = {"max_age": 30}
+        param_types = {"max_age": "INT64"}
         size = 1 << 20
         database = self._make_database()
         batch_txn = self._make_one(database)
@@ -1238,38 +1391,34 @@ class TestBatchSnapshot(_BaseTest):
 
         batches = list(
             batch_txn.generate_query_batches(
-                sql, params=params, param_types=param_types,
-                partition_size_bytes=size))
+                sql, params=params, param_types=param_types, partition_size_bytes=size
+            )
+        )
 
-        expected_query = {
-            'sql': sql,
-            'params': params,
-            'param_types': param_types,
-        }
+        expected_query = {"sql": sql, "params": params, "param_types": param_types}
         self.assertEqual(len(batches), len(self.TOKENS))
         for batch, token in zip(batches, self.TOKENS):
-            self.assertEqual(batch['partition'], token)
-            self.assertEqual(batch['query'], expected_query)
+            self.assertEqual(batch["partition"], token)
+            self.assertEqual(batch["query"], expected_query)
 
         snapshot.partition_query.assert_called_once_with(
-            sql=sql, params=params, param_types=param_types,
-            partition_size_bytes=size, max_partitions=None)
+            sql=sql,
+            params=params,
+            param_types=param_types,
+            partition_size_bytes=size,
+            max_partitions=None,
+        )
 
     def test_process_query_batch(self):
         sql = (
-            "SELECT first_name, last_name, email FROM citizens "
-            "WHERE age <= @max_age"
+            "SELECT first_name, last_name, email FROM citizens " "WHERE age <= @max_age"
         )
-        params = {'max_age': 30}
-        param_types = {'max_age': 'INT64'}
-        token = b'TOKEN'
+        params = {"max_age": 30}
+        param_types = {"max_age": "INT64"}
+        token = b"TOKEN"
         batch = {
-            'partition': token,
-            'query': {
-                'sql': sql,
-                'params': params,
-                'param_types': param_types,
-            },
+            "partition": token,
+            "query": {"sql": sql, "params": params, "param_types": param_types},
         }
         database = self._make_database()
         batch_txn = self._make_one(database)
@@ -1281,10 +1430,7 @@ class TestBatchSnapshot(_BaseTest):
         self.assertIs(found, expected)
 
         snapshot.execute_sql.assert_called_once_with(
-            sql=sql,
-            params=params,
-            param_types=param_types,
-            partition=token,
+            sql=sql, params=params, param_types=param_types, partition=token
         )
 
     def test_close_wo_session(self):
@@ -1303,11 +1449,8 @@ class TestBatchSnapshot(_BaseTest):
         session.delete.assert_called_once_with()
 
     def test_process_w_invalid_batch(self):
-        token = b'TOKEN'
-        batch = {
-            'partition': token,
-            'bogus': b'BOGUS',
-        }
+        token = b"TOKEN"
+        batch = {"partition": token, "bogus": b"BOGUS"}
         database = self._make_database()
         batch_txn = self._make_one(database)
 
@@ -1316,14 +1459,14 @@ class TestBatchSnapshot(_BaseTest):
 
     def test_process_w_read_batch(self):
         keyset = self._make_keyset()
-        token = b'TOKEN'
+        token = b"TOKEN"
         batch = {
-            'partition': token,
-            'read': {
-                'table': self.TABLE,
-                'columns': self.COLUMNS,
-                'keyset': {'all': True},
-                'index': self.INDEX,
+            "partition": token,
+            "read": {
+                "table": self.TABLE,
+                "columns": self.COLUMNS,
+                "keyset": {"all": True},
+                "index": self.INDEX,
             },
         }
         database = self._make_database()
@@ -1345,19 +1488,14 @@ class TestBatchSnapshot(_BaseTest):
 
     def test_process_w_query_batch(self):
         sql = (
-            "SELECT first_name, last_name, email FROM citizens "
-            "WHERE age <= @max_age"
+            "SELECT first_name, last_name, email FROM citizens " "WHERE age <= @max_age"
         )
-        params = {'max_age': 30}
-        param_types = {'max_age': 'INT64'}
-        token = b'TOKEN'
+        params = {"max_age": 30}
+        param_types = {"max_age": "INT64"}
+        token = b"TOKEN"
         batch = {
-            'partition': token,
-            'query': {
-                'sql': sql,
-                'params': params,
-                'param_types': param_types,
-            },
+            "partition": token,
+            "query": {"sql": sql, "params": params, "param_types": param_types},
         }
         database = self._make_database()
         batch_txn = self._make_one(database)
@@ -1369,33 +1507,27 @@ class TestBatchSnapshot(_BaseTest):
         self.assertIs(found, expected)
 
         snapshot.execute_sql.assert_called_once_with(
-            sql=sql,
-            params=params,
-            param_types=param_types,
-            partition=token,
+            sql=sql, params=params, param_types=param_types, partition=token
         )
 
 
 class _Client(object):
-
     def __init__(self, project=TestDatabase.PROJECT_ID):
         self.project = project
-        self.project_name = 'projects/' + self.project
+        self.project_name = "projects/" + self.project
 
 
 class _Instance(object):
-
     def __init__(self, name, client=None):
         self.name = name
-        self.instance_id = name.rsplit('/', 1)[1]
+        self.instance_id = name.rsplit("/", 1)[1]
         self._client = client
 
 
 class _Database(object):
-
     def __init__(self, name, instance=None):
         self.name = name
-        self.database_id = name.rsplit('/', 1)[1]
+        self.database_id = name.rsplit("/", 1)[1]
         self._instance = instance
 
 
@@ -1420,8 +1552,9 @@ class _Session(object):
     _transaction = None
     _snapshot = None
 
-    def __init__(self, database=None, name=_BaseTest.SESSION_NAME,
-                 run_transaction_function=False):
+    def __init__(
+        self, database=None, name=_BaseTest.SESSION_NAME, run_transaction_function=False
+    ):
         self._database = database
         self.name = name
         self._run_transaction_function = run_transaction_function
@@ -1433,80 +1566,18 @@ class _Session(object):
         return self._committed
 
 
-class _SessionPB(object):
-    name = TestDatabase.SESSION_NAME
+class _MockIterator(object):
+    def __init__(self, *values, **kw):
+        self._iter_values = iter(values)
+        self._fail_after = kw.pop("fail_after", False)
 
+    def __iter__(self):
+        return self
 
-class _FauxOperationFuture(object):
-    pass
+    def __next__(self):
+        try:
+            return next(self._iter_values)
+        except StopIteration:
+            raise
 
-
-class _FauxSpannerClient(object):
-
-    _committed = None
-
-    def __init__(self, **kwargs):
-        self.__dict__.update(**kwargs)
-
-    def commit(self, session, mutations,
-               transaction_id='', single_use_transaction=None, metadata=None):
-        assert transaction_id == ''
-        self._committed = (
-            session, mutations, single_use_transaction, metadata)
-        return self._commit_response
-
-
-class _FauxDatabaseAdminAPI(object):
-
-    _create_database_conflict = False
-    _database_not_found = False
-    _rpc_error = False
-
-    def __init__(self, **kwargs):
-        self.__dict__.update(**kwargs)
-
-    def create_database(self, parent, create_statement, extra_statements=None,
-                        metadata=None):
-        from google.api_core.exceptions import AlreadyExists, NotFound, Unknown
-
-        self._created_database = (
-            parent, create_statement, extra_statements, metadata)
-        if self._rpc_error:
-            raise Unknown('error')
-        if self._create_database_conflict:
-            raise AlreadyExists('conflict')
-        if self._database_not_found:
-            raise NotFound('not found')
-        return self._create_database_response
-
-    def get_database_ddl(self, database, metadata=None):
-        from google.api_core.exceptions import NotFound, Unknown
-
-        self._got_database_ddl = database, metadata
-        if self._rpc_error:
-            raise Unknown('error')
-        if self._database_not_found:
-            raise NotFound('not found')
-        return self._get_database_ddl_response
-
-    def drop_database(self, database, metadata=None):
-        from google.api_core.exceptions import NotFound, Unknown
-
-        self._dropped_database = database, metadata
-        if self._rpc_error:
-            raise Unknown('error')
-        if self._database_not_found:
-            raise NotFound('not found')
-        return self._drop_database_response
-
-    def update_database_ddl(self, database, statements, operation_id,
-                            metadata=None):
-        from google.api_core.exceptions import NotFound, Unknown
-
-        self._updated_database_ddl = (
-            database, statements, operation_id, metadata)
-        if self._rpc_error:
-            raise Unknown('error')
-        if self._database_not_found:
-            raise NotFound('not found')
-        return self._update_database_ddl_response
+    next = __next__

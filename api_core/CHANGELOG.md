@@ -4,6 +4,63 @@
 
 [1]: https://pypi.org/project/google-api-core/#history
 
+## 1.6.0
+
+11-30-2018 12:45 PST
+
+
+### Implementation Changes
+- Import stdlib ABCs from 'collections.abc' rather than 'collections'. ([#6451](https://github.com/googleapis/google-cloud-python/pull/6451))
+
+### New Features
+- Move google.cloud.iam (core) to google.api_core.iam ([#6740](https://github.com/googleapis/google-cloud-python/pull/6740))
+- Add bidi support to api_core. ([#6191](https://github.com/googleapis/google-cloud-python/pull/6191))
+
+### Documentation
+- Fix typo ([#6532](https://github.com/googleapis/google-cloud-python/pull/6532))
+
+### Internal / Testing Changes
+- blacken api_core and core ([#6668](https://github.com/googleapis/google-cloud-python/pull/6668))
+
+## 1.5.2
+
+11-09-2018 14:22 PST
+
+
+### Implementation Changes
+- Retry transient errors in 'PollingFuture.result'. ([#6305](https://github.com/googleapis/google-cloud-python/pull/6305))
+
+### Dependencies
+- Remove hyphen from named extra in api_core. ([#6468](https://github.com/googleapis/google-cloud-python/pull/6468))
+- Bump minimum 'api_core' version for all GAPIC libs to 1.4.1. ([#6391](https://github.com/googleapis/google-cloud-python/pull/6391))
+- Avoid broken 'google-common-apis 1.5.4' release. ([#6355](https://github.com/googleapis/google-cloud-python/pull/6355))
+
+## 1.5.1
+
+10-29-2018 13:29 PDT
+
+### Implementation Changes
+- Don't URL-encode slashes in gRPC request headers. ([#6310](https://github.com/googleapis/google-cloud-python/pull/6310))
+
+### Internal / Testing Changes
+- Back out changes from [#6267](https://github.com/googleapis/google-cloud-python/pull/6267) / `api_core-1.6.0a1` release. ([#6328](https://github.com/googleapis/google-cloud-python/pull/6328))
+
+## 1.5.0
+
+### New Features
+- Add bidi, Bidirection Streaming, to api-core ([#6211](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/6211))
+
+### Internal / Testing Changes
+- Use new Nox ([#6175](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/6175))
+
+## 1.4.1
+
+### Dependencies
+- Pin minimum protobuf dependency to 3.4.0. ([#6132](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/6132))
+
+### Internal / Testing Changes
+- Add type-checking via pytype to api_core. ([#6116](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/6116))
+
 ## 1.4.0
 
 ### Dependencies

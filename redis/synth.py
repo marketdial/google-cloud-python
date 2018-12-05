@@ -22,53 +22,52 @@ logging.basicConfig(level=logging.DEBUG)
 
 gapic = gcp.GAPICGenerator()
 common = gcp.CommonTemplates()
-excludes = [
-    'setup.py',
-    'nox.py',
-    'docs/conf.py',
-    'docs/index.rst',
-]
+excludes = ["README.rst", "setup.py", "nox*.py", "docs/conf.py", "docs/index.rst"]
 
-for version in ['v1beta1', 'v1']:
+# ----------------------------------------------------------------------------
+# Generate redis GAPIC layer
+# ----------------------------------------------------------------------------
+for version in ["v1beta1", "v1"]:
     library = gapic.py_library(
-        'redis', version,
-        config_path=f'artman_redis_{version}.yaml')
+        "redis", version, config_path=f"artman_redis_{version}.yaml"
+    )
 
     s.copy(library, excludes=excludes)
 
-
 # Fix docstrings
 s.replace(
-    'google/cloud/**/cloud_redis_client.py',
-    r'resources of the form:\n      ``',
-    r'resources of the form:\n\n      ``',)
+    "google/cloud/**/cloud_redis_client.py",
+    r"resources of the form:\n      ``",
+    r"resources of the form:\n\n      ``",
+)
 
 s.replace(
-    'google/cloud/**/cloud_redis_client.py',
+    "google/cloud/**/cloud_redis_client.py",
     r"""
             parent \(str\): Required. The resource name of the instance location using the form:
                 ::
 
                     `projects/{project_id}/locations/{location_id}`
                 where ``location_id`` refers to a GCP region""",
-
     r"""
             parent (str): Required. The resource name of the instance location using the form ``projects/{project_id}/locations/{location_id}``
-                where ``location_id`` refers to a GCP region""",)
+                where ``location_id`` refers to a GCP region""",
+)
 
 
 s.replace(
-    'google/cloud/**/cloud_redis_client.py',
+    "google/cloud/**/cloud_redis_client.py",
     r"""
                 with the following restrictions:
 
                 \* Must contain only lowercase letters, numbers, and hyphens\.""",
     r"""
                 with the following restrictions:
-                * Must contain only lowercase letters, numbers, and hyphens.""")
+                * Must contain only lowercase letters, numbers, and hyphens.""",
+)
 
 s.replace(
-    'google/cloud/**/cloud_redis_client.py',
+    "google/cloud/**/cloud_redis_client.py",
     r"""
             name \(str\): Required. Redis instance resource name using the form:
                 ::
@@ -77,10 +76,11 @@ s.replace(
                 where ``location_id`` refers to a GCP region""",
     r"""
             name (str): Required. Redis instance resource name using the form ``projects/{project_id}/locations/{location_id}/instances/{instance_id}```
-                where ``location_id`` refers to a GCP region""")
+                where ``location_id`` refers to a GCP region""",
+)
 
 s.replace(
-    'google/cloud/**/cloud_redis_client.py',
+    "google/cloud/**/cloud_redis_client.py",
     r"""
                 fields from ``Instance``:
 
@@ -88,37 +88,14 @@ s.replace(
                  \*   ``labels``
                  \*   ``memorySizeGb``
                  \*   ``redisConfig``""",
-
     r"""
-                fields from ``Instance``: ``displayName``, ``labels``, ``memorySizeGb``, and ``redisConfig``.""",)
+                fields from ``Instance``: ``displayName``, ``labels``, ``memorySizeGb``, and ``redisConfig``.""",
+)
 
-# Set Release Status
-release_status = 'Development Status :: 3 - Alpha'
-s.replace('setup.py',
-          '(release_status = )(.*)$',
-          f"\\1'{release_status}'")
+# ----------------------------------------------------------------------------
+# Add templated files
+# ----------------------------------------------------------------------------
+templated_files = common.py_library(unit_cov_level=97, cov_level=100)
+s.move(templated_files)
 
-# Fix the enable API link
-s.replace(
-    'README.rst',
-    r'.. _Enable the Google Cloud Memorystore for Redis API.:  https://cloud.google.com/redis',
-    '.. _Enable the Google Cloud Memorystore for Redis API.:  https://console.cloud.google.com/apis/'
-    'library/redis.googleapis.com')
-
-# Fix link to product page
-s.replace(
-    'README.rst',
-    r'https://cloud.google.com/redis',
-    'https://cloud.google.com/memorystore/')
-
-# Fix link to Client Library Documentation
-s.replace(
-    'README.rst',
-    r'https://googlecloudplatform.github.io/google-cloud-python/stable/redis/usage.html',
-    'https://googlecloudplatform.github.io/google-cloud-python/latest/redis/index.html')
-
-# Fix link to Auth instructions
-s.replace(
-    'README.rst',
-    r'https://googlecloudplatform.github.io/google-cloud-python/stable/core/auth.html',
-    'https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html')
+s.shell.run(["nox", "-s", "blacken"], hide_output=False)

@@ -57,8 +57,7 @@ class WriteBatch(object):
             document_data (dict): Property names and values to use for
                 creating a document.
         """
-        write_pbs = _helpers.pbs_for_set(
-            reference._document_path, document_data, merge=False, exists=False)
+        write_pbs = _helpers.pbs_for_create(reference._document_path, document_data)
         self._add_write_pbs(write_pbs)
 
     def set(self, reference, document_data, merge=False):
@@ -74,12 +73,19 @@ class WriteBatch(object):
                 A document reference that will have values set in this batch.
             document_data (dict):
                 Property names and values to use for replacing a document.
-            merge (Optional[bool]):
+            merge (Optional[bool] or Optional[List<apispec>]):
                 If True, apply merging instead of overwriting the state
                 of the document.
         """
-        write_pbs = _helpers.pbs_for_set(
-            reference._document_path, document_data, merge=merge)
+        if merge is not False:
+            write_pbs = _helpers.pbs_for_set_with_merge(
+                reference._document_path, document_data, merge
+            )
+        else:
+            write_pbs = _helpers.pbs_for_set_no_merge(
+                reference._document_path, document_data
+            )
+
         self._add_write_pbs(write_pbs)
 
     def update(self, reference, field_updates, option=None):
@@ -98,8 +104,11 @@ class WriteBatch(object):
                write option to make assertions / preconditions on the server
                state of the document before applying changes.
         """
+        if option.__class__.__name__ == "ExistsOption":
+            raise ValueError("you must not pass an explicit write option to " "update.")
         write_pbs = _helpers.pbs_for_update(
-            self._client, reference._document_path, field_updates, option)
+            reference._document_path, field_updates, option
+        )
         self._add_write_pbs(write_pbs)
 
     def delete(self, reference, option=None):
@@ -131,8 +140,11 @@ class WriteBatch(object):
             ``update_time`` field.
         """
         commit_response = self._client._firestore_api.commit(
-            self._client._database_string, self._write_pbs,
-            transaction=None, metadata=self._client._rpc_metadata)
+            self._client._database_string,
+            self._write_pbs,
+            transaction=None,
+            metadata=self._client._rpc_metadata,
+        )
 
         self._write_pbs = []
         return list(commit_response.write_results)

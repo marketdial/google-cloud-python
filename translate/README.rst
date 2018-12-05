@@ -1,7 +1,7 @@
 Python Client for Google Cloud Translation
 ==========================================
 
-|pypi| |versions|
+|GA| |pypi| |versions|
 
 With `Google Cloud Translation`_, you can dynamically translate text between
 thousands of language pairs. The Google Cloud Translation API lets websites
@@ -12,7 +12,8 @@ Cloud Translation is available as a paid service. See the `Pricing`_ and
 - `Client Library Documentation`_
 - `Product Documentation`_
 
-
+.. |GA| image:: https://img.shields.io/badge/support-GA-gold.svg
+   :target: https://github.com/googleapis/google-cloud-python/blob/master/README.rst#general-availability
 .. |pypi| image:: https://img.shields.io/pypi/v/google-cloud-translate.svg
    :target: https://pypi.org/project/google-cloud-translate/
 .. |versions| image:: https://img.shields.io/pypi/pyversions/google-cloud-translate.svg
@@ -30,12 +31,12 @@ In order to use this library, you first need to go through the following steps:
 
 1. `Select or create a Cloud Platform project.`_
 2. `Enable billing for your project.`_
-3. `Enable the Google Cloud Datastore API.`_
+3. `Enable the Google Cloud Translate API.`_
 4. `Setup Authentication.`_
 
 .. _Select or create a Cloud Platform project.: https://console.cloud.google.com/project
 .. _Enable billing for your project.: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
-.. _Enable the Google Cloud Datastore API.:  https://cloud.google.com/datastore
+.. _Enable the Google Cloud Translate API.:  https://cloud.google.com/translate
 .. _Setup Authentication.: https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html
 
 Installation
@@ -60,7 +61,7 @@ Mac/Linux
     pip install virtualenv
     virtualenv <your-env>
     source <your-env>/bin/activate
-    <your-env>/bin/pip install google-cloud-datastore
+    <your-env>/bin/pip install google-cloud-translate
 
 
 Windows
@@ -71,7 +72,7 @@ Windows
     pip install virtualenv
     virtualenv <your-env>
     <your-env>\Scripts\activate
-    <your-env>\Scripts\pip.exe install google-cloud-datastore
+    <your-env>\Scripts\pip.exe install google-cloud-translate
 
 
 Example Usage

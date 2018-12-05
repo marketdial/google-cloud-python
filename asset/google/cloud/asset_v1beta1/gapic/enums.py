@@ -20,14 +20,15 @@ import enum
 
 class NullValue(enum.IntEnum):
     """
-    ``NullValue`` is a singleton enumeration to represent the null value for the
-    ``Value`` type union.
+    ``NullValue`` is a singleton enumeration to represent the null value for
+    the ``Value`` type union.
 
-     The JSON representation for ``NullValue`` is JSON ``null``.
+    The JSON representation for ``NullValue`` is JSON ``null``.
 
     Attributes:
       NULL_VALUE (int): Null value.
     """
+
     NULL_VALUE = 0
 
 
@@ -40,6 +41,7 @@ class ContentType(enum.IntEnum):
       RESOURCE (int): Resource metadata.
       IAM_POLICY (int): The actual IAM policy set on a resource.
     """
+
     CONTENT_TYPE_UNSPECIFIED = 0
     RESOURCE = 1
     IAM_POLICY = 2

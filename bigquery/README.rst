@@ -1,7 +1,7 @@
 Python Client for Google BigQuery
 =================================
 
-|pypi| |versions|
+|GA| |pypi| |versions|
 
 Querying massive datasets can be time consuming and expensive without the
 right hardware and infrastructure. Google `BigQuery`_ solves this problem by
@@ -11,6 +11,8 @@ processing power of Google's infrastructure.
 -  `Client Library Documentation`_
 -  `Product Documentation`_
 
+.. |GA| image:: https://img.shields.io/badge/support-GA-gold.svg
+   :target: https://github.com/googleapis/google-cloud-python/blob/master/README.rst#general-availability
 .. |pypi| image:: https://img.shields.io/pypi/v/google-cloud-bigquery.svg
    :target: https://pypi.org/project/google-cloud-bigquery/
 .. |versions| image:: https://img.shields.io/pypi/pyversions/google-cloud-bigquery.svg
@@ -26,12 +28,12 @@ In order to use this library, you first need to go through the following steps:
 
 1. `Select or create a Cloud Platform project.`_
 2. `Enable billing for your project.`_
-3. `Enable the Google Cloud Datastore API.`_
+3. `Enable the Google Cloud BigQuery API.`_
 4. `Setup Authentication.`_
 
 .. _Select or create a Cloud Platform project.: https://console.cloud.google.com/project
 .. _Enable billing for your project.: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
-.. _Enable the Google Cloud Datastore API.:  https://cloud.google.com/bigquery
+.. _Enable the Google Cloud BigQuery API.:  https://cloud.google.com/bigquery
 .. _Setup Authentication.: https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html
 
 Installation
@@ -72,55 +74,14 @@ Windows
 Example Usage
 -------------
 
-Create a dataset
-~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    from google.cloud import bigquery
-    from google.cloud.bigquery import Dataset
-
-    client = bigquery.Client()
-
-    dataset_ref = client.dataset('dataset_name')
-    dataset = Dataset(dataset_ref)
-    dataset.description = 'my dataset'
-    dataset = client.create_dataset(dataset)  # API request
-
-Load data from CSV
-~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    import csv
-
-    from google.cloud import bigquery
-    from google.cloud.bigquery import LoadJobConfig
-    from google.cloud.bigquery import SchemaField
-
-    client = bigquery.Client()
-
-    SCHEMA = [
-        SchemaField('full_name', 'STRING', mode='required'),
-        SchemaField('age', 'INTEGER', mode='required'),
-    ]
-    table_ref = client.dataset('dataset_name').table('table_name')
-
-    load_config = LoadJobConfig()
-    load_config.skip_leading_rows = 1
-    load_config.schema = SCHEMA
-
-    # Contents of csv_file.csv:
-    #     Name,Age
-    #     Tim,99
-    with open('csv_file.csv', 'rb') as readable:
-        client.load_table_from_file(
-            readable, table_ref, job_config=load_config)  # API request
-
 Perform a query
 ~~~~~~~~~~~~~~~
 
 .. code:: python
+
+    from google.cloud import bigquery
+
+    client = bigquery.Client()
 
     # Perform a query.
     QUERY = (

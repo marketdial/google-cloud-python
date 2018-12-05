@@ -28,17 +28,17 @@ class SubscriberGrpcTransport(object):
     which can be used to take advantage of advanced
     features of gRPC.
     """
+
     # The scopes needed to make gRPC calls to all of the methods defined
     # in this service.
     _OAUTH_SCOPES = (
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/pubsub',
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/pubsub",
     )
 
-    def __init__(self,
-                 channel=None,
-                 credentials=None,
-                 address='pubsub.googleapis.com:443'):
+    def __init__(
+        self, channel=None, credentials=None, address="pubsub.googleapis.com:443"
+    ):
         """Instantiate the transport class.
 
         Args:
@@ -56,27 +56,24 @@ class SubscriberGrpcTransport(object):
         # exception (channels come with credentials baked in already).
         if channel is not None and credentials is not None:
             raise ValueError(
-                'The `channel` and `credentials` arguments are mutually '
-                'exclusive.', )
+                "The `channel` and `credentials` arguments are mutually " "exclusive."
+            )
 
         # Create the channel.
         if channel is None:
-            channel = self.create_channel(
-                address=address,
-                credentials=credentials,
-            )
+            channel = self.create_channel(address=address, credentials=credentials)
+
+        self._channel = channel
 
         # gRPC uses objects called "stubs" that are bound to the
         # channel and provide a basic method for each RPC.
         self._stubs = {
-            'iam_policy_stub': iam_policy_pb2.IAMPolicyStub(channel),
-            'subscriber_stub': pubsub_pb2_grpc.SubscriberStub(channel),
+            "iam_policy_stub": iam_policy_pb2.IAMPolicyStub(channel),
+            "subscriber_stub": pubsub_pb2_grpc.SubscriberStub(channel),
         }
 
     @classmethod
-    def create_channel(cls,
-                       address='pubsub.googleapis.com:443',
-                       credentials=None):
+    def create_channel(cls, address="pubsub.googleapis.com:443", credentials=None):
         """Create and return a gRPC channel object.
 
         Args:
@@ -91,33 +88,39 @@ class SubscriberGrpcTransport(object):
             grpc.Channel: A gRPC channel object.
         """
         return google.api_core.grpc_helpers.create_channel(
-            address,
-            credentials=credentials,
-            scopes=cls._OAUTH_SCOPES,
+            address, credentials=credentials, scopes=cls._OAUTH_SCOPES
         )
+
+    @property
+    def channel(self):
+        """The gRPC channel used by the transport.
+
+        Returns:
+            grpc.Channel: A gRPC channel object.
+        """
+        return self._channel
 
     @property
     def create_subscription(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Creates a subscription to a given topic. See the
-        <a href=\"/pubsub/docs/admin#resource_names\"> resource name rules</a>.
-        If the subscription already exists, returns ``ALREADY_EXISTS``.
-        If the corresponding topic doesn't exist, returns ``NOT_FOUND``.
+        Creates a subscription to a given topic. See the resource name rules. If
+        the subscription already exists, returns ``ALREADY_EXISTS``. If the
+        corresponding topic doesn't exist, returns ``NOT_FOUND``.
 
-        If the name is not provided in the request, the server will assign a random
-        name for this subscription on the same project as the topic, conforming
-        to the
-        `resource name format <https://cloud.google.com/pubsub/docs/overview#names>`_.
-        The generated name is populated in the returned Subscription object.
-        Note that for REST API requests, you must specify a name in the request.
+        If the name is not provided in the request, the server will assign a
+        random name for this subscription on the same project as the topic,
+        conforming to the `resource name
+        format <https://cloud.google.com/pubsub/docs/overview#names>`__. The
+        generated name is populated in the returned Subscription object. Note
+        that for REST API requests, you must specify a name in the request.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].CreateSubscription
+        return self._stubs["subscriber_stub"].CreateSubscription
 
     @property
     def get_subscription(self):
@@ -130,7 +133,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].GetSubscription
+        return self._stubs["subscriber_stub"].GetSubscription
 
     @property
     def update_subscription(self):
@@ -144,7 +147,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].UpdateSubscription
+        return self._stubs["subscriber_stub"].UpdateSubscription
 
     @property
     def list_subscriptions(self):
@@ -157,24 +160,25 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].ListSubscriptions
+        return self._stubs["subscriber_stub"].ListSubscriptions
 
     @property
     def delete_subscription(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Deletes an existing subscription. All messages retained in the subscription
-        are immediately dropped. Calls to ``Pull`` after deletion will return
-        ``NOT_FOUND``. After a subscription is deleted, a new one may be created with
-        the same name, but the new one has no association with the old
-        subscription or its topic unless the same topic is specified.
+        Deletes an existing subscription. All messages retained in the
+        subscription are immediately dropped. Calls to ``Pull`` after deletion
+        will return ``NOT_FOUND``. After a subscription is deleted, a new one
+        may be created with the same name, but the new one has no association
+        with the old subscription or its topic unless the same topic is
+        specified.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].DeleteSubscription
+        return self._stubs["subscriber_stub"].DeleteSubscription
 
     @property
     def modify_ack_deadline(self):
@@ -191,18 +195,18 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].ModifyAckDeadline
+        return self._stubs["subscriber_stub"].ModifyAckDeadline
 
     @property
     def acknowledge(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
         Acknowledges the messages associated with the ``ack_ids`` in the
-        ``AcknowledgeRequest``. The Pub/Sub system can remove the relevant messages
-        from the subscription.
+        ``AcknowledgeRequest``. The Pub/Sub system can remove the relevant
+        messages from the subscription.
 
-        Acknowledging a message whose ack deadline has expired may succeed,
-        but such a message may be redelivered later. Acknowledging a message more
+        Acknowledging a message whose ack deadline has expired may succeed, but
+        such a message may be redelivered later. Acknowledging a message more
         than once will not result in an error.
 
         Returns:
@@ -210,14 +214,13 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].Acknowledge
+        return self._stubs["subscriber_stub"].Acknowledge
 
     @property
     def pull(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Pulls messages from the server. Returns an empty list if there are no
-        messages available in the backlog. The server may return ``UNAVAILABLE`` if
+        Pulls messages from the server. The server may return ``UNAVAILABLE`` if
         there are too many concurrent pull requests pending for the given
         subscription.
 
@@ -226,26 +229,26 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].Pull
+        return self._stubs["subscriber_stub"].Pull
 
     @property
     def streaming_pull(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
         Establishes a stream with the server, which sends messages down to the
-        client. The client streams acknowledgements and ack deadline modifications
-        back to the server. The server will close the stream and return the status
-        on any error. The server may close the stream with status ``UNAVAILABLE`` to
-        reassign server-side resources, in which case, the client should
-        re-establish the stream. Flow control can be achieved by configuring the
-        underlying RPC channel.
+        client. The client streams acknowledgements and ack deadline
+        modifications back to the server. The server will close the stream and
+        return the status on any error. The server may close the stream with
+        status ``UNAVAILABLE`` to reassign server-side resources, in which case,
+        the client should re-establish the stream. Flow control can be achieved
+        by configuring the underlying RPC channel.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].StreamingPull
+        return self._stubs["subscriber_stub"].StreamingPull
 
     @property
     def modify_push_config(self):
@@ -253,17 +256,18 @@ class SubscriberGrpcTransport(object):
 
         Modifies the ``PushConfig`` for a specified subscription.
 
-        This may be used to change a push subscription to a pull one (signified by
-        an empty ``PushConfig``) or vice versa, or change the endpoint URL and other
-        attributes of a push subscription. Messages will accumulate for delivery
-        continuously through the call regardless of changes to the ``PushConfig``.
+        This may be used to change a push subscription to a pull one (signified
+        by an empty ``PushConfig``) or vice versa, or change the endpoint URL
+        and other attributes of a push subscription. Messages will accumulate
+        for delivery continuously through the call regardless of changes to the
+        ``PushConfig``.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].ModifyPushConfig
+        return self._stubs["subscriber_stub"].ModifyPushConfig
 
     @property
     def list_snapshots(self):
@@ -279,34 +283,33 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].ListSnapshots
+        return self._stubs["subscriber_stub"].ListSnapshots
 
     @property
     def create_snapshot(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Creates a snapshot from the requested subscription.<br><br>
-        <b>ALPHA:</b> This feature is part of an alpha release. This API might be
-        changed in backward-incompatible ways and is not recommended for production
-        use. It is not subject to any SLA or deprecation policy.
-        If the snapshot already exists, returns ``ALREADY_EXISTS``.
-        If the requested subscription doesn't exist, returns ``NOT_FOUND``.
-        If the backlog in the subscription is too old -- and the resulting snapshot
-        would expire in less than 1 hour -- then ``FAILED_PRECONDITION`` is returned.
-        See also the ``Snapshot.expire_time`` field. If the name is not provided in
-        the request, the server will assign a random
-        name for this snapshot on the same project as the subscription, conforming
-        to the `resource name format <https://cloud.google.com/pubsub/docs/overview#names>`_.
-        The generated
-        name is populated in the returned Snapshot object. Note that for REST API
-        requests, you must specify a name in the request.
+        Creates a snapshot from the requested subscription. ALPHA: This feature
+        is part of an alpha release. This API might be changed in
+        backward-incompatible ways and is not recommended for production use. It
+        is not subject to any SLA or deprecation policy. If the snapshot already
+        exists, returns ``ALREADY_EXISTS``. If the requested subscription
+        doesn't exist, returns ``NOT_FOUND``. If the backlog in the subscription
+        is too old -- and the resulting snapshot would expire in less than 1
+        hour -- then ``FAILED_PRECONDITION`` is returned. See also the
+        ``Snapshot.expire_time`` field. If the name is not provided in the
+        request, the server will assign a random name for this snapshot on the
+        same project as the subscription, conforming to the `resource name
+        format <https://cloud.google.com/pubsub/docs/overview#names>`__. The
+        generated name is populated in the returned Snapshot object. Note that
+        for REST API requests, you must specify a name in the request.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].CreateSnapshot
+        return self._stubs["subscriber_stub"].CreateSnapshot
 
     @property
     def update_snapshot(self):
@@ -323,7 +326,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].UpdateSnapshot
+        return self._stubs["subscriber_stub"].UpdateSnapshot
 
     @property
     def delete_snapshot(self):
@@ -343,7 +346,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].DeleteSnapshot
+        return self._stubs["subscriber_stub"].DeleteSnapshot
 
     @property
     def seek(self):
@@ -360,7 +363,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['subscriber_stub'].Seek
+        return self._stubs["subscriber_stub"].Seek
 
     @property
     def set_iam_policy(self):
@@ -374,7 +377,7 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['iam_policy_stub'].SetIamPolicy
+        return self._stubs["iam_policy_stub"].SetIamPolicy
 
     @property
     def get_iam_policy(self):
@@ -389,19 +392,19 @@ class SubscriberGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['iam_policy_stub'].GetIamPolicy
+        return self._stubs["iam_policy_stub"].GetIamPolicy
 
     @property
     def test_iam_permissions(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Returns permissions that a caller has on the specified resource.
-        If the resource does not exist, this will return an empty set of
-        permissions, not a NOT_FOUND error.
+        Returns permissions that a caller has on the specified resource. If the
+        resource does not exist, this will return an empty set of permissions,
+        not a NOT\_FOUND error.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['iam_policy_stub'].TestIamPermissions
+        return self._stubs["iam_policy_stub"].TestIamPermissions

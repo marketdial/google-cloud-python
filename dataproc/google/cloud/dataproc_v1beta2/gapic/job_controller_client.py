@@ -40,19 +40,18 @@ from google.protobuf import duration_pb2
 from google.protobuf import empty_pb2
 from google.protobuf import field_mask_pb2
 
-_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-dataproc', ).version
+_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution("google-cloud-dataproc").version
 
 
 class JobControllerClient(object):
     """The JobController provides methods to manage jobs."""
 
-    SERVICE_ADDRESS = 'dataproc.googleapis.com:443'
+    SERVICE_ADDRESS = "dataproc.googleapis.com:443"
     """The default address of the service."""
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.cloud.dataproc.v1beta2.JobController'
+    _INTERFACE_NAME = "google.cloud.dataproc.v1beta2.JobController"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -68,19 +67,20 @@ class JobControllerClient(object):
         Returns:
             JobControllerClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=job_controller_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -112,13 +112,21 @@ class JobControllerClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = job_controller_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -127,26 +135,26 @@ class JobControllerClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=job_controller_grpc_transport.
-                    JobControllerGrpcTransport,
+                    default_class=job_controller_grpc_transport.JobControllerGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
         else:
             self.transport = job_controller_grpc_transport.JobControllerGrpcTransport(
-                address=self.SERVICE_ADDRESS,
-                channel=channel,
-                credentials=credentials,
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
             )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -154,7 +162,8 @@ class JobControllerClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -163,14 +172,16 @@ class JobControllerClient(object):
         self._inner_api_calls = {}
 
     # Service calls
-    def submit_job(self,
-                   project_id,
-                   region,
-                   job,
-                   request_id=None,
-                   retry=google.api_core.gapic_v1.method.DEFAULT,
-                   timeout=google.api_core.gapic_v1.method.DEFAULT,
-                   metadata=None):
+    def submit_job(
+        self,
+        project_id,
+        region,
+        job,
+        request_id=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Submits a job to a cluster.
 
@@ -179,13 +190,13 @@ class JobControllerClient(object):
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
-            >>> # TODO: Initialize ``job``:
+            >>> # TODO: Initialize `job`:
             >>> job = {}
             >>>
             >>> response = client.submit_job(project_id, region, job)
@@ -195,19 +206,19 @@ class JobControllerClient(object):
                 belongs to.
             region (str): Required. The Cloud Dataproc region in which to handle the request.
             job (Union[dict, ~google.cloud.dataproc_v1beta2.types.Job]): Required. The job resource.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.dataproc_v1beta2.types.Job`
             request_id (str): Optional. A unique id used to identify the request. If the server
-                receives two ``SubmitJobRequest`` requests  with the same
-                id, then the second request will be ignored and the
-                first ``Job`` created and stored in the backend
-                is returned.
+                receives two ``SubmitJobRequest`` requests with the same id, then the
+                second request will be ignored and the first ``Job`` created and stored
+                in the backend is returned.
 
                 It is recommended to always set this value to a
-                `UUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`_.
+                `UUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`__.
 
-                The id must contain only letters (a-z, A-Z), numbers (0-9),
-                underscores (_), and hyphens (-). The maximum length is 40 characters.
+                The id must contain only letters (a-z, A-Z), numbers (0-9), underscores
+                (\_), and hyphens (-). The maximum length is 40 characters.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -228,31 +239,32 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'submit_job' not in self._inner_api_calls:
+        if "submit_job" not in self._inner_api_calls:
             self._inner_api_calls[
-                'submit_job'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.submit_job,
-                    default_retry=self._method_configs['SubmitJob'].retry,
-                    default_timeout=self._method_configs['SubmitJob'].timeout,
-                    client_info=self._client_info,
-                )
+                "submit_job"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.submit_job,
+                default_retry=self._method_configs["SubmitJob"].retry,
+                default_timeout=self._method_configs["SubmitJob"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.SubmitJobRequest(
-            project_id=project_id,
-            region=region,
-            job=job,
-            request_id=request_id,
+            project_id=project_id, region=region, job=job, request_id=request_id
         )
-        return self._inner_api_calls['submit_job'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["submit_job"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def get_job(self,
-                project_id,
-                region,
-                job_id,
-                retry=google.api_core.gapic_v1.method.DEFAULT,
-                timeout=google.api_core.gapic_v1.method.DEFAULT,
-                metadata=None):
+    def get_job(
+        self,
+        project_id,
+        region,
+        job_id,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets the resource representation for a job in a project.
 
@@ -261,13 +273,13 @@ class JobControllerClient(object):
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
-            >>> # TODO: Initialize ``job_id``:
+            >>> # TODO: Initialize `job_id`:
             >>> job_id = ''
             >>>
             >>> response = client.get_job(project_id, region, job_id)
@@ -297,33 +309,35 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_job' not in self._inner_api_calls:
+        if "get_job" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_job'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_job,
-                    default_retry=self._method_configs['GetJob'].retry,
-                    default_timeout=self._method_configs['GetJob'].timeout,
-                    client_info=self._client_info,
-                )
+                "get_job"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_job,
+                default_retry=self._method_configs["GetJob"].retry,
+                default_timeout=self._method_configs["GetJob"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.GetJobRequest(
-            project_id=project_id,
-            region=region,
-            job_id=job_id,
+            project_id=project_id, region=region, job_id=job_id
         )
-        return self._inner_api_calls['get_job'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["get_job"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def list_jobs(self,
-                  project_id,
-                  region,
-                  page_size=None,
-                  cluster_name=None,
-                  job_state_matcher=None,
-                  filter_=None,
-                  retry=google.api_core.gapic_v1.method.DEFAULT,
-                  timeout=google.api_core.gapic_v1.method.DEFAULT,
-                  metadata=None):
+    def list_jobs(
+        self,
+        project_id,
+        region,
+        page_size=None,
+        cluster_name=None,
+        job_state_matcher=None,
+        filter_=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists regions/{region}/jobs in a project.
 
@@ -332,10 +346,10 @@ class JobControllerClient(object):
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
             >>> # Iterate over all results
@@ -347,7 +361,7 @@ class JobControllerClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_jobs(project_id, region, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_jobs(project_id, region).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
@@ -363,8 +377,8 @@ class JobControllerClient(object):
                 of resources in a page.
             cluster_name (str): Optional. If set, the returned jobs list includes only jobs that were
                 submitted to the named cluster.
-            job_state_matcher (~google.cloud.dataproc_v1beta2.types.JobStateMatcher): Optional. Specifies enumerated categories of jobs to list.
-                (default = match ALL jobs).
+            job_state_matcher (~google.cloud.dataproc_v1beta2.types.JobStateMatcher): Optional. Specifies enumerated categories of jobs to list. (default =
+                match ALL jobs).
 
                 If ``filter`` is provided, ``jobStateMatcher`` will be ignored.
             filter_ (str): Optional. A filter constraining the jobs to list. Filters are
@@ -372,15 +386,15 @@ class JobControllerClient(object):
 
                 [field = value] AND [field [= value]] ...
 
-                where **field** is ``status.state`` or ``labels.[KEY]``, and ``[KEY]`` is a label
-                key. **value** can be ``*`` to match all values.
-                ``status.state`` can be either ``ACTIVE`` or ``NON_ACTIVE``.
-                Only the logical ``AND`` operator is supported; space-separated items are
-                treated as having an implicit ``AND`` operator.
+                where **field** is ``status.state`` or ``labels.[KEY]``, and ``[KEY]``
+                is a label key. **value** can be ``*`` to match all values.
+                ``status.state`` can be either ``ACTIVE`` or ``NON_ACTIVE``. Only the
+                logical ``AND`` operator is supported; space-separated items are treated
+                as having an implicit ``AND`` operator.
 
                 Example filter:
 
-                status.state = ACTIVE AND labels.env = staging AND labels.starred = *
+                status.state = ACTIVE AND labels.env = staging AND labels.starred = \*
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -404,14 +418,15 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_jobs' not in self._inner_api_calls:
+        if "list_jobs" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_jobs'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_jobs,
-                    default_retry=self._method_configs['ListJobs'].retry,
-                    default_timeout=self._method_configs['ListJobs'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_jobs"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_jobs,
+                default_retry=self._method_configs["ListJobs"].retry,
+                default_timeout=self._method_configs["ListJobs"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.ListJobsRequest(
             project_id=project_id,
@@ -424,26 +439,29 @@ class JobControllerClient(object):
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_jobs'],
+                self._inner_api_calls["list_jobs"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='jobs',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="jobs",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def update_job(self,
-                   project_id,
-                   region,
-                   job_id,
-                   job,
-                   update_mask,
-                   retry=google.api_core.gapic_v1.method.DEFAULT,
-                   timeout=google.api_core.gapic_v1.method.DEFAULT,
-                   metadata=None):
+    def update_job(
+        self,
+        project_id,
+        region,
+        job_id,
+        job,
+        update_mask,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Updates a job in a project.
 
@@ -452,19 +470,19 @@ class JobControllerClient(object):
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
-            >>> # TODO: Initialize ``job_id``:
+            >>> # TODO: Initialize `job_id`:
             >>> job_id = ''
             >>>
-            >>> # TODO: Initialize ``job``:
+            >>> # TODO: Initialize `job`:
             >>> job = {}
             >>>
-            >>> # TODO: Initialize ``update_mask``:
+            >>> # TODO: Initialize `update_mask`:
             >>> update_mask = {}
             >>>
             >>> response = client.update_job(project_id, region, job_id, job, update_mask)
@@ -475,14 +493,15 @@ class JobControllerClient(object):
             region (str): Required. The Cloud Dataproc region in which to handle the request.
             job_id (str): Required. The job ID.
             job (Union[dict, ~google.cloud.dataproc_v1beta2.types.Job]): Required. The changes to the job.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.dataproc_v1beta2.types.Job`
-            update_mask (Union[dict, ~google.cloud.dataproc_v1beta2.types.FieldMask]): Required. Specifies the path, relative to <code>Job</code>, of
-                the field to update. For example, to update the labels of a Job the
-                <code>update_mask</code> parameter would be specified as
-                <code>labels</code>, and the ``PATCH`` request body would specify the new
-                value. <strong>Note:</strong> Currently, <code>labels</code> is the only
-                field that can be updated.
+            update_mask (Union[dict, ~google.cloud.dataproc_v1beta2.types.FieldMask]): Required. Specifies the path, relative to Job, of the field to update.
+                For example, to update the labels of a Job the update\_mask parameter
+                would be specified as labels, and the ``PATCH`` request body would
+                specify the new value. Note: Currently, labels is the only field that
+                can be updated.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.dataproc_v1beta2.types.FieldMask`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -505,14 +524,15 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'update_job' not in self._inner_api_calls:
+        if "update_job" not in self._inner_api_calls:
             self._inner_api_calls[
-                'update_job'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.update_job,
-                    default_retry=self._method_configs['UpdateJob'].retry,
-                    default_timeout=self._method_configs['UpdateJob'].timeout,
-                    client_info=self._client_info,
-                )
+                "update_job"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.update_job,
+                default_retry=self._method_configs["UpdateJob"].retry,
+                default_timeout=self._method_configs["UpdateJob"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.UpdateJobRequest(
             project_id=project_id,
@@ -521,34 +541,38 @@ class JobControllerClient(object):
             job=job,
             update_mask=update_mask,
         )
-        return self._inner_api_calls['update_job'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["update_job"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def cancel_job(self,
-                   project_id,
-                   region,
-                   job_id,
-                   retry=google.api_core.gapic_v1.method.DEFAULT,
-                   timeout=google.api_core.gapic_v1.method.DEFAULT,
-                   metadata=None):
+    def cancel_job(
+        self,
+        project_id,
+        region,
+        job_id,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Starts a job cancellation request. To access the job resource
-        after cancellation, call
-        `regions/{region}/jobs.list <https://cloud.google.com/dataproc/docs/reference/rest/v1beta2/projects.regions.jobs/list>`_ or
-        `regions/{region}/jobs.get <https://cloud.google.com/dataproc/docs/reference/rest/v1beta2/projects.regions.jobs/get>`_.
+        Starts a job cancellation request. To access the job resource after
+        cancellation, call
+        `regions/{region}/jobs.list <https://cloud.google.com/dataproc/docs/reference/rest/v1beta2/projects.regions.jobs/list>`__
+        or
+        `regions/{region}/jobs.get <https://cloud.google.com/dataproc/docs/reference/rest/v1beta2/projects.regions.jobs/get>`__.
 
         Example:
             >>> from google.cloud import dataproc_v1beta2
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
-            >>> # TODO: Initialize ``job_id``:
+            >>> # TODO: Initialize `job_id`:
             >>> job_id = ''
             >>>
             >>> response = client.cancel_job(project_id, region, job_id)
@@ -578,46 +602,48 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'cancel_job' not in self._inner_api_calls:
+        if "cancel_job" not in self._inner_api_calls:
             self._inner_api_calls[
-                'cancel_job'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.cancel_job,
-                    default_retry=self._method_configs['CancelJob'].retry,
-                    default_timeout=self._method_configs['CancelJob'].timeout,
-                    client_info=self._client_info,
-                )
+                "cancel_job"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.cancel_job,
+                default_retry=self._method_configs["CancelJob"].retry,
+                default_timeout=self._method_configs["CancelJob"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.CancelJobRequest(
-            project_id=project_id,
-            region=region,
-            job_id=job_id,
+            project_id=project_id, region=region, job_id=job_id
         )
-        return self._inner_api_calls['cancel_job'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["cancel_job"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def delete_job(self,
-                   project_id,
-                   region,
-                   job_id,
-                   retry=google.api_core.gapic_v1.method.DEFAULT,
-                   timeout=google.api_core.gapic_v1.method.DEFAULT,
-                   metadata=None):
+    def delete_job(
+        self,
+        project_id,
+        region,
+        job_id,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Deletes the job from the project. If the job is active, the delete fails,
-        and the response returns ``FAILED_PRECONDITION``.
+        Deletes the job from the project. If the job is active, the delete
+        fails, and the response returns ``FAILED_PRECONDITION``.
 
         Example:
             >>> from google.cloud import dataproc_v1beta2
             >>>
             >>> client = dataproc_v1beta2.JobControllerClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``region``:
+            >>> # TODO: Initialize `region`:
             >>> region = ''
             >>>
-            >>> # TODO: Initialize ``job_id``:
+            >>> # TODO: Initialize `job_id`:
             >>> job_id = ''
             >>>
             >>> client.delete_job(project_id, region, job_id)
@@ -644,19 +670,19 @@ class JobControllerClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'delete_job' not in self._inner_api_calls:
+        if "delete_job" not in self._inner_api_calls:
             self._inner_api_calls[
-                'delete_job'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.delete_job,
-                    default_retry=self._method_configs['DeleteJob'].retry,
-                    default_timeout=self._method_configs['DeleteJob'].timeout,
-                    client_info=self._client_info,
-                )
+                "delete_job"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.delete_job,
+                default_retry=self._method_configs["DeleteJob"].retry,
+                default_timeout=self._method_configs["DeleteJob"].timeout,
+                client_info=self._client_info,
+            )
 
         request = jobs_pb2.DeleteJobRequest(
-            project_id=project_id,
-            region=region,
-            job_id=job_id,
+            project_id=project_id, region=region, job_id=job_id
         )
-        self._inner_api_calls['delete_job'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        self._inner_api_calls["delete_job"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )

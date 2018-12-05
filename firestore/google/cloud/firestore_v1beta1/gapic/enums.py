@@ -20,14 +20,15 @@ import enum
 
 class NullValue(enum.IntEnum):
     """
-    ``NullValue`` is a singleton enumeration to represent the null value for the
-    ``Value`` type union.
+    ``NullValue`` is a singleton enumeration to represent the null value for
+    the ``Value`` type union.
 
-     The JSON representation for ``NullValue`` is JSON ``null``.
+    The JSON representation for ``NullValue`` is JSON ``null``.
 
     Attributes:
       NULL_VALUE (int): Null value.
     """
+
     NULL_VALUE = 0
 
 
@@ -42,6 +43,7 @@ class DocumentTransform(object):
               REQUEST_TIME (int): The time at which the server processed the request, with millisecond
               precision.
             """
+
             SERVER_VALUE_UNSPECIFIED = 0
             REQUEST_TIME = 1
 
@@ -56,6 +58,7 @@ class StructuredQuery(object):
           ASCENDING (int): Ascending.
           DESCENDING (int): Descending.
         """
+
         DIRECTION_UNSPECIFIED = 0
         ASCENDING = 1
         DESCENDING = 2
@@ -69,6 +72,7 @@ class StructuredQuery(object):
               OPERATOR_UNSPECIFIED (int): Unspecified. This value must not be used.
               AND (int): The results are required to satisfy each of the combined filters.
             """
+
             OPERATOR_UNSPECIFIED = 0
             AND = 1
 
@@ -87,6 +91,7 @@ class StructuredQuery(object):
               EQUAL (int): Equal.
               ARRAY_CONTAINS (int): Contains. Requires that the field is an array.
             """
+
             OPERATOR_UNSPECIFIED = 0
             LESS_THAN = 1
             LESS_THAN_OR_EQUAL = 2
@@ -105,6 +110,7 @@ class StructuredQuery(object):
               IS_NAN (int): Test if a field is equal to NaN.
               IS_NULL (int): Test if an exprestion evaluates to Null.
             """
+
             OPERATOR_UNSPECIFIED = 0
             IS_NAN = 2
             IS_NULL = 3
@@ -125,14 +131,15 @@ class TargetChange(object):
           This will be sent after or with a ``read_time`` that is greater than or
           equal to the time at which the targets were added.
 
-          Listeners can wait for this change if read-after-write semantics
-          are desired.
+          Listeners can wait for this change if read-after-write semantics are
+          desired.
           RESET (int): The targets have been reset, and a new initial state for the targets
           will be returned in subsequent changes.
 
           After the initial state is complete, ``CURRENT`` will be returned even
           if the target was previously indicated to be ``CURRENT``.
         """
+
         NO_CHANGE = 0
         ADD = 1
         REMOVE = 2

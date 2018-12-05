@@ -15,6 +15,10 @@
 """Helpers for :mod:`protobuf`."""
 
 import collections
+try:
+    from collections import abc as collections_abc
+except ImportError:  # Python 2.7
+    import collections as collections_abc
 import copy
 import inspect
 
@@ -53,8 +57,10 @@ def from_any_pb(pb_type, any_pb):
     msg = pb_type()
     if not any_pb.Unpack(msg):
         raise TypeError(
-            'Could not convert {} to {}'.format(
-                any_pb.__class__.__name__, pb_type.__name__))
+            "Could not convert {} to {}".format(
+                any_pb.__class__.__name__, pb_type.__name__
+            )
+        )
 
     return msg
 
@@ -74,9 +80,11 @@ def check_oneof(**kwargs):
 
     not_nones = [val for val in kwargs.values() if val is not None]
     if len(not_nones) > 1:
-        raise ValueError('Only one of {fields} should be set.'.format(
-            fields=', '.join(sorted(kwargs.keys())),
-        ))
+        raise ValueError(
+            "Only one of {fields} should be set.".format(
+                fields=", ".join(sorted(kwargs.keys()))
+            )
+        )
 
 
 def get_messages(module):
@@ -94,13 +102,12 @@ def get_messages(module):
     answer = collections.OrderedDict()
     for name in dir(module):
         candidate = getattr(module, name)
-        if (inspect.isclass(candidate) and
-                issubclass(candidate, message.Message)):
+        if inspect.isclass(candidate) and issubclass(candidate, message.Message):
             answer[name] = candidate
     return answer
 
 
-def _resolve_subkeys(key, separator='.'):
+def _resolve_subkeys(key, separator="."):
     """Resolve a potentially nested key.
 
     If the key contains the ``separator`` (e.g. ``.``) then the key will be
@@ -161,12 +168,14 @@ def get(msg_or_dict, key, default=_SENTINEL):
     # If we get something else, complain.
     if isinstance(msg_or_dict, message.Message):
         answer = getattr(msg_or_dict, key, default)
-    elif isinstance(msg_or_dict, collections.Mapping):
+    elif isinstance(msg_or_dict, collections_abc.Mapping):
         answer = msg_or_dict.get(key, default)
     else:
         raise TypeError(
-            'get() expected a dict or protobuf message, got {!r}.'.format(
-                type(msg_or_dict)))
+            "get() expected a dict or protobuf message, got {!r}.".format(
+                type(msg_or_dict)
+            )
+        )
 
     # If the object we got back is our sentinel, raise KeyError; this is
     # a "not found" case.
@@ -184,7 +193,7 @@ def _set_field_on_message(msg, key, value):
     """Set helper for protobuf Messages."""
     # Attempt to set the value on the types of objects we know how to deal
     # with.
-    if isinstance(value, (collections.MutableSequence, tuple)):
+    if isinstance(value, (collections_abc.MutableSequence, tuple)):
         # Clear the existing repeated protobuf message of any elements
         # currently inside it.
         while getattr(msg, key):
@@ -192,13 +201,13 @@ def _set_field_on_message(msg, key, value):
 
         # Write our new elements to the repeated field.
         for item in value:
-            if isinstance(item, collections.Mapping):
+            if isinstance(item, collections_abc.Mapping):
                 getattr(msg, key).add(**item)
             else:
                 # protobuf's RepeatedCompositeContainer doesn't support
                 # append.
                 getattr(msg, key).extend([item])
-    elif isinstance(value, collections.Mapping):
+    elif isinstance(value, collections_abc.Mapping):
         # Assign the dictionary values to the protobuf message.
         for item_key, item_value in value.items():
             set(getattr(msg, key), item_key, item_value)
@@ -221,11 +230,12 @@ def set(msg_or_dict, key, value):
         TypeError: If ``msg_or_dict`` is not a Message or dictionary.
     """
     # Sanity check: Is our target object valid?
-    if (not isinstance(msg_or_dict,
-                       (collections.MutableMapping, message.Message))):
+    if not isinstance(msg_or_dict, (collections_abc.MutableMapping, message.Message)):
         raise TypeError(
-            'set() expected a dict or protobuf message, got {!r}.'.format(
-                type(msg_or_dict)))
+            "set() expected a dict or protobuf message, got {!r}.".format(
+                type(msg_or_dict)
+            )
+        )
 
     # We may be setting a nested key. Resolve this.
     basekey, subkey = _resolve_subkeys(key)
@@ -233,12 +243,12 @@ def set(msg_or_dict, key, value):
     # If a subkey exists, then get that object and call this method
     # recursively against it using the subkey.
     if subkey is not None:
-        if isinstance(msg_or_dict, collections.MutableMapping):
+        if isinstance(msg_or_dict, collections_abc.MutableMapping):
             msg_or_dict.setdefault(basekey, {})
         set(get(msg_or_dict, basekey), subkey, value)
         return
 
-    if isinstance(msg_or_dict, collections.MutableMapping):
+    if isinstance(msg_or_dict, collections_abc.MutableMapping):
         msg_or_dict[key] = value
     else:
         _set_field_on_message(msg_or_dict, key, value)
@@ -298,15 +308,16 @@ def field_mask(original, modified):
 
     if type(original) != type(modified):
         raise ValueError(
-                'expected that both original and modified should be of the '
-                'same type, received "{!r}" and "{!r}".'.
-                format(type(original), type(modified)))
+            "expected that both original and modified should be of the "
+            'same type, received "{!r}" and "{!r}".'.format(
+                type(original), type(modified)
+            )
+        )
 
-    return field_mask_pb2.FieldMask(
-        paths=_field_mask_helper(original, modified))
+    return field_mask_pb2.FieldMask(paths=_field_mask_helper(original, modified))
 
 
-def _field_mask_helper(original, modified, current=''):
+def _field_mask_helper(original, modified, current=""):
     answer = []
 
     for name in original.DESCRIPTOR.fields_by_name:
@@ -324,8 +335,9 @@ def _field_mask_helper(original, modified, current=''):
                 elif not modified_val.ListFields():
                     answer.append(field_path)
                 else:
-                    answer.extend(_field_mask_helper(original_val,
-                                                     modified_val, field_path))
+                    answer.extend(
+                        _field_mask_helper(original_val, modified_val, field_path)
+                    )
         else:
             if original_val != modified_val:
                 answer.append(field_path)
@@ -336,7 +348,7 @@ def _field_mask_helper(original, modified, current=''):
 def _get_path(current, name):
     if not current:
         return name
-    return '%s.%s' % (current, name)
+    return "%s.%s" % (current, name)
 
 
 def _is_message(value):

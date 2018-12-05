@@ -40,8 +40,7 @@ from google.protobuf import empty_pb2
 from google.protobuf import field_mask_pb2
 from google.protobuf import timestamp_pb2
 
-_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-pubsub', ).version
+_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution("google-cloud-pubsub").version
 
 
 class SubscriberClient(object):
@@ -51,18 +50,19 @@ class SubscriberClient(object):
     establishing a bi-directional stream using the ``StreamingPull`` method.
     """
 
-    SERVICE_ADDRESS = 'pubsub.googleapis.com:443'
+    SERVICE_ADDRESS = "pubsub.googleapis.com:443"
     """The default address of the service."""
 
     # The scopes needed to make gRPC calls to all of the methods defined in
     # this service
     _DEFAULT_SCOPES = (
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/pubsub', )
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/pubsub",
+    )
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.pubsub.v1.Subscriber'
+    _INTERFACE_NAME = "google.pubsub.v1.Subscriber"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -78,9 +78,8 @@ class SubscriberClient(object):
         Returns:
             SubscriberClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
@@ -89,7 +88,7 @@ class SubscriberClient(object):
     def subscription_path(cls, project, subscription):
         """Return a fully-qualified subscription string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/subscriptions/{subscription}',
+            "projects/{project}/subscriptions/{subscription}",
             project=project,
             subscription=subscription,
         )
@@ -98,34 +97,33 @@ class SubscriberClient(object):
     def topic_path(cls, project, topic):
         """Return a fully-qualified topic string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/topics/{topic}',
-            project=project,
-            topic=topic,
+            "projects/{project}/topics/{topic}", project=project, topic=topic
         )
 
     @classmethod
     def project_path(cls, project):
         """Return a fully-qualified project string."""
         return google.api_core.path_template.expand(
-            'projects/{project}',
-            project=project,
+            "projects/{project}", project=project
         )
 
     @classmethod
     def snapshot_path(cls, project, snapshot):
         """Return a fully-qualified snapshot string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/snapshots/{snapshot}',
+            "projects/{project}/snapshots/{snapshot}",
             project=project,
             snapshot=snapshot,
         )
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=subscriber_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -157,13 +155,21 @@ class SubscriberClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = subscriber_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -172,26 +178,26 @@ class SubscriberClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=subscriber_grpc_transport.
-                    SubscriberGrpcTransport,
+                    default_class=subscriber_grpc_transport.SubscriberGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
         else:
             self.transport = subscriber_grpc_transport.SubscriberGrpcTransport(
-                address=self.SERVICE_ADDRESS,
-                channel=channel,
-                credentials=credentials,
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
             )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -199,7 +205,8 @@ class SubscriberClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -208,29 +215,31 @@ class SubscriberClient(object):
         self._inner_api_calls = {}
 
     # Service calls
-    def create_subscription(self,
-                            name,
-                            topic,
-                            push_config=None,
-                            ack_deadline_seconds=None,
-                            retain_acked_messages=None,
-                            message_retention_duration=None,
-                            labels=None,
-                            retry=google.api_core.gapic_v1.method.DEFAULT,
-                            timeout=google.api_core.gapic_v1.method.DEFAULT,
-                            metadata=None):
+    def create_subscription(
+        self,
+        name,
+        topic,
+        push_config=None,
+        ack_deadline_seconds=None,
+        retain_acked_messages=None,
+        message_retention_duration=None,
+        labels=None,
+        expiration_policy=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Creates a subscription to a given topic. See the
-        <a href=\"/pubsub/docs/admin#resource_names\"> resource name rules</a>.
-        If the subscription already exists, returns ``ALREADY_EXISTS``.
-        If the corresponding topic doesn't exist, returns ``NOT_FOUND``.
+        Creates a subscription to a given topic. See the resource name rules. If
+        the subscription already exists, returns ``ALREADY_EXISTS``. If the
+        corresponding topic doesn't exist, returns ``NOT_FOUND``.
 
-        If the name is not provided in the request, the server will assign a random
-        name for this subscription on the same project as the topic, conforming
-        to the
-        `resource name format <https://cloud.google.com/pubsub/docs/overview#names>`_.
-        The generated name is populated in the returned Subscription object.
-        Note that for REST API requests, you must specify a name in the request.
+        If the name is not provided in the request, the server will assign a
+        random name for this subscription on the same project as the topic,
+        conforming to the `resource name
+        format <https://cloud.google.com/pubsub/docs/overview#names>`__. The
+        generated name is populated in the returned Subscription object. Note
+        that for REST API requests, you must specify a name in the request.
 
         Example:
             >>> from google.cloud import pubsub_v1
@@ -244,18 +253,18 @@ class SubscriberClient(object):
 
         Args:
             name (str): The name of the subscription. It must have the format
-                ``\"projects/{project}/subscriptions/{subscription}\"``. ``{subscription}`` must
-                start with a letter, and contain only letters (``[A-Za-z]``), numbers
-                (``[0-9]``), dashes (``-``), underscores (``_``), periods (``.``), tildes (``~``),
-                plus (``+``) or percent signs (``%``). It must be between 3 and 255 characters
-                in length, and it must not start with ``\"goog\"``
-            topic (str): The name of the topic from which this subscription is receiving messages.
-                Format is ``projects/{project}/topics/{topic}``.
-                The value of this field will be ``_deleted-topic_`` if the topic has been
-                deleted.
-            push_config (Union[dict, ~google.cloud.pubsub_v1.types.PushConfig]): If push delivery is used with this subscription, this field is
-                used to configure it. An empty ``pushConfig`` signifies that the subscriber
-                will pull and ack messages using API methods.
+                `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
+                start with a letter, and contain only letters (`[A-Za-z]`), numbers
+                (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
+                plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters
+                in length, and it must not start with `"goog"`
+            topic (str): The name of the topic from which this subscription is receiving
+                messages. Format is ``projects/{project}/topics/{topic}``. The value of
+                this field will be ``_deleted-topic_`` if the topic has been deleted.
+            push_config (Union[dict, ~google.cloud.pubsub_v1.types.PushConfig]): If push delivery is used with this subscription, this field is used to
+                configure it. An empty ``pushConfig`` signifies that the subscriber will
+                pull and ack messages using API methods.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.PushConfig`
             ack_deadline_seconds (int): This value is the maximum time after a subscriber receives a message
@@ -264,39 +273,52 @@ class SubscriberClient(object):
                 acknowledged, it is an outstanding message and will not be delivered
                 again during that time (on a best-effort basis).
 
-                For pull subscriptions, this value is used as the initial value for the ack
-                deadline. To override this value for a given message, call
+                For pull subscriptions, this value is used as the initial value for the
+                ack deadline. To override this value for a given message, call
                 ``ModifyAckDeadline`` with the corresponding ``ack_id`` if using
                 non-streaming pull or send the ``ack_id`` in a
-                ``StreamingModifyAckDeadlineRequest`` if using streaming pull.
-                The minimum custom deadline you can specify is 10 seconds.
-                The maximum custom deadline you can specify is 600 seconds (10 minutes).
-                If this parameter is 0, a default value of 10 seconds is used.
+                ``StreamingModifyAckDeadlineRequest`` if using streaming pull. The
+                minimum custom deadline you can specify is 10 seconds. The maximum
+                custom deadline you can specify is 600 seconds (10 minutes). If this
+                parameter is 0, a default value of 10 seconds is used.
 
-                For push delivery, this value is also used to set the request timeout for
-                the call to the push endpoint.
+                For push delivery, this value is also used to set the request timeout
+                for the call to the push endpoint.
 
-                If the subscriber never acknowledges the message, the Pub/Sub
-                system will eventually redeliver the message.
+                If the subscriber never acknowledges the message, the Pub/Sub system
+                will eventually redeliver the message.
             retain_acked_messages (bool): Indicates whether to retain acknowledged messages. If true, then
-                messages are not expunged from the subscription's backlog, even if they are
-                acknowledged, until they fall out of the ``message_retention_duration``
-                window.<br><br>
-                <b>ALPHA:</b> This feature is part of an alpha release. This API might be
-                changed in backward-incompatible ways and is not recommended for production
-                use. It is not subject to any SLA or deprecation policy.
-            message_retention_duration (Union[dict, ~google.cloud.pubsub_v1.types.Duration]): How long to retain unacknowledged messages in the subscription's backlog,
-                from the moment a message is published.
-                If ``retain_acked_messages`` is true, then this also configures the retention
-                of acknowledged messages, and thus configures how far back in time a ``Seek``
-                can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10
-                minutes.<br><br>
-                <b>ALPHA:</b> This feature is part of an alpha release. This API might be
-                changed in backward-incompatible ways and is not recommended for production
-                use. It is not subject to any SLA or deprecation policy.
+                messages are not expunged from the subscription's backlog, even if they
+                are acknowledged, until they fall out of the
+                ``message_retention_duration`` window. ALPHA: This feature is part of an
+                alpha release. This API might be changed in backward-incompatible ways
+                and is not recommended for production use. It is not subject to any SLA
+                or deprecation policy.
+            message_retention_duration (Union[dict, ~google.cloud.pubsub_v1.types.Duration]): How long to retain unacknowledged messages in the subscription's
+                backlog, from the moment a message is published. If
+                ``retain_acked_messages`` is true, then this also configures the
+                retention of acknowledged messages, and thus configures how far back in
+                time a ``Seek`` can be done. Defaults to 7 days. Cannot be more than 7
+                days or less than 10 minutes. ALPHA: This feature is part of an alpha
+                release. This API might be changed in backward-incompatible ways and is
+                not recommended for production use. It is not subject to any SLA or
+                deprecation policy.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.Duration`
-            labels (dict[str -> str]): User labels.
+            labels (dict[str -> str]): See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
+            expiration_policy (Union[dict, ~google.cloud.pubsub_v1.types.ExpirationPolicy]): A policy that specifies the conditions for this subscription's
+                expiration. A subscription is considered active as long as any connected
+                subscriber is successfully consuming messages from the subscription or
+                is issuing operations on the subscription. If ``expiration_policy`` is
+                not set, a *default policy* with ``ttl`` of 31 days will be used. The
+                minimum allowed value for ``expiration_policy.ttl`` is 1 day. BETA: This
+                feature is part of a beta release. This API might be changed in
+                backward-incompatible ways and is not recommended for production use. It
+                is not subject to any SLA or deprecation policy.
+
+                If a dict is provided, it must be of the same form as the protobuf
+                message :class:`~google.cloud.pubsub_v1.types.ExpirationPolicy`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -317,16 +339,15 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'create_subscription' not in self._inner_api_calls:
+        if "create_subscription" not in self._inner_api_calls:
             self._inner_api_calls[
-                'create_subscription'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.create_subscription,
-                    default_retry=self._method_configs['CreateSubscription'].
-                    retry,
-                    default_timeout=self._method_configs['CreateSubscription'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "create_subscription"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.create_subscription,
+                default_retry=self._method_configs["CreateSubscription"].retry,
+                default_timeout=self._method_configs["CreateSubscription"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.Subscription(
             name=name,
@@ -336,15 +357,19 @@ class SubscriberClient(object):
             retain_acked_messages=retain_acked_messages,
             message_retention_duration=message_retention_duration,
             labels=labels,
+            expiration_policy=expiration_policy,
         )
-        return self._inner_api_calls['create_subscription'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["create_subscription"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def get_subscription(self,
-                         subscription,
-                         retry=google.api_core.gapic_v1.method.DEFAULT,
-                         timeout=google.api_core.gapic_v1.method.DEFAULT,
-                         metadata=None):
+    def get_subscription(
+        self,
+        subscription,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets the configuration details of a subscription.
 
@@ -358,8 +383,8 @@ class SubscriberClient(object):
             >>> response = client.get_subscription(subscription)
 
         Args:
-            subscription (str): The name of the subscription to get.
-                Format is ``projects/{project}/subscriptions/{sub}``.
+            subscription (str): The name of the subscription to get. Format is
+                ``projects/{project}/subscriptions/{sub}``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -380,28 +405,29 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_subscription' not in self._inner_api_calls:
+        if "get_subscription" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_subscription'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_subscription,
-                    default_retry=self._method_configs['GetSubscription'].
-                    retry,
-                    default_timeout=self._method_configs['GetSubscription'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "get_subscription"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_subscription,
+                default_retry=self._method_configs["GetSubscription"].retry,
+                default_timeout=self._method_configs["GetSubscription"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = pubsub_pb2.GetSubscriptionRequest(
-            subscription=subscription, )
-        return self._inner_api_calls['get_subscription'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = pubsub_pb2.GetSubscriptionRequest(subscription=subscription)
+        return self._inner_api_calls["get_subscription"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def update_subscription(self,
-                            subscription,
-                            update_mask,
-                            retry=google.api_core.gapic_v1.method.DEFAULT,
-                            timeout=google.api_core.gapic_v1.method.DEFAULT,
-                            metadata=None):
+    def update_subscription(
+        self,
+        subscription,
+        update_mask,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Updates an existing subscription. Note that certain properties of a
         subscription, such as its topic, are not modifiable.
@@ -421,10 +447,12 @@ class SubscriberClient(object):
 
         Args:
             subscription (Union[dict, ~google.cloud.pubsub_v1.types.Subscription]): The updated subscription object.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.Subscription`
             update_mask (Union[dict, ~google.cloud.pubsub_v1.types.FieldMask]): Indicates which fields in the provided subscription to update.
                 Must be specified and non-empty.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.FieldMask`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -447,30 +475,31 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'update_subscription' not in self._inner_api_calls:
+        if "update_subscription" not in self._inner_api_calls:
             self._inner_api_calls[
-                'update_subscription'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.update_subscription,
-                    default_retry=self._method_configs['UpdateSubscription'].
-                    retry,
-                    default_timeout=self._method_configs['UpdateSubscription'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "update_subscription"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.update_subscription,
+                default_retry=self._method_configs["UpdateSubscription"].retry,
+                default_timeout=self._method_configs["UpdateSubscription"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.UpdateSubscriptionRequest(
-            subscription=subscription,
-            update_mask=update_mask,
+            subscription=subscription, update_mask=update_mask
         )
-        return self._inner_api_calls['update_subscription'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["update_subscription"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def list_subscriptions(self,
-                           project,
-                           page_size=None,
-                           retry=google.api_core.gapic_v1.method.DEFAULT,
-                           timeout=google.api_core.gapic_v1.method.DEFAULT,
-                           metadata=None):
+    def list_subscriptions(
+        self,
+        project,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists matching subscriptions.
 
@@ -490,14 +519,14 @@ class SubscriberClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_subscriptions(project, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_subscriptions(project).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
-            project (str): The name of the cloud project that subscriptions belong to.
-                Format is ``projects/{project}``.
+            project (str): The name of the project in which to list subscriptions. Format is
+                ``projects/{project-id}``.
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
@@ -526,46 +555,48 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_subscriptions' not in self._inner_api_calls:
+        if "list_subscriptions" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_subscriptions'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_subscriptions,
-                    default_retry=self._method_configs['ListSubscriptions'].
-                    retry,
-                    default_timeout=self._method_configs['ListSubscriptions'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "list_subscriptions"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_subscriptions,
+                default_retry=self._method_configs["ListSubscriptions"].retry,
+                default_timeout=self._method_configs["ListSubscriptions"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.ListSubscriptionsRequest(
-            project=project,
-            page_size=page_size,
+            project=project, page_size=page_size
         )
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_subscriptions'],
+                self._inner_api_calls["list_subscriptions"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='subscriptions',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="subscriptions",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def delete_subscription(self,
-                            subscription,
-                            retry=google.api_core.gapic_v1.method.DEFAULT,
-                            timeout=google.api_core.gapic_v1.method.DEFAULT,
-                            metadata=None):
+    def delete_subscription(
+        self,
+        subscription,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Deletes an existing subscription. All messages retained in the subscription
-        are immediately dropped. Calls to ``Pull`` after deletion will return
-        ``NOT_FOUND``. After a subscription is deleted, a new one may be created with
-        the same name, but the new one has no association with the old
-        subscription or its topic unless the same topic is specified.
+        Deletes an existing subscription. All messages retained in the
+        subscription are immediately dropped. Calls to ``Pull`` after deletion
+        will return ``NOT_FOUND``. After a subscription is deleted, a new one
+        may be created with the same name, but the new one has no association
+        with the old subscription or its topic unless the same topic is
+        specified.
 
         Example:
             >>> from google.cloud import pubsub_v1
@@ -577,8 +608,8 @@ class SubscriberClient(object):
             >>> client.delete_subscription(subscription)
 
         Args:
-            subscription (str): The subscription to delete.
-                Format is ``projects/{project}/subscriptions/{sub}``.
+            subscription (str): The subscription to delete. Format is
+                ``projects/{project}/subscriptions/{sub}``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -596,29 +627,30 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'delete_subscription' not in self._inner_api_calls:
+        if "delete_subscription" not in self._inner_api_calls:
             self._inner_api_calls[
-                'delete_subscription'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.delete_subscription,
-                    default_retry=self._method_configs['DeleteSubscription'].
-                    retry,
-                    default_timeout=self._method_configs['DeleteSubscription'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "delete_subscription"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.delete_subscription,
+                default_retry=self._method_configs["DeleteSubscription"].retry,
+                default_timeout=self._method_configs["DeleteSubscription"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = pubsub_pb2.DeleteSubscriptionRequest(
-            subscription=subscription, )
-        self._inner_api_calls['delete_subscription'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = pubsub_pb2.DeleteSubscriptionRequest(subscription=subscription)
+        self._inner_api_calls["delete_subscription"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def modify_ack_deadline(self,
-                            subscription,
-                            ack_ids,
-                            ack_deadline_seconds,
-                            retry=google.api_core.gapic_v1.method.DEFAULT,
-                            timeout=google.api_core.gapic_v1.method.DEFAULT,
-                            metadata=None):
+    def modify_ack_deadline(
+        self,
+        subscription,
+        ack_ids,
+        ack_deadline_seconds,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Modifies the ack deadline for a specific message. This method is useful
         to indicate that more time is needed to process a message by the
@@ -633,24 +665,23 @@ class SubscriberClient(object):
             >>>
             >>> subscription = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``ack_ids``:
+            >>> # TODO: Initialize `ack_ids`:
             >>> ack_ids = []
             >>>
-            >>> # TODO: Initialize ``ack_deadline_seconds``:
+            >>> # TODO: Initialize `ack_deadline_seconds`:
             >>> ack_deadline_seconds = 0
             >>>
             >>> client.modify_ack_deadline(subscription, ack_ids, ack_deadline_seconds)
 
         Args:
-            subscription (str): The name of the subscription.
-                Format is ``projects/{project}/subscriptions/{sub}``.
+            subscription (str): The name of the subscription. Format is
+                ``projects/{project}/subscriptions/{sub}``.
             ack_ids (list[str]): List of acknowledgment IDs.
             ack_deadline_seconds (int): The new ack deadline with respect to the time this request was sent to
-                the Pub/Sub system. For example, if the value is 10, the new
-                ack deadline will expire 10 seconds after the ``ModifyAckDeadline`` call
-                was made. Specifying zero may immediately make the message available for
-                another pull request.
-                The minimum deadline you can specify is 0 seconds.
+                the Pub/Sub system. For example, if the value is 10, the new ack
+                deadline will expire 10 seconds after the ``ModifyAckDeadline`` call was
+                made. Specifying zero may immediately make the message available for
+                another pull request. The minimum deadline you can specify is 0 seconds.
                 The maximum deadline you can specify is 600 seconds (10 minutes).
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
@@ -669,38 +700,40 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'modify_ack_deadline' not in self._inner_api_calls:
+        if "modify_ack_deadline" not in self._inner_api_calls:
             self._inner_api_calls[
-                'modify_ack_deadline'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.modify_ack_deadline,
-                    default_retry=self._method_configs['ModifyAckDeadline'].
-                    retry,
-                    default_timeout=self._method_configs['ModifyAckDeadline'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "modify_ack_deadline"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.modify_ack_deadline,
+                default_retry=self._method_configs["ModifyAckDeadline"].retry,
+                default_timeout=self._method_configs["ModifyAckDeadline"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.ModifyAckDeadlineRequest(
             subscription=subscription,
             ack_ids=ack_ids,
             ack_deadline_seconds=ack_deadline_seconds,
         )
-        self._inner_api_calls['modify_ack_deadline'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        self._inner_api_calls["modify_ack_deadline"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def acknowledge(self,
-                    subscription,
-                    ack_ids,
-                    retry=google.api_core.gapic_v1.method.DEFAULT,
-                    timeout=google.api_core.gapic_v1.method.DEFAULT,
-                    metadata=None):
+    def acknowledge(
+        self,
+        subscription,
+        ack_ids,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Acknowledges the messages associated with the ``ack_ids`` in the
-        ``AcknowledgeRequest``. The Pub/Sub system can remove the relevant messages
-        from the subscription.
+        ``AcknowledgeRequest``. The Pub/Sub system can remove the relevant
+        messages from the subscription.
 
-        Acknowledging a message whose ack deadline has expired may succeed,
-        but such a message may be redelivered later. Acknowledging a message more
+        Acknowledging a message whose ack deadline has expired may succeed, but
+        such a message may be redelivered later. Acknowledging a message more
         than once will not result in an error.
 
         Example:
@@ -710,16 +743,17 @@ class SubscriberClient(object):
             >>>
             >>> subscription = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``ack_ids``:
+            >>> # TODO: Initialize `ack_ids`:
             >>> ack_ids = []
             >>>
             >>> client.acknowledge(subscription, ack_ids)
 
         Args:
-            subscription (str): The subscription whose message is being acknowledged.
-                Format is ``projects/{project}/subscriptions/{sub}``.
-            ack_ids (list[str]): The acknowledgment ID for the messages being acknowledged that was returned
-                by the Pub/Sub system in the ``Pull`` response. Must not be empty.
+            subscription (str): The subscription whose message is being acknowledged. Format is
+                ``projects/{project}/subscriptions/{sub}``.
+            ack_ids (list[str]): The acknowledgment ID for the messages being acknowledged that was
+                returned by the Pub/Sub system in the ``Pull`` response. Must not be
+                empty.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -737,33 +771,34 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'acknowledge' not in self._inner_api_calls:
+        if "acknowledge" not in self._inner_api_calls:
             self._inner_api_calls[
-                'acknowledge'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.acknowledge,
-                    default_retry=self._method_configs['Acknowledge'].retry,
-                    default_timeout=self._method_configs['Acknowledge'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "acknowledge"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.acknowledge,
+                default_retry=self._method_configs["Acknowledge"].retry,
+                default_timeout=self._method_configs["Acknowledge"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.AcknowledgeRequest(
-            subscription=subscription,
-            ack_ids=ack_ids,
+            subscription=subscription, ack_ids=ack_ids
         )
-        self._inner_api_calls['acknowledge'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        self._inner_api_calls["acknowledge"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def pull(self,
-             subscription,
-             max_messages,
-             return_immediately=None,
-             retry=google.api_core.gapic_v1.method.DEFAULT,
-             timeout=google.api_core.gapic_v1.method.DEFAULT,
-             metadata=None):
+    def pull(
+        self,
+        subscription,
+        max_messages,
+        return_immediately=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Pulls messages from the server. Returns an empty list if there are no
-        messages available in the backlog. The server may return ``UNAVAILABLE`` if
+        Pulls messages from the server. The server may return ``UNAVAILABLE`` if
         there are too many concurrent pull requests pending for the given
         subscription.
 
@@ -774,22 +809,20 @@ class SubscriberClient(object):
             >>>
             >>> subscription = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``max_messages``:
+            >>> # TODO: Initialize `max_messages`:
             >>> max_messages = 0
             >>>
             >>> response = client.pull(subscription, max_messages)
 
         Args:
-            subscription (str): The subscription from which messages should be pulled.
-                Format is ``projects/{project}/subscriptions/{sub}``.
+            subscription (str): The subscription from which messages should be pulled. Format is
+                ``projects/{project}/subscriptions/{sub}``.
             max_messages (int): The maximum number of messages returned for this request. The Pub/Sub
                 system may return fewer than the number specified.
             return_immediately (bool): If this field set to true, the system will respond immediately even if
                 it there are no messages available to return in the ``Pull`` response.
                 Otherwise, the system may wait (for a bounded amount of time) until at
-                least one message is available, rather than returning no messages. The
-                client may cancel the request if it does not wish to wait any longer for
-                the response.
+                least one message is available, rather than returning no messages.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -810,36 +843,38 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'pull' not in self._inner_api_calls:
-            self._inner_api_calls[
-                'pull'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.pull,
-                    default_retry=self._method_configs['Pull'].retry,
-                    default_timeout=self._method_configs['Pull'].timeout,
-                    client_info=self._client_info,
-                )
+        if "pull" not in self._inner_api_calls:
+            self._inner_api_calls["pull"] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.pull,
+                default_retry=self._method_configs["Pull"].retry,
+                default_timeout=self._method_configs["Pull"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.PullRequest(
             subscription=subscription,
             max_messages=max_messages,
             return_immediately=return_immediately,
         )
-        return self._inner_api_calls['pull'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["pull"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def streaming_pull(self,
-                       requests,
-                       retry=google.api_core.gapic_v1.method.DEFAULT,
-                       timeout=google.api_core.gapic_v1.method.DEFAULT,
-                       metadata=None):
+    def streaming_pull(
+        self,
+        requests,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Establishes a stream with the server, which sends messages down to the
-        client. The client streams acknowledgements and ack deadline modifications
-        back to the server. The server will close the stream and return the status
-        on any error. The server may close the stream with status ``UNAVAILABLE`` to
-        reassign server-side resources, in which case, the client should
-        re-establish the stream. Flow control can be achieved by configuring the
-        underlying RPC channel.
+        client. The client streams acknowledgements and ack deadline
+        modifications back to the server. The server will close the stream and
+        return the status on any error. The server may close the stream with
+        status ``UNAVAILABLE`` to reassign server-side resources, in which case,
+        the client should re-establish the stream. Flow control can be achieved
+        by configuring the underlying RPC channel.
 
         EXPERIMENTAL: This method interface might change in the future.
 
@@ -850,7 +885,7 @@ class SubscriberClient(object):
             >>>
             >>> subscription = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``stream_ack_deadline_seconds``:
+            >>> # TODO: Initialize `stream_ack_deadline_seconds`:
             >>> stream_ack_deadline_seconds = 0
             >>> request = {'subscription': subscription, 'stream_ack_deadline_seconds': stream_ack_deadline_seconds}
             >>>
@@ -882,32 +917,36 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'streaming_pull' not in self._inner_api_calls:
+        if "streaming_pull" not in self._inner_api_calls:
             self._inner_api_calls[
-                'streaming_pull'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.streaming_pull,
-                    default_retry=self._method_configs['StreamingPull'].retry,
-                    default_timeout=self._method_configs['StreamingPull'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "streaming_pull"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.streaming_pull,
+                default_retry=self._method_configs["StreamingPull"].retry,
+                default_timeout=self._method_configs["StreamingPull"].timeout,
+                client_info=self._client_info,
+            )
 
-        return self._inner_api_calls['streaming_pull'](
-            requests, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["streaming_pull"](
+            requests, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def modify_push_config(self,
-                           subscription,
-                           push_config,
-                           retry=google.api_core.gapic_v1.method.DEFAULT,
-                           timeout=google.api_core.gapic_v1.method.DEFAULT,
-                           metadata=None):
+    def modify_push_config(
+        self,
+        subscription,
+        push_config,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Modifies the ``PushConfig`` for a specified subscription.
 
-        This may be used to change a push subscription to a pull one (signified by
-        an empty ``PushConfig``) or vice versa, or change the endpoint URL and other
-        attributes of a push subscription. Messages will accumulate for delivery
-        continuously through the call regardless of changes to the ``PushConfig``.
+        This may be used to change a push subscription to a pull one (signified
+        by an empty ``PushConfig``) or vice versa, or change the endpoint URL
+        and other attributes of a push subscription. Messages will accumulate
+        for delivery continuously through the call regardless of changes to the
+        ``PushConfig``.
 
         Example:
             >>> from google.cloud import pubsub_v1
@@ -916,20 +955,21 @@ class SubscriberClient(object):
             >>>
             >>> subscription = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``push_config``:
+            >>> # TODO: Initialize `push_config`:
             >>> push_config = {}
             >>>
             >>> client.modify_push_config(subscription, push_config)
 
         Args:
-            subscription (str): The name of the subscription.
-                Format is ``projects/{project}/subscriptions/{sub}``.
+            subscription (str): The name of the subscription. Format is
+                ``projects/{project}/subscriptions/{sub}``.
             push_config (Union[dict, ~google.cloud.pubsub_v1.types.PushConfig]): The push configuration for future deliveries.
 
-                An empty ``pushConfig`` indicates that the Pub/Sub system should
-                stop pushing messages from the given subscription and allow
-                messages to be pulled and acknowledged - effectively pausing
-                the subscription if ``Pull`` or ``StreamingPull`` is not called.
+                An empty ``pushConfig`` indicates that the Pub/Sub system should stop
+                pushing messages from the given subscription and allow messages to be
+                pulled and acknowledged - effectively pausing the subscription if
+                ``Pull`` or ``StreamingPull`` is not called.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.PushConfig`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -949,30 +989,31 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'modify_push_config' not in self._inner_api_calls:
+        if "modify_push_config" not in self._inner_api_calls:
             self._inner_api_calls[
-                'modify_push_config'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.modify_push_config,
-                    default_retry=self._method_configs['ModifyPushConfig'].
-                    retry,
-                    default_timeout=self._method_configs['ModifyPushConfig'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "modify_push_config"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.modify_push_config,
+                default_retry=self._method_configs["ModifyPushConfig"].retry,
+                default_timeout=self._method_configs["ModifyPushConfig"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.ModifyPushConfigRequest(
-            subscription=subscription,
-            push_config=push_config,
+            subscription=subscription, push_config=push_config
         )
-        self._inner_api_calls['modify_push_config'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        self._inner_api_calls["modify_push_config"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def list_snapshots(self,
-                       project,
-                       page_size=None,
-                       retry=google.api_core.gapic_v1.method.DEFAULT,
-                       timeout=google.api_core.gapic_v1.method.DEFAULT,
-                       metadata=None):
+    def list_snapshots(
+        self,
+        project,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists the existing snapshots.<br><br>
         <b>ALPHA:</b> This feature is part of an alpha release. This API might be
@@ -995,14 +1036,14 @@ class SubscriberClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_snapshots(project, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_snapshots(project).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
-            project (str): The name of the cloud project that snapshots belong to.
-                Format is ``projects/{project}``.
+            project (str): The name of the project in which to list snapshots. Format is
+                ``projects/{project-id}``.
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
@@ -1031,57 +1072,56 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_snapshots' not in self._inner_api_calls:
+        if "list_snapshots" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_snapshots'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_snapshots,
-                    default_retry=self._method_configs['ListSnapshots'].retry,
-                    default_timeout=self._method_configs['ListSnapshots'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "list_snapshots"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_snapshots,
+                default_retry=self._method_configs["ListSnapshots"].retry,
+                default_timeout=self._method_configs["ListSnapshots"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = pubsub_pb2.ListSnapshotsRequest(
-            project=project,
-            page_size=page_size,
-        )
+        request = pubsub_pb2.ListSnapshotsRequest(project=project, page_size=page_size)
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_snapshots'],
+                self._inner_api_calls["list_snapshots"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='snapshots',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="snapshots",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def create_snapshot(self,
-                        name,
-                        subscription,
-                        labels=None,
-                        retry=google.api_core.gapic_v1.method.DEFAULT,
-                        timeout=google.api_core.gapic_v1.method.DEFAULT,
-                        metadata=None):
+    def create_snapshot(
+        self,
+        name,
+        subscription,
+        labels=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Creates a snapshot from the requested subscription.<br><br>
-        <b>ALPHA:</b> This feature is part of an alpha release. This API might be
-        changed in backward-incompatible ways and is not recommended for production
-        use. It is not subject to any SLA or deprecation policy.
-        If the snapshot already exists, returns ``ALREADY_EXISTS``.
-        If the requested subscription doesn't exist, returns ``NOT_FOUND``.
-        If the backlog in the subscription is too old -- and the resulting snapshot
-        would expire in less than 1 hour -- then ``FAILED_PRECONDITION`` is returned.
-        See also the ``Snapshot.expire_time`` field. If the name is not provided in
-        the request, the server will assign a random
-        name for this snapshot on the same project as the subscription, conforming
-        to the `resource name format <https://cloud.google.com/pubsub/docs/overview#names>`_.
-        The generated
-        name is populated in the returned Snapshot object. Note that for REST API
-        requests, you must specify a name in the request.
+        Creates a snapshot from the requested subscription. ALPHA: This feature
+        is part of an alpha release. This API might be changed in
+        backward-incompatible ways and is not recommended for production use. It
+        is not subject to any SLA or deprecation policy. If the snapshot already
+        exists, returns ``ALREADY_EXISTS``. If the requested subscription
+        doesn't exist, returns ``NOT_FOUND``. If the backlog in the subscription
+        is too old -- and the resulting snapshot would expire in less than 1
+        hour -- then ``FAILED_PRECONDITION`` is returned. See also the
+        ``Snapshot.expire_time`` field. If the name is not provided in the
+        request, the server will assign a random name for this snapshot on the
+        same project as the subscription, conforming to the `resource name
+        format <https://cloud.google.com/pubsub/docs/overview#names>`__. The
+        generated name is populated in the returned Snapshot object. Note that
+        for REST API requests, you must specify a name in the request.
 
         Example:
             >>> from google.cloud import pubsub_v1
@@ -1094,22 +1134,20 @@ class SubscriberClient(object):
             >>> response = client.create_snapshot(name, subscription)
 
         Args:
-            name (str): Optional user-provided name for this snapshot.
-                If the name is not provided in the request, the server will assign a random
-                name for this snapshot on the same project as the subscription.
-                Note that for REST API requests, you must specify a name.
-                Format is ``projects/{project}/snapshots/{snap}``.
-            subscription (str): The subscription whose backlog the snapshot retains.
-                Specifically, the created snapshot is guaranteed to retain: \
-                 (a) The existing backlog on the subscription. More precisely, this is \
-                     defined as the messages in the subscription's backlog that are \
-                     unacknowledged upon the successful completion of the \
-                     `CreateSnapshot` request; as well as: \
-                 (b) Any messages published to the subscription's topic following the \
-                     successful completion of the CreateSnapshot request. \
-
-                Format is ``projects/{project}/subscriptions/{sub}``.
-            labels (dict[str -> str]): User labels.
+            name (str): Optional user-provided name for this snapshot. If the name is not
+                provided in the request, the server will assign a random name for this
+                snapshot on the same project as the subscription. Note that for REST API
+                requests, you must specify a name. See the resource name rules. Format
+                is ``projects/{project}/snapshots/{snap}``.
+            subscription (str): The subscription whose backlog the snapshot retains. Specifically, the
+                created snapshot is guaranteed to retain: (a) The existing backlog on
+                the subscription. More precisely, this is defined as the messages in the
+                subscription's backlog that are unacknowledged upon the successful
+                completion of the ``CreateSnapshot`` request; as well as: (b) Any
+                messages published to the subscription's topic following the successful
+                completion of the CreateSnapshot request. Format is
+                ``projects/{project}/subscriptions/{sub}``.
+            labels (dict[str -> str]): See <a href="/pubsub/docs/labels"> Creating and managing labels</a>.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -1130,30 +1168,31 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'create_snapshot' not in self._inner_api_calls:
+        if "create_snapshot" not in self._inner_api_calls:
             self._inner_api_calls[
-                'create_snapshot'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.create_snapshot,
-                    default_retry=self._method_configs['CreateSnapshot'].retry,
-                    default_timeout=self._method_configs['CreateSnapshot'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "create_snapshot"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.create_snapshot,
+                default_retry=self._method_configs["CreateSnapshot"].retry,
+                default_timeout=self._method_configs["CreateSnapshot"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.CreateSnapshotRequest(
-            name=name,
-            subscription=subscription,
-            labels=labels,
+            name=name, subscription=subscription, labels=labels
         )
-        return self._inner_api_calls['create_snapshot'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["create_snapshot"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def update_snapshot(self,
-                        snapshot,
-                        update_mask,
-                        retry=google.api_core.gapic_v1.method.DEFAULT,
-                        timeout=google.api_core.gapic_v1.method.DEFAULT,
-                        metadata=None):
+    def update_snapshot(
+        self,
+        snapshot,
+        update_mask,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Updates an existing snapshot.<br><br>
         <b>ALPHA:</b> This feature is part of an alpha release. This API might be
@@ -1177,10 +1216,12 @@ class SubscriberClient(object):
 
         Args:
             snapshot (Union[dict, ~google.cloud.pubsub_v1.types.Snapshot]): The updated snapshot object.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.Snapshot`
             update_mask (Union[dict, ~google.cloud.pubsub_v1.types.FieldMask]): Indicates which fields in the provided snapshot to update.
                 Must be specified and non-empty.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.FieldMask`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -1203,28 +1244,30 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'update_snapshot' not in self._inner_api_calls:
+        if "update_snapshot" not in self._inner_api_calls:
             self._inner_api_calls[
-                'update_snapshot'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.update_snapshot,
-                    default_retry=self._method_configs['UpdateSnapshot'].retry,
-                    default_timeout=self._method_configs['UpdateSnapshot'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "update_snapshot"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.update_snapshot,
+                default_retry=self._method_configs["UpdateSnapshot"].retry,
+                default_timeout=self._method_configs["UpdateSnapshot"].timeout,
+                client_info=self._client_info,
+            )
 
         request = pubsub_pb2.UpdateSnapshotRequest(
-            snapshot=snapshot,
-            update_mask=update_mask,
+            snapshot=snapshot, update_mask=update_mask
         )
-        return self._inner_api_calls['update_snapshot'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["update_snapshot"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def delete_snapshot(self,
-                        snapshot,
-                        retry=google.api_core.gapic_v1.method.DEFAULT,
-                        timeout=google.api_core.gapic_v1.method.DEFAULT,
-                        metadata=None):
+    def delete_snapshot(
+        self,
+        snapshot,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Removes an existing snapshot. <br><br>
         <b>ALPHA:</b> This feature is part of an alpha release. This API might be
@@ -1245,8 +1288,8 @@ class SubscriberClient(object):
             >>> client.delete_snapshot(snapshot)
 
         Args:
-            snapshot (str): The name of the snapshot to delete.
-                Format is ``projects/{project}/snapshots/{snap}``.
+            snapshot (str): The name of the snapshot to delete. Format is
+                ``projects/{project}/snapshots/{snap}``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -1264,27 +1307,30 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'delete_snapshot' not in self._inner_api_calls:
+        if "delete_snapshot" not in self._inner_api_calls:
             self._inner_api_calls[
-                'delete_snapshot'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.delete_snapshot,
-                    default_retry=self._method_configs['DeleteSnapshot'].retry,
-                    default_timeout=self._method_configs['DeleteSnapshot'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "delete_snapshot"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.delete_snapshot,
+                default_retry=self._method_configs["DeleteSnapshot"].retry,
+                default_timeout=self._method_configs["DeleteSnapshot"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = pubsub_pb2.DeleteSnapshotRequest(snapshot=snapshot, )
-        self._inner_api_calls['delete_snapshot'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = pubsub_pb2.DeleteSnapshotRequest(snapshot=snapshot)
+        self._inner_api_calls["delete_snapshot"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def seek(self,
-             subscription,
-             time=None,
-             snapshot=None,
-             retry=google.api_core.gapic_v1.method.DEFAULT,
-             timeout=google.api_core.gapic_v1.method.DEFAULT,
-             metadata=None):
+    def seek(
+        self,
+        subscription,
+        time=None,
+        snapshot=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Seeks an existing subscription to a point in time or to a given snapshot,
         whichever is provided in the request.<br><br>
@@ -1303,22 +1349,22 @@ class SubscriberClient(object):
 
         Args:
             subscription (str): The subscription to affect.
-            time (Union[dict, ~google.cloud.pubsub_v1.types.Timestamp]): The time to seek to.
-                Messages retained in the subscription that were published before this
-                time are marked as acknowledged, and messages retained in the
-                subscription that were published after this time are marked as
-                unacknowledged. Note that this operation affects only those messages
-                retained in the subscription (configured by the combination of
-                ``message_retention_duration`` and ``retain_acked_messages``). For example,
-                if ``time`` corresponds to a point before the message retention
+            time (Union[dict, ~google.cloud.pubsub_v1.types.Timestamp]): The time to seek to. Messages retained in the subscription that were
+                published before this time are marked as acknowledged, and messages
+                retained in the subscription that were published after this time are
+                marked as unacknowledged. Note that this operation affects only those
+                messages retained in the subscription (configured by the combination of
+                ``message_retention_duration`` and ``retain_acked_messages``). For
+                example, if ``time`` corresponds to a point before the message retention
                 window (or to a point before the system's notion of the subscription
                 creation time), only retained messages will be marked as unacknowledged,
                 and already-expunged messages will not be restored.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.Timestamp`
-            snapshot (str): The snapshot to seek to. The snapshot's topic must be the same as that of
-                the provided subscription.
-                Format is ``projects/{project}/snapshots/{snap}``.
+            snapshot (str): The snapshot to seek to. The snapshot's topic must be the same as that
+                of the provided subscription. Format is
+                ``projects/{project}/snapshots/{snap}``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -1339,36 +1385,33 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'seek' not in self._inner_api_calls:
-            self._inner_api_calls[
-                'seek'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.seek,
-                    default_retry=self._method_configs['Seek'].retry,
-                    default_timeout=self._method_configs['Seek'].timeout,
-                    client_info=self._client_info,
-                )
+        if "seek" not in self._inner_api_calls:
+            self._inner_api_calls["seek"] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.seek,
+                default_retry=self._method_configs["Seek"].retry,
+                default_timeout=self._method_configs["Seek"].timeout,
+                client_info=self._client_info,
+            )
 
         # Sanity check: We have some fields which are mutually exclusive;
         # raise ValueError if more than one is sent.
-        google.api_core.protobuf_helpers.check_oneof(
-            time=time,
-            snapshot=snapshot,
-        )
+        google.api_core.protobuf_helpers.check_oneof(time=time, snapshot=snapshot)
 
         request = pubsub_pb2.SeekRequest(
-            subscription=subscription,
-            time=time,
-            snapshot=snapshot,
+            subscription=subscription, time=time, snapshot=snapshot
         )
-        return self._inner_api_calls['seek'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["seek"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def set_iam_policy(self,
-                       resource,
-                       policy,
-                       retry=google.api_core.gapic_v1.method.DEFAULT,
-                       timeout=google.api_core.gapic_v1.method.DEFAULT,
-                       metadata=None):
+    def set_iam_policy(
+        self,
+        resource,
+        policy,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Sets the access control policy on the specified resource. Replaces any
         existing policy.
@@ -1380,7 +1423,7 @@ class SubscriberClient(object):
             >>>
             >>> resource = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``policy``:
+            >>> # TODO: Initialize `policy`:
             >>> policy = {}
             >>>
             >>> response = client.set_iam_policy(resource, policy)
@@ -1389,10 +1432,11 @@ class SubscriberClient(object):
             resource (str): REQUIRED: The resource for which the policy is being specified.
                 ``resource`` is usually specified as a path. For example, a Project
                 resource is specified as ``projects/{project}``.
-            policy (Union[dict, ~google.cloud.pubsub_v1.types.Policy]): REQUIRED: The complete policy to be applied to the ``resource``. The size of
-                the policy is limited to a few 10s of KB. An empty policy is a
+            policy (Union[dict, ~google.cloud.pubsub_v1.types.Policy]): REQUIRED: The complete policy to be applied to the ``resource``. The
+                size of the policy is limited to a few 10s of KB. An empty policy is a
                 valid policy but certain Cloud Platform services (such as Projects)
                 might reject them.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.pubsub_v1.types.Policy`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -1415,28 +1459,28 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'set_iam_policy' not in self._inner_api_calls:
+        if "set_iam_policy" not in self._inner_api_calls:
             self._inner_api_calls[
-                'set_iam_policy'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.set_iam_policy,
-                    default_retry=self._method_configs['SetIamPolicy'].retry,
-                    default_timeout=self._method_configs['SetIamPolicy'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "set_iam_policy"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.set_iam_policy,
+                default_retry=self._method_configs["SetIamPolicy"].retry,
+                default_timeout=self._method_configs["SetIamPolicy"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = iam_policy_pb2.SetIamPolicyRequest(
-            resource=resource,
-            policy=policy,
+        request = iam_policy_pb2.SetIamPolicyRequest(resource=resource, policy=policy)
+        return self._inner_api_calls["set_iam_policy"](
+            request, retry=retry, timeout=timeout, metadata=metadata
         )
-        return self._inner_api_calls['set_iam_policy'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
 
-    def get_iam_policy(self,
-                       resource,
-                       retry=google.api_core.gapic_v1.method.DEFAULT,
-                       timeout=google.api_core.gapic_v1.method.DEFAULT,
-                       metadata=None):
+    def get_iam_policy(
+        self,
+        resource,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets the access control policy for a resource.
         Returns an empty policy if the resource exists and does not have a policy
@@ -1475,30 +1519,33 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_iam_policy' not in self._inner_api_calls:
+        if "get_iam_policy" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_iam_policy'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_iam_policy,
-                    default_retry=self._method_configs['GetIamPolicy'].retry,
-                    default_timeout=self._method_configs['GetIamPolicy'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "get_iam_policy"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_iam_policy,
+                default_retry=self._method_configs["GetIamPolicy"].retry,
+                default_timeout=self._method_configs["GetIamPolicy"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = iam_policy_pb2.GetIamPolicyRequest(resource=resource, )
-        return self._inner_api_calls['get_iam_policy'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = iam_policy_pb2.GetIamPolicyRequest(resource=resource)
+        return self._inner_api_calls["get_iam_policy"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def test_iam_permissions(self,
-                             resource,
-                             permissions,
-                             retry=google.api_core.gapic_v1.method.DEFAULT,
-                             timeout=google.api_core.gapic_v1.method.DEFAULT,
-                             metadata=None):
+    def test_iam_permissions(
+        self,
+        resource,
+        permissions,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Returns permissions that a caller has on the specified resource.
-        If the resource does not exist, this will return an empty set of
-        permissions, not a NOT_FOUND error.
+        Returns permissions that a caller has on the specified resource. If the
+        resource does not exist, this will return an empty set of permissions,
+        not a NOT\_FOUND error.
 
         Example:
             >>> from google.cloud import pubsub_v1
@@ -1507,7 +1554,7 @@ class SubscriberClient(object):
             >>>
             >>> resource = client.subscription_path('[PROJECT]', '[SUBSCRIPTION]')
             >>>
-            >>> # TODO: Initialize ``permissions``:
+            >>> # TODO: Initialize `permissions`:
             >>> permissions = []
             >>>
             >>> response = client.test_iam_permissions(resource, permissions)
@@ -1518,8 +1565,8 @@ class SubscriberClient(object):
                 resource is specified as ``projects/{project}``.
             permissions (list[str]): The set of permissions to check for the ``resource``. Permissions with
                 wildcards (such as '*' or 'storage.*') are not allowed. For more
-                information see
-                `IAM Overview <https://cloud.google.com/iam/docs/overview#permissions>`_.
+                information see `IAM
+                Overview <https://cloud.google.com/iam/docs/overview#permissions>`__.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -1540,20 +1587,19 @@ class SubscriberClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'test_iam_permissions' not in self._inner_api_calls:
+        if "test_iam_permissions" not in self._inner_api_calls:
             self._inner_api_calls[
-                'test_iam_permissions'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.test_iam_permissions,
-                    default_retry=self._method_configs['TestIamPermissions'].
-                    retry,
-                    default_timeout=self._method_configs['TestIamPermissions'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "test_iam_permissions"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.test_iam_permissions,
+                default_retry=self._method_configs["TestIamPermissions"].retry,
+                default_timeout=self._method_configs["TestIamPermissions"].timeout,
+                client_info=self._client_info,
+            )
 
         request = iam_policy_pb2.TestIamPermissionsRequest(
-            resource=resource,
-            permissions=permissions,
+            resource=resource, permissions=permissions
         )
-        return self._inner_api_calls['test_iam_permissions'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["test_iam_permissions"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )

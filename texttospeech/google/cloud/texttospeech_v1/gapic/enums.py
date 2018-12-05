@@ -20,8 +20,8 @@ import enum
 
 class SsmlVoiceGender(enum.IntEnum):
     """
-    Gender of the voice as described in
-    `SSML voice element <https://www.w3.org/TR/speech-synthesis11/#edef_voice>`_.
+    Gender of the voice as described in `SSML voice
+    element <https://www.w3.org/TR/speech-synthesis11/#edef_voice>`__.
 
     Attributes:
       SSML_VOICE_GENDER_UNSPECIFIED (int): An unspecified gender.
@@ -33,6 +33,7 @@ class SsmlVoiceGender(enum.IntEnum):
       FEMALE (int): A female voice.
       NEUTRAL (int): A gender-neutral voice.
     """
+
     SSML_VOICE_GENDER_UNSPECIFIED = 0
     MALE = 1
     FEMALE = 2
@@ -54,6 +55,7 @@ class AudioEncoding(enum.IntEnum):
       Chrome and Firefox). The quality of the encoding is considerably higher
       than MP3 while using approximately the same bitrate.
     """
+
     AUDIO_ENCODING_UNSPECIFIED = 0
     LINEAR16 = 1
     MP3 = 2

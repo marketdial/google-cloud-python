@@ -35,8 +35,7 @@ from google.cloud.trace_v1.proto import trace_pb2_grpc
 from google.protobuf import empty_pb2
 from google.protobuf import timestamp_pb2
 
-_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-trace', ).version
+_GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution("google-cloud-trace").version
 
 
 class TraceServiceClient(object):
@@ -48,12 +47,12 @@ class TraceServiceClient(object):
     may span multiple services.
     """
 
-    SERVICE_ADDRESS = 'cloudtrace.googleapis.com:443'
+    SERVICE_ADDRESS = "cloudtrace.googleapis.com:443"
     """The default address of the service."""
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.devtools.cloudtrace.v1.TraceService'
+    _INTERFACE_NAME = "google.devtools.cloudtrace.v1.TraceService"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -69,19 +68,20 @@ class TraceServiceClient(object):
         Returns:
             TraceServiceClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=trace_service_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -113,13 +113,21 @@ class TraceServiceClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = trace_service_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -128,26 +136,26 @@ class TraceServiceClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=trace_service_grpc_transport.
-                    TraceServiceGrpcTransport,
+                    default_class=trace_service_grpc_transport.TraceServiceGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
         else:
             self.transport = trace_service_grpc_transport.TraceServiceGrpcTransport(
-                address=self.SERVICE_ADDRESS,
-                channel=channel,
-                credentials=credentials,
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
             )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -155,7 +163,8 @@ class TraceServiceClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -164,12 +173,14 @@ class TraceServiceClient(object):
         self._inner_api_calls = {}
 
     # Service calls
-    def patch_traces(self,
-                     project_id,
-                     traces,
-                     retry=google.api_core.gapic_v1.method.DEFAULT,
-                     timeout=google.api_core.gapic_v1.method.DEFAULT,
-                     metadata=None):
+    def patch_traces(
+        self,
+        project_id,
+        traces,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Sends new traces to Stackdriver Trace or updates existing traces. If the ID
         of a trace that you send matches that of an existing trace, any fields
@@ -182,10 +193,10 @@ class TraceServiceClient(object):
             >>>
             >>> client = trace_v1.TraceServiceClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``traces``:
+            >>> # TODO: Initialize `traces`:
             >>> traces = {}
             >>>
             >>> client.patch_traces(project_id, traces)
@@ -193,6 +204,7 @@ class TraceServiceClient(object):
         Args:
             project_id (str): ID of the Cloud project where the trace data is stored.
             traces (Union[dict, ~google.cloud.trace_v1.types.Traces]): The body of the message.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.trace_v1.types.Traces`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -212,29 +224,29 @@ class TraceServiceClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'patch_traces' not in self._inner_api_calls:
+        if "patch_traces" not in self._inner_api_calls:
             self._inner_api_calls[
-                'patch_traces'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.patch_traces,
-                    default_retry=self._method_configs['PatchTraces'].retry,
-                    default_timeout=self._method_configs['PatchTraces'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "patch_traces"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.patch_traces,
+                default_retry=self._method_configs["PatchTraces"].retry,
+                default_timeout=self._method_configs["PatchTraces"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = trace_pb2.PatchTracesRequest(
-            project_id=project_id,
-            traces=traces,
+        request = trace_pb2.PatchTracesRequest(project_id=project_id, traces=traces)
+        self._inner_api_calls["patch_traces"](
+            request, retry=retry, timeout=timeout, metadata=metadata
         )
-        self._inner_api_calls['patch_traces'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
 
-    def get_trace(self,
-                  project_id,
-                  trace_id,
-                  retry=google.api_core.gapic_v1.method.DEFAULT,
-                  timeout=google.api_core.gapic_v1.method.DEFAULT,
-                  metadata=None):
+    def get_trace(
+        self,
+        project_id,
+        trace_id,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets a single trace by its ID.
 
@@ -243,10 +255,10 @@ class TraceServiceClient(object):
             >>>
             >>> client = trace_v1.TraceServiceClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
-            >>> # TODO: Initialize ``trace_id``:
+            >>> # TODO: Initialize `trace_id`:
             >>> trace_id = ''
             >>>
             >>> response = client.get_trace(project_id, trace_id)
@@ -274,33 +286,34 @@ class TraceServiceClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_trace' not in self._inner_api_calls:
+        if "get_trace" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_trace'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_trace,
-                    default_retry=self._method_configs['GetTrace'].retry,
-                    default_timeout=self._method_configs['GetTrace'].timeout,
-                    client_info=self._client_info,
-                )
+                "get_trace"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_trace,
+                default_retry=self._method_configs["GetTrace"].retry,
+                default_timeout=self._method_configs["GetTrace"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = trace_pb2.GetTraceRequest(
-            project_id=project_id,
-            trace_id=trace_id,
+        request = trace_pb2.GetTraceRequest(project_id=project_id, trace_id=trace_id)
+        return self._inner_api_calls["get_trace"](
+            request, retry=retry, timeout=timeout, metadata=metadata
         )
-        return self._inner_api_calls['get_trace'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
 
-    def list_traces(self,
-                    project_id,
-                    view=None,
-                    page_size=None,
-                    start_time=None,
-                    end_time=None,
-                    filter_=None,
-                    order_by=None,
-                    retry=google.api_core.gapic_v1.method.DEFAULT,
-                    timeout=google.api_core.gapic_v1.method.DEFAULT,
-                    metadata=None):
+    def list_traces(
+        self,
+        project_id,
+        view=None,
+        page_size=None,
+        start_time=None,
+        end_time=None,
+        filter_=None,
+        order_by=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Returns of a list of traces that match the specified filter conditions.
 
@@ -309,7 +322,7 @@ class TraceServiceClient(object):
             >>>
             >>> client = trace_v1.TraceServiceClient()
             >>>
-            >>> # TODO: Initialize ``project_id``:
+            >>> # TODO: Initialize `project_id`:
             >>> project_id = ''
             >>>
             >>> # Iterate over all results
@@ -321,7 +334,7 @@ class TraceServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_traces(project_id, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_traces(project_id).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
@@ -335,53 +348,55 @@ class TraceServiceClient(object):
                 return fewer traces than the requested page size. Optional.
             start_time (Union[dict, ~google.cloud.trace_v1.types.Timestamp]): Start of the time interval (inclusive) during which the trace data was
                 collected from the application.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.trace_v1.types.Timestamp`
             end_time (Union[dict, ~google.cloud.trace_v1.types.Timestamp]): End of the time interval (inclusive) during which the trace data was
                 collected from the application.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.trace_v1.types.Timestamp`
             filter_ (str): An optional filter against labels for the request.
 
-                By default, searches use prefix matching. To specify exact match, prepend
-                a plus symbol (``+``) to the search term.
-                Multiple terms are ANDed. Syntax:
+                By default, searches use prefix matching. To specify exact match,
+                prepend a plus symbol (``+``) to the search term. Multiple terms are
+                ANDed. Syntax:
 
-                *   ``root:NAME_PREFIX`` or ``NAME_PREFIX``: Return traces where any root
-                    span starts with `NAME_PREFIX`.
-                *   ``+root:NAME`` or ``+NAME``: Return traces where any root span's name is
-                    exactly `NAME`.
-                *   ``span:NAME_PREFIX``: Return traces where any span starts with
-                    `NAME_PREFIX`.
-                *   ``+span:NAME``: Return traces where any span's name is exactly
-                    `NAME`.
-                *   ``latency:DURATION``: Return traces whose overall latency is
-                    greater or equal to than `DURATION`. Accepted units are nanoseconds
-                    (`ns`), milliseconds (`ms`), and seconds (`s`). Default is `ms`. For
-                    example, `latency:24ms` returns traces whose overall latency
-                    is greater than or equal to 24 milliseconds.
-                *   ``label:LABEL_KEY``: Return all traces containing the specified
-                    label key (exact match, case-sensitive) regardless of the key:value
-                    pair's value (including empty values).
-                *   ``LABEL_KEY:VALUE_PREFIX``: Return all traces containing the specified
-                    label key (exact match, case-sensitive) whose value starts with
-                    `VALUE_PREFIX`. Both a key and a value must be specified.
-                *   ``+LABEL_KEY:VALUE``: Return all traces containing a key:value pair
-                    exactly matching the specified text. Both a key and a value must be
-                    specified.
-                *   ``method:VALUE``: Equivalent to ``/http/method:VALUE``.
-                *   ``url:VALUE``: Equivalent to ``/http/url:VALUE``.
-            order_by (str): Field used to sort the returned traces. Optional.
-                Can be one of the following:
+                -  ``root:NAME_PREFIX`` or ``NAME_PREFIX``: Return traces where any root
+                   span starts with ``NAME_PREFIX``.
+                -  ``+root:NAME`` or ``+NAME``: Return traces where any root span's name
+                   is exactly ``NAME``.
+                -  ``span:NAME_PREFIX``: Return traces where any span starts with
+                   ``NAME_PREFIX``.
+                -  ``+span:NAME``: Return traces where any span's name is exactly
+                   ``NAME``.
+                -  ``latency:DURATION``: Return traces whose overall latency is greater
+                   or equal to than ``DURATION``. Accepted units are nanoseconds
+                   (``ns``), milliseconds (``ms``), and seconds (``s``). Default is
+                   ``ms``. For example, ``latency:24ms`` returns traces whose overall
+                   latency is greater than or equal to 24 milliseconds.
+                -  ``label:LABEL_KEY``: Return all traces containing the specified label
+                   key (exact match, case-sensitive) regardless of the key:value pair's
+                   value (including empty values).
+                -  ``LABEL_KEY:VALUE_PREFIX``: Return all traces containing the
+                   specified label key (exact match, case-sensitive) whose value starts
+                   with ``VALUE_PREFIX``. Both a key and a value must be specified.
+                -  ``+LABEL_KEY:VALUE``: Return all traces containing a key:value pair
+                   exactly matching the specified text. Both a key and a value must be
+                   specified.
+                -  ``method:VALUE``: Equivalent to ``/http/method:VALUE``.
+                -  ``url:VALUE``: Equivalent to ``/http/url:VALUE``.
+            order_by (str): Field used to sort the returned traces. Optional. Can be one of the
+                following:
 
-                *   ``trace_id``
-                *   ``name`` (``name`` field of root span in the trace)
-                *   ``duration`` (difference between ``end_time`` and ``start_time`` fields of
-                     the root span)
-                *   ``start`` (``start_time`` field of the root span)
+                -  ``trace_id``
+                -  ``name`` (``name`` field of root span in the trace)
+                -  ``duration`` (difference between ``end_time`` and ``start_time``
+                   fields of the root span)
+                -  ``start`` (``start_time`` field of the root span)
 
-                Descending order can be specified by appending ``desc`` to the sort field
-                (for example, ``name desc``).
+                Descending order can be specified by appending ``desc`` to the sort
+                field (for example, ``name desc``).
 
                 Only one sort field is permitted.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -407,14 +422,15 @@ class TraceServiceClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_traces' not in self._inner_api_calls:
+        if "list_traces" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_traces'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_traces,
-                    default_retry=self._method_configs['ListTraces'].retry,
-                    default_timeout=self._method_configs['ListTraces'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_traces"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_traces,
+                default_retry=self._method_configs["ListTraces"].retry,
+                default_timeout=self._method_configs["ListTraces"].timeout,
+                client_info=self._client_info,
+            )
 
         request = trace_pb2.ListTracesRequest(
             project_id=project_id,
@@ -428,13 +444,14 @@ class TraceServiceClient(object):
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_traces'],
+                self._inner_api_calls["list_traces"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='traces',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="traces",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator

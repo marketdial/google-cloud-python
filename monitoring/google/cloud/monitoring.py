@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +25,11 @@ from google.cloud.monitoring_v3 import enums
 from google.cloud.monitoring_v3 import types
 
 __all__ = (
-    'enums',
-    'types',
-    'AlertPolicyServiceClient',
-    'GroupServiceClient',
-    'MetricServiceClient',
-    'NotificationChannelServiceClient',
-    'UptimeCheckServiceClient',
+    "enums",
+    "types",
+    "AlertPolicyServiceClient",
+    "GroupServiceClient",
+    "MetricServiceClient",
+    "NotificationChannelServiceClient",
+    "UptimeCheckServiceClient",
 )

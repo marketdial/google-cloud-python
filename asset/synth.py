@@ -18,31 +18,23 @@ import synthtool as s
 from synthtool import gcp
 
 gapic = gcp.GAPICGenerator()
-
+common = gcp.CommonTemplates()
 versions = ["v1beta1"]
 
-excludes = [
-    'setup.py',
-    'README.rst',
-    'docs/conf.py',
-    'docs/index.rst',
-]
+excludes = ["setup.py", "nox*.py", "README.rst", "docs/conf.py", "docs/index.rst"]
 
+# ----------------------------------------------------------------------------
+# Generate asset GAPIC layer
+# ----------------------------------------------------------------------------
 for version in versions:
     library = gapic.py_library(
         "asset",
         version,
         config_path=f"/google/cloud/asset/artman_cloudasset_{version}.yaml",
-        artman_output_name=f"cloudasset-{version}",
+        artman_output_name=f"asset-{version}",
     )
 
     s.move(library, excludes=excludes)
-
-    s.replace(
-        f"google/cloud/asset_{version}/gapic/asset_service_client.py",
-        "'google-cloud-cloudasset', \).version",
-        "'google-cloud-asset', ).version",
-    )
 
 s.replace(
     "google/cloud/asset_v1beta1/proto/assets_pb2.py",
@@ -65,3 +57,32 @@ s.replace(
     "_ASSET.fields_by_name['iam_policy'].message_type = google_dot_iam_dot"
     "_v1_dot_policy__pb2.google_dot_iam_dot_v1_dot_policy__pb2._POLICY",
 )
+
+
+_BORKED_ASSET_DOCSTRING = """\
+          The full name of the asset. For example: ``//compute.googleapi
+          s.com/projects/my_project_123/zones/zone1/instances/instance1`
+          `. See `Resource Names <https://cloud.google.com/apis/design/r
+          esource_names#full_resource_name>`__ for more information.
+"""
+
+_FIXED_ASSET_DOCSTRING = """
+          The full name of the asset. For example:
+          ``//compute.googleapis.com/projects/my_project_123/zones/zone1/instances/instance1``.
+          See https://cloud.google.com/apis/design/resource_names#full_resource_name
+          for more information.
+"""
+
+s.replace(
+    "google/cloud/asset_v1beta1/proto/assets_pb2.py",
+    _BORKED_ASSET_DOCSTRING,
+    _FIXED_ASSET_DOCSTRING,
+)
+
+# ----------------------------------------------------------------------------
+# Add templated files
+# ----------------------------------------------------------------------------
+templated_files = gcp.CommonTemplates().py_library(unit_cov_level=79, cov_level=80)
+s.move(templated_files)
+
+s.shell.run(["nox", "-s", "blacken"], hide_output=False)

@@ -27,14 +27,17 @@ class ReportErrorsServiceGrpcTransport(object):
     which can be used to take advantage of advanced
     features of gRPC.
     """
+
     # The scopes needed to make gRPC calls to all of the methods defined
     # in this service.
-    _OAUTH_SCOPES = ('https://www.googleapis.com/auth/cloud-platform', )
+    _OAUTH_SCOPES = ("https://www.googleapis.com/auth/cloud-platform",)
 
-    def __init__(self,
-                 channel=None,
-                 credentials=None,
-                 address='clouderrorreporting.googleapis.com:443'):
+    def __init__(
+        self,
+        channel=None,
+        credentials=None,
+        address="clouderrorreporting.googleapis.com:443",
+    ):
         """Instantiate the transport class.
 
         Args:
@@ -52,27 +55,27 @@ class ReportErrorsServiceGrpcTransport(object):
         # exception (channels come with credentials baked in already).
         if channel is not None and credentials is not None:
             raise ValueError(
-                'The `channel` and `credentials` arguments are mutually '
-                'exclusive.', )
+                "The `channel` and `credentials` arguments are mutually " "exclusive."
+            )
 
         # Create the channel.
         if channel is None:
-            channel = self.create_channel(
-                address=address,
-                credentials=credentials,
-            )
+            channel = self.create_channel(address=address, credentials=credentials)
+
+        self._channel = channel
 
         # gRPC uses objects called "stubs" that are bound to the
         # channel and provide a basic method for each RPC.
         self._stubs = {
-            'report_errors_service_stub':
-            report_errors_service_pb2_grpc.ReportErrorsServiceStub(channel),
+            "report_errors_service_stub": report_errors_service_pb2_grpc.ReportErrorsServiceStub(
+                channel
+            )
         }
 
     @classmethod
-    def create_channel(cls,
-                       address='clouderrorreporting.googleapis.com:443',
-                       credentials=None):
+    def create_channel(
+        cls, address="clouderrorreporting.googleapis.com:443", credentials=None
+    ):
         """Create and return a gRPC channel object.
 
         Args:
@@ -87,10 +90,17 @@ class ReportErrorsServiceGrpcTransport(object):
             grpc.Channel: A gRPC channel object.
         """
         return google.api_core.grpc_helpers.create_channel(
-            address,
-            credentials=credentials,
-            scopes=cls._OAUTH_SCOPES,
+            address, credentials=credentials, scopes=cls._OAUTH_SCOPES
         )
+
+    @property
+    def channel(self):
+        """The gRPC channel used by the transport.
+
+        Returns:
+            grpc.Channel: A gRPC channel object.
+        """
+        return self._channel
 
     @property
     def report_error_event(self):
@@ -98,16 +108,9 @@ class ReportErrorsServiceGrpcTransport(object):
 
         Report an individual error event.
 
-        This endpoint accepts <strong>either</strong> an OAuth token,
-        <strong>or</strong> an
-        <a href=\"https://support.google.com/cloud/answer/6158862\">API key</a>
-        for authentication. To use an API key, append it to the URL as the value of
-        a ``key`` parameter. For example:
-        <pre>POST https://clouderrorreporting.googleapis.com/v1beta1/projects/example-project/events:report?key=123ABC456</pre>
-
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['report_errors_service_stub'].ReportErrorEvent
+        return self._stubs["report_errors_service_stub"].ReportErrorEvent

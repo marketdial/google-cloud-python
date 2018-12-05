@@ -1,7 +1,7 @@
 Python Client for Google Cloud Video Intelligence
 =================================================
 
-|pypi| |versions|
+|beta| |pypi| |versions|
 
 `Google Cloud Video Intelligence`_ API makes videos searchable, and
 discoverable, by extracting metadata with an easy to use API.
@@ -15,6 +15,8 @@ relevant information at the video, shot or per frame.
 - `Client Library Documentation`_
 - `Product Documentation`_
 
+.. |beta| image:: https://img.shields.io/badge/support-beta-silver.svg
+   :target: https://github.com/googleapis/google-cloud-python/blob/master/README.rst#beta-support
 .. |pypi| image:: https://img.shields.io/pypi/v/google-cloud-videointelligence.svg
    :target: https://pypi.org/project/google-cloud-videointelligence/
 .. |versions| image:: https://img.shields.io/pypi/pyversions/google-cloud-videointelligence.svg
@@ -60,7 +62,7 @@ Mac/Linux
     pip install virtualenv
     virtualenv <your-env>
     source <your-env>/bin/activate
-    <your-env>/bin/pip install google-cloud-datastore
+    <your-env>/bin/pip install google-cloud-videointelligence
 
 Windows
 ^^^^^^^
@@ -70,7 +72,7 @@ Windows
     pip install virtualenv
     virtualenv <your-env>
     <your-env>\Scripts\activate
-    <your-env>\Scripts\pip.exe install google-cloud-datastore
+    <your-env>\Scripts\pip.exe install google-cloud-videointelligence
 
 Example Usage
 ~~~~~~~~~~~~~

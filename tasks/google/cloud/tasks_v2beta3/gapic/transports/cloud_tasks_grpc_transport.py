@@ -27,14 +27,14 @@ class CloudTasksGrpcTransport(object):
     which can be used to take advantage of advanced
     features of gRPC.
     """
+
     # The scopes needed to make gRPC calls to all of the methods defined
     # in this service.
-    _OAUTH_SCOPES = ('https://www.googleapis.com/auth/cloud-platform', )
+    _OAUTH_SCOPES = ("https://www.googleapis.com/auth/cloud-platform",)
 
-    def __init__(self,
-                 channel=None,
-                 credentials=None,
-                 address='cloudtasks.googleapis.com:443'):
+    def __init__(
+        self, channel=None, credentials=None, address="cloudtasks.googleapis.com:443"
+    ):
         """Instantiate the transport class.
 
         Args:
@@ -52,26 +52,21 @@ class CloudTasksGrpcTransport(object):
         # exception (channels come with credentials baked in already).
         if channel is not None and credentials is not None:
             raise ValueError(
-                'The `channel` and `credentials` arguments are mutually '
-                'exclusive.', )
+                "The `channel` and `credentials` arguments are mutually " "exclusive."
+            )
 
         # Create the channel.
         if channel is None:
-            channel = self.create_channel(
-                address=address,
-                credentials=credentials,
-            )
+            channel = self.create_channel(address=address, credentials=credentials)
+
+        self._channel = channel
 
         # gRPC uses objects called "stubs" that are bound to the
         # channel and provide a basic method for each RPC.
-        self._stubs = {
-            'cloud_tasks_stub': cloudtasks_pb2_grpc.CloudTasksStub(channel),
-        }
+        self._stubs = {"cloud_tasks_stub": cloudtasks_pb2_grpc.CloudTasksStub(channel)}
 
     @classmethod
-    def create_channel(cls,
-                       address='cloudtasks.googleapis.com:443',
-                       credentials=None):
+    def create_channel(cls, address="cloudtasks.googleapis.com:443", credentials=None):
         """Create and return a gRPC channel object.
 
         Args:
@@ -86,10 +81,17 @@ class CloudTasksGrpcTransport(object):
             grpc.Channel: A gRPC channel object.
         """
         return google.api_core.grpc_helpers.create_channel(
-            address,
-            credentials=credentials,
-            scopes=cls._OAUTH_SCOPES,
+            address, credentials=credentials, scopes=cls._OAUTH_SCOPES
         )
+
+    @property
+    def channel(self):
+        """The gRPC channel used by the transport.
+
+        Returns:
+            grpc.Channel: A gRPC channel object.
+        """
+        return self._channel
 
     @property
     def list_queues(self):
@@ -104,7 +106,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].ListQueues
+        return self._stubs["cloud_tasks_stub"].ListQueues
 
     @property
     def get_queue(self):
@@ -117,7 +119,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].GetQueue
+        return self._stubs["cloud_tasks_stub"].GetQueue
 
     @property
     def create_queue(self):
@@ -126,21 +128,21 @@ class CloudTasksGrpcTransport(object):
         Creates a queue.
 
         Queues created with this method allow tasks to live for a maximum of 31
-        days. After a task is 31 days old, the task will be deleted regardless of whether
-        it was dispatched or not.
+        days. After a task is 31 days old, the task will be deleted regardless
+        of whether it was dispatched or not.
 
         WARNING: Using this method may have unintended side effects if you are
-        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your queues.
-        Read
-        `Overview of Queue Management and queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`_
-        before using this method.
+        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your
+        queues. Read `Overview of Queue Management and
+        queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`__ before
+        using this method.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].CreateQueue
+        return self._stubs["cloud_tasks_stub"].CreateQueue
 
     @property
     def update_queue(self):
@@ -148,25 +150,25 @@ class CloudTasksGrpcTransport(object):
 
         Updates a queue.
 
-        This method creates the queue if it does not exist and updates
-        the queue if it does exist.
+        This method creates the queue if it does not exist and updates the queue
+        if it does exist.
 
         Queues created with this method allow tasks to live for a maximum of 31
-        days. After a task is 31 days old, the task will be deleted regardless of whether
-        it was dispatched or not.
+        days. After a task is 31 days old, the task will be deleted regardless
+        of whether it was dispatched or not.
 
         WARNING: Using this method may have unintended side effects if you are
-        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your queues.
-        Read
-        `Overview of Queue Management and queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`_
-        before using this method.
+        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your
+        queues. Read `Overview of Queue Management and
+        queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`__ before
+        using this method.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].UpdateQueue
+        return self._stubs["cloud_tasks_stub"].UpdateQueue
 
     @property
     def delete_queue(self):
@@ -180,17 +182,17 @@ class CloudTasksGrpcTransport(object):
         for 7 days.
 
         WARNING: Using this method may have unintended side effects if you are
-        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your queues.
-        Read
-        `Overview of Queue Management and queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`_
-        before using this method.
+        using an App Engine ``queue.yaml`` or ``queue.xml`` file to manage your
+        queues. Read `Overview of Queue Management and
+        queue.yaml <https://cloud.google.com/tasks/docs/queue-yaml>`__ before
+        using this method.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].DeleteQueue
+        return self._stubs["cloud_tasks_stub"].DeleteQueue
 
     @property
     def purge_queue(self):
@@ -208,7 +210,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].PurgeQueue
+        return self._stubs["cloud_tasks_stub"].PurgeQueue
 
     @property
     def pause_queue(self):
@@ -216,18 +218,16 @@ class CloudTasksGrpcTransport(object):
 
         Pauses the queue.
 
-        If a queue is paused then the system will stop dispatching tasks
-        until the queue is resumed via
-        ``ResumeQueue``. Tasks can still be added
-        when the queue is paused. A queue is paused if its
-        ``state`` is ``PAUSED``.
+        If a queue is paused then the system will stop dispatching tasks until
+        the queue is resumed via ``ResumeQueue``. Tasks can still be added when
+        the queue is paused. A queue is paused if its ``state`` is ``PAUSED``.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].PauseQueue
+        return self._stubs["cloud_tasks_stub"].PauseQueue
 
     @property
     def resume_queue(self):
@@ -235,44 +235,41 @@ class CloudTasksGrpcTransport(object):
 
         Resume a queue.
 
-        This method resumes a queue after it has been
-        ``PAUSED`` or
-        ``DISABLED``. The state of a queue is stored
-        in the queue's ``state``; after calling this method it
-        will be set to ``RUNNING``.
+        This method resumes a queue after it has been ``PAUSED`` or
+        ``DISABLED``. The state of a queue is stored in the queue's ``state``;
+        after calling this method it will be set to ``RUNNING``.
 
-        WARNING: Resuming many high-QPS queues at the same time can
-        lead to target overloading. If you are resuming high-QPS
-        queues, follow the 500/50/5 pattern described in
-        `Managing Cloud Tasks Scaling Risks <https://cloud.google.com/tasks/docs/manage-cloud-task-scaling>`_.
+        WARNING: Resuming many high-QPS queues at the same time can lead to
+        target overloading. If you are resuming high-QPS queues, follow the
+        500/50/5 pattern described in `Managing Cloud Tasks Scaling
+        Risks <https://cloud.google.com/tasks/docs/manage-cloud-task-scaling>`__.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].ResumeQueue
+        return self._stubs["cloud_tasks_stub"].ResumeQueue
 
     @property
     def get_iam_policy(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Gets the access control policy for a ``Queue``.
-        Returns an empty policy if the resource exists and does not have a policy
-        set.
+        Gets the access control policy for a ``Queue``. Returns an empty policy
+        if the resource exists and does not have a policy set.
 
-        Authorization requires the following
-        `Google IAM <https://cloud.google.com/iam>`_ permission on the specified
+        Authorization requires the following `Google
+        IAM <https://cloud.google.com/iam>`__ permission on the specified
         resource parent:
 
-        * ``cloudtasks.queues.getIamPolicy``
+        -  ``cloudtasks.queues.getIamPolicy``
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].GetIamPolicy
+        return self._stubs["cloud_tasks_stub"].GetIamPolicy
 
     @property
     def set_iam_policy(self):
@@ -284,37 +281,37 @@ class CloudTasksGrpcTransport(object):
         Note: The Cloud Console does not check queue-level IAM permissions yet.
         Project-level permissions are required to use the Cloud Console.
 
-        Authorization requires the following
-        `Google IAM <https://cloud.google.com/iam>`_ permission on the specified
+        Authorization requires the following `Google
+        IAM <https://cloud.google.com/iam>`__ permission on the specified
         resource parent:
 
-        * ``cloudtasks.queues.setIamPolicy``
+        -  ``cloudtasks.queues.setIamPolicy``
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].SetIamPolicy
+        return self._stubs["cloud_tasks_stub"].SetIamPolicy
 
     @property
     def test_iam_permissions(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Returns permissions that a caller has on a ``Queue``.
-        If the resource does not exist, this will return an empty set of
-        permissions, not a ``NOT_FOUND`` error.
+        Returns permissions that a caller has on a ``Queue``. If the resource
+        does not exist, this will return an empty set of permissions, not a
+        ``NOT_FOUND`` error.
 
-        Note: This operation is designed to be used for building permission-aware
-        UIs and command-line tools, not for authorization checking. This operation
-        may \"fail open\" without warning.
+        Note: This operation is designed to be used for building
+        permission-aware UIs and command-line tools, not for authorization
+        checking. This operation may "fail open" without warning.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].TestIamPermissions
+        return self._stubs["cloud_tasks_stub"].TestIamPermissions
 
     @property
     def list_tasks(self):
@@ -322,10 +319,9 @@ class CloudTasksGrpcTransport(object):
 
         Lists the tasks in a queue.
 
-        By default, only the ``BASIC`` view is retrieved
-        due to performance considerations;
-        ``response_view`` controls the
-        subset of information which is returned.
+        By default, only the ``BASIC`` view is retrieved due to performance
+        considerations; ``response_view`` controls the subset of information
+        which is returned.
 
         The tasks may be returned in any order. The ordering may change at any
         time.
@@ -335,7 +331,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].ListTasks
+        return self._stubs["cloud_tasks_stub"].ListTasks
 
     @property
     def get_task(self):
@@ -348,7 +344,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].GetTask
+        return self._stubs["cloud_tasks_stub"].GetTask
 
     @property
     def create_task(self):
@@ -358,15 +354,14 @@ class CloudTasksGrpcTransport(object):
 
         Tasks cannot be updated after creation; there is no UpdateTask command.
 
-        * For ``App Engine queues``, the maximum task size is
-        100KB.
+        -  For ``App Engine queues``, the maximum task size is 100KB.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].CreateTask
+        return self._stubs["cloud_tasks_stub"].CreateTask
 
     @property
     def delete_task(self):
@@ -383,7 +378,7 @@ class CloudTasksGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].DeleteTask
+        return self._stubs["cloud_tasks_stub"].DeleteTask
 
     @property
     def run_task(self):
@@ -395,28 +390,25 @@ class CloudTasksGrpcTransport(object):
         the task is already running, the queue has reached its ``RateLimits`` or
         is ``PAUSED``.
 
-        This command is meant to be used for manual debugging. For
-        example, ``RunTask`` can be used to retry a failed
-        task after a fix has been made or to manually force a task to be
-        dispatched now.
+        This command is meant to be used for manual debugging. For example,
+        ``RunTask`` can be used to retry a failed task after a fix has been made
+        or to manually force a task to be dispatched now.
 
         The dispatched task is returned. That is, the task that is returned
-        contains the ``status`` after the task is dispatched but
-        before the task is received by its target.
+        contains the ``status`` after the task is dispatched but before the task
+        is received by its target.
 
-        If Cloud Tasks receives a successful response from the task's
-        target, then the task will be deleted; otherwise the task's
-        ``schedule_time`` will be reset to the time that
-        ``RunTask`` was called plus the retry delay specified
-        in the queue's ``RetryConfig``.
+        If Cloud Tasks receives a successful response from the task's target,
+        then the task will be deleted; otherwise the task's ``schedule_time``
+        will be reset to the time that ``RunTask`` was called plus the retry
+        delay specified in the queue's ``RetryConfig``.
 
-        ``RunTask`` returns
-        ``NOT_FOUND`` when it is called on a
-        task that has already succeeded or permanently failed.
+        ``RunTask`` returns ``NOT_FOUND`` when it is called on a task that has
+        already succeeded or permanently failed.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['cloud_tasks_stub'].RunTask
+        return self._stubs["cloud_tasks_stub"].RunTask

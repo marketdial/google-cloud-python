@@ -1,7 +1,7 @@
 Python Client for Cloud Spanner
 ===============================
 
-|pypi| |versions|
+|GA| |pypi| |versions|
 
 `Cloud Spanner`_ is the world's first fully managed relational database service
 to offer both strong consistency and horizontal scalability for
@@ -15,7 +15,8 @@ workloads.
 - `Client Library Documentation`_
 - `Product Documentation`_
 
-
+.. |GA| image:: https://img.shields.io/badge/support-GA-gold.svg
+   :target: https://github.com/googleapis/google-cloud-python/blob/master/README.rst#general-availability
 .. |pypi| image:: https://img.shields.io/pypi/v/google-cloud-spanner.svg
    :target: https://pypi.org/project/google-cloud-spanner/
 .. |versions| image:: https://img.shields.io/pypi/pyversions/google-cloud-spanner.svg
@@ -31,12 +32,12 @@ In order to use this library, you first need to go through the following steps:
 
 1. `Select or create a Cloud Platform project.`_
 2. `Enable billing for your project.`_
-3. `Enable the Google Cloud Datastore API.`_
+3. `Enable the Google Cloud Spanner API.`_
 4. `Setup Authentication.`_
 
 .. _Select or create a Cloud Platform project.: https://console.cloud.google.com/project
 .. _Enable billing for your project.: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
-.. _Enable the Google Cloud Datastore API.:  https://cloud.google.com/datastore
+.. _Enable the Google Cloud Spanner API.:  https://cloud.google.com/spanner
 .. _Setup Authentication.: https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html
 
 Installation

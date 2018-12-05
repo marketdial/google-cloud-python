@@ -31,27 +31,29 @@ from google.cloud.firestore_v1beta1 import SERVER_TIMESTAMP
 from google.cloud.firestore_v1beta1 import Transaction
 from google.cloud.firestore_v1beta1 import transactional
 from google.cloud.firestore_v1beta1 import types
+from google.cloud.firestore_v1beta1 import Watch
 from google.cloud.firestore_v1beta1 import WriteBatch
 from google.cloud.firestore_v1beta1 import WriteOption
 
 
 __all__ = [
-    '__version__',
-    'Client',
-    'CollectionReference',
-    'DELETE_FIELD',
-    'DocumentReference',
-    'DocumentSnapshot',
-    'enums',
-    'ExistsOption',
-    'GeoPoint',
-    'LastUpdateOption',
-    'Query',
-    'ReadAfterWriteError',
-    'SERVER_TIMESTAMP',
-    'Transaction',
-    'transactional',
-    'types',
-    'WriteBatch',
-    'WriteOption',
+    "__version__",
+    "Client",
+    "CollectionReference",
+    "DELETE_FIELD",
+    "DocumentReference",
+    "DocumentSnapshot",
+    "enums",
+    "ExistsOption",
+    "GeoPoint",
+    "LastUpdateOption",
+    "Query",
+    "ReadAfterWriteError",
+    "SERVER_TIMESTAMP",
+    "Transaction",
+    "transactional",
+    "types",
+    "Watch",
+    "WriteBatch",
+    "WriteOption",
 ]

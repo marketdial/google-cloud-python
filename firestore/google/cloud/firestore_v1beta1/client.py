@@ -23,7 +23,6 @@ In the hierarchy of API concepts
 * a :class:`~.firestore_v1beta1.client.Client` owns a
   :class:`~.firestore_v1beta1.document.DocumentReference`
 """
-
 from google.cloud.client import ClientWithProject
 
 from google.cloud.firestore_v1beta1 import _helpers
@@ -36,14 +35,16 @@ from google.cloud.firestore_v1beta1.gapic import firestore_client
 from google.cloud.firestore_v1beta1.transaction import Transaction
 
 
-DEFAULT_DATABASE = '(default)'
+DEFAULT_DATABASE = "(default)"
 """str: The default database used in a :class:`~.firestore.client.Client`."""
 _BAD_OPTION_ERR = (
-    'Exactly one of ``last_update_time`` or ``exists`` must be provided.')
+    "Exactly one of ``last_update_time`` or ``exists`` " "must be provided."
+)
 _BAD_DOC_TEMPLATE = (
-    'Document {!r} appeared in response but was not present among references')
-_ACTIVE_TXN = 'There is already an active transaction.'
-_INACTIVE_TXN = 'There is no active transaction.'
+    "Document {!r} appeared in response but was not present among references"
+)
+_ACTIVE_TXN = "There is already an active transaction."
+_INACTIVE_TXN = "There is no active transaction."
 
 
 class Client(ClientWithProject):
@@ -67,8 +68,8 @@ class Client(ClientWithProject):
     """
 
     SCOPE = (
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/datastore',
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/datastore",
     )
     """The scopes required for authenticating with the Firestore service."""
 
@@ -76,13 +77,13 @@ class Client(ClientWithProject):
     _database_string_internal = None
     _rpc_metadata_internal = None
 
-    def __init__(self, project=None, credentials=None,
-                 database=DEFAULT_DATABASE):
+    def __init__(self, project=None, credentials=None, database=DEFAULT_DATABASE):
         # NOTE: This API has no use for the _http argument, but sending it
         #       will have no impact since the _http() @property only lazily
         #       creates a working HTTP object.
         super(Client, self).__init__(
-            project=project, credentials=credentials, _http=None)
+            project=project, credentials=credentials, _http=None
+        )
         self._database = database
 
     @property
@@ -95,7 +96,8 @@ class Client(ClientWithProject):
         """
         if self._firestore_api_internal is None:
             self._firestore_api_internal = firestore_client.FirestoreClient(
-                credentials=self._credentials)
+                credentials=self._credentials
+            )
 
         return self._firestore_api_internal
 
@@ -119,7 +121,8 @@ class Client(ClientWithProject):
             # NOTE: database_root_path() is a classmethod, so we don't use
             #       self._firestore_api (it isn't necessary).
             db_str = firestore_client.FirestoreClient.database_root_path(
-                self.project, self._database)
+                self.project, self._database
+            )
             self._database_string_internal = db_str
 
         return self._database_string_internal
@@ -134,7 +137,8 @@ class Client(ClientWithProject):
         """
         if self._rpc_metadata_internal is None:
             self._rpc_metadata_internal = _helpers.metadata_with_prefix(
-                self._database_string)
+                self._database_string
+            )
 
         return self._rpc_metadata_internal
 
@@ -278,12 +282,12 @@ class Client(ClientWithProject):
             raise TypeError(_BAD_OPTION_ERR)
 
         name, value = kwargs.popitem()
-        if name == 'last_update_time':
-            return LastUpdateOption(value)
-        elif name == 'exists':
-            return ExistsOption(value)
+        if name == "last_update_time":
+            return _helpers.LastUpdateOption(value)
+        elif name == "exists":
+            return _helpers.ExistsOption(value)
         else:
-            extra = '{!r} was provided'.format(name)
+            extra = "{!r} was provided".format(name)
             raise TypeError(_BAD_OPTION_ERR, extra)
 
     def get_all(self, references, field_paths=None, transaction=None):
@@ -324,12 +328,29 @@ class Client(ClientWithProject):
         document_paths, reference_map = _reference_info(references)
         mask = _get_doc_mask(field_paths)
         response_iterator = self._firestore_api.batch_get_documents(
-            self._database_string, document_paths, mask,
+            self._database_string,
+            document_paths,
+            mask,
             transaction=_helpers.get_transaction_id(transaction),
-            metadata=self._rpc_metadata)
+            metadata=self._rpc_metadata,
+        )
 
         for get_doc_response in response_iterator:
             yield _parse_batch_get(get_doc_response, reference_map, self)
+
+    def collections(self):
+        """List top-level collections of the client's database.
+
+        Returns:
+            Sequence[~.firestore_v1beta1.collection.CollectionReference]:
+                iterator of subcollections of the current document.
+        """
+        iterator = self._firestore_api.list_collection_ids(
+            self._database_string, metadata=self._rpc_metadata
+        )
+        iterator.client = self
+        iterator.item_to_value = _item_to_collection_ref
+        return iterator
 
     def batch(self):
         """Get a batch instance from this client.
@@ -358,96 +379,6 @@ class Client(ClientWithProject):
             attached to this client.
         """
         return Transaction(self, **kwargs)
-
-
-class WriteOption(object):
-    """Option used to assert a condition on a write operation."""
-
-    def modify_write(self, write_pb, no_create_msg=None):
-        """Modify a ``Write`` protobuf based on the state of this write option.
-
-        This is a virtual method intended to be implemented by subclasses.
-
-        Args:
-            write_pb (google.cloud.firestore_v1beta1.types.Write): A
-                ``Write`` protobuf instance to be modified with a precondition
-                determined by the state of this option.
-            no_create_msg (Optional[str]): A message to use to indicate that
-                a create operation is not allowed.
-
-        Raises:
-            NotImplementedError: Always, this method is virtual.
-        """
-        raise NotImplementedError
-
-
-class LastUpdateOption(WriteOption):
-    """Option used to assert a "last update" condition on a write operation.
-
-    This will typically be created by
-    :meth:`~.firestore_v1beta1.client.Client.write_option`.
-
-    Args:
-        last_update_time (google.protobuf.timestamp_pb2.Timestamp): A
-            timestamp. When set, the target document must exist and have
-            been last updated at that time. Protobuf ``update_time`` timestamps
-            are typically returned from methods that perform write operations
-            as part of a "write result" protobuf or directly.
-    """
-
-    def __init__(self, last_update_time):
-        self._last_update_time = last_update_time
-
-    def modify_write(self, write_pb, **unused_kwargs):
-        """Modify a ``Write`` protobuf based on the state of this write option.
-
-        The ``last_update_time`` is added to ``write_pb`` as an "update time"
-        precondition. When set, the target document must exist and have been
-        last updated at that time.
-
-        Args:
-            write_pb (google.cloud.firestore_v1beta1.types.Write): A
-                ``Write`` protobuf instance to be modified with a precondition
-                determined by the state of this option.
-            unused_kwargs (Dict[str, Any]): Keyword arguments accepted by
-                other subclasses that are unused here.
-        """
-        current_doc = types.Precondition(
-            update_time=self._last_update_time)
-        write_pb.current_document.CopyFrom(current_doc)
-
-
-class ExistsOption(WriteOption):
-    """Option used to assert existence on a write operation.
-
-    This will typically be created by
-    :meth:`~.firestore_v1beta1.client.Client.write_option`.
-
-    Args:
-        exists (bool): Indicates if the document being modified
-            should already exist.
-    """
-
-    def __init__(self, exists):
-        self._exists = exists
-
-    def modify_write(self, write_pb, **unused_kwargs):
-        """Modify a ``Write`` protobuf based on the state of this write option.
-
-        If:
-
-        * ``exists=True``, adds a precondition that requires existence
-        * ``exists=False``, adds a precondition that requires non-existence
-
-        Args:
-            write_pb (google.cloud.firestore_v1beta1.types.Write): A
-                ``Write`` protobuf instance to be modified with a precondition
-                determined by the state of this option.
-            unused_kwargs (Dict[str, Any]): Keyword arguments accepted by
-                other subclasses that are unused here.
-        """
-        current_doc = types.Precondition(exists=self._exists)
-        write_pb.current_document.CopyFrom(current_doc)
 
 
 def _reference_info(references):
@@ -523,10 +454,9 @@ def _parse_batch_get(get_doc_response, reference_map, client):
         ValueError: If the response has a ``result`` field (a oneof) other
             than ``found`` or ``missing``.
     """
-    result_type = get_doc_response.WhichOneof('result')
-    if result_type == 'found':
-        reference = _get_reference(
-            get_doc_response.found.name, reference_map)
+    result_type = get_doc_response.WhichOneof("result")
+    if result_type == "found":
+        reference = _get_reference(get_doc_response.found.name, reference_map)
         data = _helpers.decode_dict(get_doc_response.found.fields, client)
         snapshot = DocumentSnapshot(
             reference,
@@ -534,19 +464,22 @@ def _parse_batch_get(get_doc_response, reference_map, client):
             exists=True,
             read_time=get_doc_response.read_time,
             create_time=get_doc_response.found.create_time,
-            update_time=get_doc_response.found.update_time)
-    elif result_type == 'missing':
+            update_time=get_doc_response.found.update_time,
+        )
+    elif result_type == "missing":
         snapshot = DocumentSnapshot(
             None,
             None,
             exists=False,
             read_time=get_doc_response.read_time,
             create_time=None,
-            update_time=None)
+            update_time=None,
+        )
     else:
         raise ValueError(
-            '`BatchGetDocumentsResponse.result` (a oneof) had a field other '
-            'than `found` or `missing` set, or was unset')
+            "`BatchGetDocumentsResponse.result` (a oneof) had a field other "
+            "than `found` or `missing` set, or was unset"
+        )
     return snapshot
 
 
@@ -566,3 +499,14 @@ def _get_doc_mask(field_paths):
         return None
     else:
         return types.DocumentMask(field_paths=field_paths)
+
+
+def _item_to_collection_ref(iterator, item):
+    """Convert collection ID to collection ref.
+
+    Args:
+        iterator (google.api_core.page_iterator.GRPCIterator):
+            iterator response
+        item (str): ID of the collection
+    """
+    return iterator.client.collection(item)

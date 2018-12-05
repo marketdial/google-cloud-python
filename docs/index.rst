@@ -22,6 +22,8 @@
   Redis <redis/index>
   Resource Manager <resource-manager/index>
   Runtime Configuration <runtimeconfig/index>
+  Scheduler <scheduler/index>
+  Security Center <securitycenter/index>
   Security Scanner <websecurityscanner/index>
   Spanner <spanner/index>
   Speech <speech/index>
@@ -31,7 +33,7 @@
   Translate <translate/index>
   Vision <vision/index>
   Video Intelligence <videointelligence/index>
-  Stackdriver Error Reporting <error-reporting/usage>
+  Stackdriver Error Reporting <error-reporting/index>
   Stackdriver Logging <logging/index>
   Stackdriver Monitoring <monitoring/index>
   Stackdriver Trace <trace/index>

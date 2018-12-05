@@ -28,17 +28,17 @@ class DatabaseAdminGrpcTransport(object):
     which can be used to take advantage of advanced
     features of gRPC.
     """
+
     # The scopes needed to make gRPC calls to all of the methods defined
     # in this service.
     _OAUTH_SCOPES = (
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/spanner.admin',
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/spanner.admin",
     )
 
-    def __init__(self,
-                 channel=None,
-                 credentials=None,
-                 address='spanner.googleapis.com:443'):
+    def __init__(
+        self, channel=None, credentials=None, address="spanner.googleapis.com:443"
+    ):
         """Instantiate the transport class.
 
         Args:
@@ -56,33 +56,32 @@ class DatabaseAdminGrpcTransport(object):
         # exception (channels come with credentials baked in already).
         if channel is not None and credentials is not None:
             raise ValueError(
-                'The `channel` and `credentials` arguments are mutually '
-                'exclusive.', )
+                "The `channel` and `credentials` arguments are mutually " "exclusive."
+            )
 
         # Create the channel.
         if channel is None:
-            channel = self.create_channel(
-                address=address,
-                credentials=credentials,
-            )
+            channel = self.create_channel(address=address, credentials=credentials)
+
+        self._channel = channel
 
         # gRPC uses objects called "stubs" that are bound to the
         # channel and provide a basic method for each RPC.
         self._stubs = {
-            'database_admin_stub':
-            spanner_database_admin_pb2_grpc.DatabaseAdminStub(channel),
+            "database_admin_stub": spanner_database_admin_pb2_grpc.DatabaseAdminStub(
+                channel
+            )
         }
 
         # Because this API includes a method that returns a
         # long-running operation (proto: google.longrunning.Operation),
         # instantiate an LRO client.
         self._operations_client = google.api_core.operations_v1.OperationsClient(
-            channel)
+            channel
+        )
 
     @classmethod
-    def create_channel(cls,
-                       address='spanner.googleapis.com:443',
-                       credentials=None):
+    def create_channel(cls, address="spanner.googleapis.com:443", credentials=None):
         """Create and return a gRPC channel object.
 
         Args:
@@ -97,10 +96,17 @@ class DatabaseAdminGrpcTransport(object):
             grpc.Channel: A gRPC channel object.
         """
         return google.api_core.grpc_helpers.create_channel(
-            address,
-            credentials=credentials,
-            scopes=cls._OAUTH_SCOPES,
+            address, credentials=credentials, scopes=cls._OAUTH_SCOPES
         )
+
+    @property
+    def channel(self):
+        """The gRPC channel used by the transport.
+
+        Returns:
+            grpc.Channel: A gRPC channel object.
+        """
+        return self._channel
 
     @property
     def list_databases(self):
@@ -113,27 +119,25 @@ class DatabaseAdminGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].ListDatabases
+        return self._stubs["database_admin_stub"].ListDatabases
 
     @property
     def create_database(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Creates a new Cloud Spanner database and starts to prepare it for serving.
-        The returned ``long-running operation`` will
-        have a name of the format ``<database_name>/operations/<operation_id>`` and
-        can be used to track preparation of the database. The
-        ``metadata`` field type is
-        ``CreateDatabaseMetadata``. The
-        ``response`` field type is
-        ``Database``, if successful.
+        Creates a new Cloud Spanner database and starts to prepare it for
+        serving. The returned ``long-running operation`` will have a name of the
+        format ``<database_name>/operations/<operation_id>`` and can be used to
+        track preparation of the database. The ``metadata`` field type is
+        ``CreateDatabaseMetadata``. The ``response`` field type is ``Database``,
+        if successful.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].CreateDatabase
+        return self._stubs["database_admin_stub"].CreateDatabase
 
     @property
     def get_database(self):
@@ -146,7 +150,7 @@ class DatabaseAdminGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].GetDatabase
+        return self._stubs["database_admin_stub"].GetDatabase
 
     @property
     def update_database_ddl(self):
@@ -154,18 +158,17 @@ class DatabaseAdminGrpcTransport(object):
 
         Updates the schema of a Cloud Spanner database by
         creating/altering/dropping tables, columns, indexes, etc. The returned
-        ``long-running operation`` will have a name of
-        the format ``<database_name>/operations/<operation_id>`` and can be used to
-        track execution of the schema change(s). The
-        ``metadata`` field type is
-        ``UpdateDatabaseDdlMetadata``.  The operation has no response.
+        ``long-running operation`` will have a name of the format
+        ``<database_name>/operations/<operation_id>`` and can be used to track
+        execution of the schema change(s). The ``metadata`` field type is
+        ``UpdateDatabaseDdlMetadata``. The operation has no response.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].UpdateDatabaseDdl
+        return self._stubs["database_admin_stub"].UpdateDatabaseDdl
 
     @property
     def drop_database(self):
@@ -178,22 +181,22 @@ class DatabaseAdminGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].DropDatabase
+        return self._stubs["database_admin_stub"].DropDatabase
 
     @property
     def get_database_ddl(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
         Returns the schema of a Cloud Spanner database as a list of formatted
-        DDL statements. This method does not show pending schema updates, those may
-        be queried using the ``Operations`` API.
+        DDL statements. This method does not show pending schema updates, those
+        may be queried using the ``Operations`` API.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].GetDatabaseDdl
+        return self._stubs["database_admin_stub"].GetDatabaseDdl
 
     @property
     def set_iam_policy(self):
@@ -210,7 +213,7 @@ class DatabaseAdminGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].SetIamPolicy
+        return self._stubs["database_admin_stub"].SetIamPolicy
 
     @property
     def get_iam_policy(self):
@@ -227,22 +230,23 @@ class DatabaseAdminGrpcTransport(object):
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].GetIamPolicy
+        return self._stubs["database_admin_stub"].GetIamPolicy
 
     @property
     def test_iam_permissions(self):
         """Return the gRPC stub for {$apiMethod.name}.
 
-        Returns permissions that the caller has on the specified database resource.
+        Returns permissions that the caller has on the specified database
+        resource.
 
-        Attempting this RPC on a non-existent Cloud Spanner database will result in
-        a NOT_FOUND error if the user has ``spanner.databases.list`` permission on
-        the containing Cloud Spanner instance. Otherwise returns an empty set of
-        permissions.
+        Attempting this RPC on a non-existent Cloud Spanner database will result
+        in a NOT\_FOUND error if the user has ``spanner.databases.list``
+        permission on the containing Cloud Spanner instance. Otherwise returns
+        an empty set of permissions.
 
         Returns:
             Callable: A callable which accepts the appropriate
                 deserialized request object and returns a
                 deserialized response object.
         """
-        return self._stubs['database_admin_stub'].TestIamPermissions
+        return self._stubs["database_admin_stub"].TestIamPermissions

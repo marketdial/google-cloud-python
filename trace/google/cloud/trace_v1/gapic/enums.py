@@ -31,6 +31,7 @@ class TraceSpan(object):
           RPC_CLIENT (int): Indicates that the span covers the client-side wrapper around an RPC or
           other remote request.
         """
+
         SPAN_KIND_UNSPECIFIED = 0
         RPC_SERVER = 1
         RPC_CLIENT = 2
@@ -48,9 +49,10 @@ class ListTracesRequest(object):
           ROOTSPAN (int): Root span view of the trace record that returns the root spans along
           with the minimal trace data.
           COMPLETE (int): Complete view of the trace record that contains the actual trace data.
-          This is equivalent to calling the REST ``get`` or RPC ``GetTrace`` method
-          using the ID of each listed trace.
+          This is equivalent to calling the REST ``get`` or RPC ``GetTrace``
+          method using the ID of each listed trace.
         """
+
         VIEW_TYPE_UNSPECIFIED = 0
         MINIMAL = 1
         ROOTSPAN = 2

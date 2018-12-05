@@ -27,23 +27,26 @@ import grpc
 
 from google.cloud.texttospeech_v1beta1.gapic import enums
 from google.cloud.texttospeech_v1beta1.gapic import text_to_speech_client_config
-from google.cloud.texttospeech_v1beta1.gapic.transports import text_to_speech_grpc_transport
+from google.cloud.texttospeech_v1beta1.gapic.transports import (
+    text_to_speech_grpc_transport,
+)
 from google.cloud.texttospeech_v1beta1.proto import cloud_tts_pb2
 from google.cloud.texttospeech_v1beta1.proto import cloud_tts_pb2_grpc
 
 _GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-texttospeech', ).version
+    "google-cloud-texttospeech"
+).version
 
 
 class TextToSpeechClient(object):
     """Service that implements Google Cloud Text-to-Speech API."""
 
-    SERVICE_ADDRESS = 'texttospeech.googleapis.com:443'
+    SERVICE_ADDRESS = "texttospeech.googleapis.com:443"
     """The default address of the service."""
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.cloud.texttospeech.v1beta1.TextToSpeech'
+    _INTERFACE_NAME = "google.cloud.texttospeech.v1beta1.TextToSpeech"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -59,19 +62,20 @@ class TextToSpeechClient(object):
         Returns:
             TextToSpeechClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=text_to_speech_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -103,13 +107,21 @@ class TextToSpeechClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = text_to_speech_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -118,26 +130,26 @@ class TextToSpeechClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=text_to_speech_grpc_transport.
-                    TextToSpeechGrpcTransport,
+                    default_class=text_to_speech_grpc_transport.TextToSpeechGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
         else:
             self.transport = text_to_speech_grpc_transport.TextToSpeechGrpcTransport(
-                address=self.SERVICE_ADDRESS,
-                channel=channel,
-                credentials=credentials,
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
             )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -145,7 +157,8 @@ class TextToSpeechClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -154,14 +167,15 @@ class TextToSpeechClient(object):
         self._inner_api_calls = {}
 
     # Service calls
-    def list_voices(self,
-                    language_code=None,
-                    retry=google.api_core.gapic_v1.method.DEFAULT,
-                    timeout=google.api_core.gapic_v1.method.DEFAULT,
-                    metadata=None):
+    def list_voices(
+        self,
+        language_code=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Returns a list of ``Voice``
-        supported for synthesis.
+        Returns a list of ``Voice`` supported for synthesis.
 
         Example:
             >>> from google.cloud import texttospeech_v1beta1
@@ -172,13 +186,13 @@ class TextToSpeechClient(object):
 
         Args:
             language_code (str): Optional (but recommended)
-                `BCP-47 <https://www.rfc-editor.org/rfc/bcp/bcp47.txt>`_ language tag. If
-                specified, the ListVoices call will only return voices that can be used to
-                synthesize this language_code. E.g. when specifying \"en-NZ\", you will get
-                supported "en-\*" voices; when specifying \"no\", you will get supported
-                "no-\*" (Norwegian) and "nb-\*" (Norwegian Bokmal) voices; specifying \"zh\"
-                will also get supported "cmn-\*" voices; specifying \"zh-hk\" will also get
-                supported "yue-\*" voices.
+                `BCP-47 <https://www.rfc-editor.org/rfc/bcp/bcp47.txt>`__ language tag.
+                If specified, the ListVoices call will only return voices that can be
+                used to synthesize this language\_code. E.g. when specifying "en-NZ",
+                you will get supported "en-*" voices; when specifying "no", you will get
+                supported "no-*" (Norwegian) and "nb-*" (Norwegian Bokmal) voices;
+                specifying "zh" will also get supported "cmn-*" voices; specifying
+                "zh-hk" will also get supported "yue-\*" voices.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -199,27 +213,30 @@ class TextToSpeechClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_voices' not in self._inner_api_calls:
+        if "list_voices" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_voices'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_voices,
-                    default_retry=self._method_configs['ListVoices'].retry,
-                    default_timeout=self._method_configs['ListVoices'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_voices"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_voices,
+                default_retry=self._method_configs["ListVoices"].retry,
+                default_timeout=self._method_configs["ListVoices"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = cloud_tts_pb2.ListVoicesRequest(
-            language_code=language_code, )
-        return self._inner_api_calls['list_voices'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = cloud_tts_pb2.ListVoicesRequest(language_code=language_code)
+        return self._inner_api_calls["list_voices"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def synthesize_speech(self,
-                          input_,
-                          voice,
-                          audio_config,
-                          retry=google.api_core.gapic_v1.method.DEFAULT,
-                          timeout=google.api_core.gapic_v1.method.DEFAULT,
-                          metadata=None):
+    def synthesize_speech(
+        self,
+        input_,
+        voice,
+        audio_config,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Synthesizes speech synchronously: receive results after all text input
         has been processed.
@@ -229,25 +246,28 @@ class TextToSpeechClient(object):
             >>>
             >>> client = texttospeech_v1beta1.TextToSpeechClient()
             >>>
-            >>> # TODO: Initialize ``input_``:
+            >>> # TODO: Initialize `input_`:
             >>> input_ = {}
             >>>
-            >>> # TODO: Initialize ``voice``:
+            >>> # TODO: Initialize `voice`:
             >>> voice = {}
             >>>
-            >>> # TODO: Initialize ``audio_config``:
+            >>> # TODO: Initialize `audio_config`:
             >>> audio_config = {}
             >>>
             >>> response = client.synthesize_speech(input_, voice, audio_config)
 
         Args:
             input_ (Union[dict, ~google.cloud.texttospeech_v1beta1.types.SynthesisInput]): Required. The Synthesizer requires either plain text or SSML as input.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.texttospeech_v1beta1.types.SynthesisInput`
             voice (Union[dict, ~google.cloud.texttospeech_v1beta1.types.VoiceSelectionParams]): Required. The desired voice of the synthesized audio.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.texttospeech_v1beta1.types.VoiceSelectionParams`
             audio_config (Union[dict, ~google.cloud.texttospeech_v1beta1.types.AudioConfig]): Required. The configuration of the synthesized audio.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.texttospeech_v1beta1.types.AudioConfig`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -270,21 +290,19 @@ class TextToSpeechClient(object):
             ValueError: If the parameters are invalid.
         """
         # Wrap the transport method to add retry and timeout logic.
-        if 'synthesize_speech' not in self._inner_api_calls:
+        if "synthesize_speech" not in self._inner_api_calls:
             self._inner_api_calls[
-                'synthesize_speech'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.synthesize_speech,
-                    default_retry=self._method_configs['SynthesizeSpeech'].
-                    retry,
-                    default_timeout=self._method_configs['SynthesizeSpeech'].
-                    timeout,
-                    client_info=self._client_info,
-                )
+                "synthesize_speech"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.synthesize_speech,
+                default_retry=self._method_configs["SynthesizeSpeech"].retry,
+                default_timeout=self._method_configs["SynthesizeSpeech"].timeout,
+                client_info=self._client_info,
+            )
 
         request = cloud_tts_pb2.SynthesizeSpeechRequest(
-            input=input_,
-            voice=voice,
-            audio_config=audio_config,
+            input=input_, voice=voice, audio_config=audio_config
         )
-        return self._inner_api_calls['synthesize_speech'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["synthesize_speech"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,31 +43,31 @@ from google.protobuf import empty_pb2
 from google.protobuf import field_mask_pb2
 
 _GAPIC_LIBRARY_VERSION = pkg_resources.get_distribution(
-    'google-cloud-monitoring', ).version
+    "google-cloud-monitoring"
+).version
 
 
 class GroupServiceClient(object):
     """
     The Group API lets you inspect and manage your
-    `groups <https://cloud.google.comgoogle.monitoring.v3.Group>`_.
+    `groups <#google.monitoring.v3.Group>`__.
 
-    A group is a named filter that is used to identify
-    a collection of monitored resources. Groups are typically used to
-    mirror the physical and/or logical topology of the environment.
-    Because group membership is computed dynamically, monitored
-    resources that are started in the future are automatically placed
-    in matching groups. By using a group to name monitored resources in,
-    for example, an alert policy, the target of that alert policy is
-    updated automatically as monitored resources are added and removed
-    from the infrastructure.
+    A group is a named filter that is used to identify a collection of
+    monitored resources. Groups are typically used to mirror the physical
+    and/or logical topology of the environment. Because group membership is
+    computed dynamically, monitored resources that are started in the future
+    are automatically placed in matching groups. By using a group to name
+    monitored resources in, for example, an alert policy, the target of that
+    alert policy is updated automatically as monitored resources are added
+    and removed from the infrastructure.
     """
 
-    SERVICE_ADDRESS = 'monitoring.googleapis.com:443'
+    SERVICE_ADDRESS = "monitoring.googleapis.com:443"
     """The default address of the service."""
 
     # The name of the interface for this client. This is the key used to
     # find the method configuration in the client_config dictionary.
-    _INTERFACE_NAME = 'google.monitoring.v3.GroupService'
+    _INTERFACE_NAME = "google.monitoring.v3.GroupService"
 
     @classmethod
     def from_service_account_file(cls, filename, *args, **kwargs):
@@ -81,9 +83,8 @@ class GroupServiceClient(object):
         Returns:
             GroupServiceClient: The constructed client.
         """
-        credentials = service_account.Credentials.from_service_account_file(
-            filename)
-        kwargs['credentials'] = credentials
+        credentials = service_account.Credentials.from_service_account_file(filename)
+        kwargs["credentials"] = credentials
         return cls(*args, **kwargs)
 
     from_service_account_json = from_service_account_file
@@ -92,25 +93,24 @@ class GroupServiceClient(object):
     def project_path(cls, project):
         """Return a fully-qualified project string."""
         return google.api_core.path_template.expand(
-            'projects/{project}',
-            project=project,
+            "projects/{project}", project=project
         )
 
     @classmethod
     def group_path(cls, project, group):
         """Return a fully-qualified group string."""
         return google.api_core.path_template.expand(
-            'projects/{project}/groups/{group}',
-            project=project,
-            group=group,
+            "projects/{project}/groups/{group}", project=project, group=group
         )
 
-    def __init__(self,
-                 transport=None,
-                 channel=None,
-                 credentials=None,
-                 client_config=group_service_client_config.config,
-                 client_info=None):
+    def __init__(
+        self,
+        transport=None,
+        channel=None,
+        credentials=None,
+        client_config=None,
+        client_info=None,
+    ):
         """Constructor.
 
         Args:
@@ -142,13 +142,21 @@ class GroupServiceClient(object):
                 your own client library.
         """
         # Raise deprecation warnings for things we want to go away.
-        if client_config:
-            warnings.warn('The `client_config` argument is deprecated.',
-                          PendingDeprecationWarning)
+        if client_config is not None:
+            warnings.warn(
+                "The `client_config` argument is deprecated.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
+        else:
+            client_config = group_service_client_config.config
+
         if channel:
             warnings.warn(
-                'The `channel` argument is deprecated; use '
-                '`transport` instead.', PendingDeprecationWarning)
+                "The `channel` argument is deprecated; use " "`transport` instead.",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
 
         # Instantiate the transport.
         # The transport is responsible for handling serialization and
@@ -157,25 +165,26 @@ class GroupServiceClient(object):
             if callable(transport):
                 self.transport = transport(
                     credentials=credentials,
-                    default_class=group_service_grpc_transport.
-                    GroupServiceGrpcTransport,
+                    default_class=group_service_grpc_transport.GroupServiceGrpcTransport,
                 )
             else:
                 if credentials:
                     raise ValueError(
-                        'Received both a transport instance and '
-                        'credentials; these are mutually exclusive.')
+                        "Received both a transport instance and "
+                        "credentials; these are mutually exclusive."
+                    )
                 self.transport = transport
-        self.transport = group_service_grpc_transport.GroupServiceGrpcTransport(
-            address=self.SERVICE_ADDRESS,
-            channel=channel,
-            credentials=credentials,
-        )
+        else:
+            self.transport = group_service_grpc_transport.GroupServiceGrpcTransport(
+                address=self.SERVICE_ADDRESS, channel=channel, credentials=credentials
+            )
 
         if client_info is None:
-            client_info = (
-                google.api_core.gapic_v1.client_info.DEFAULT_CLIENT_INFO)
-        client_info.gapic_version = _GAPIC_LIBRARY_VERSION
+            client_info = google.api_core.gapic_v1.client_info.ClientInfo(
+                gapic_version=_GAPIC_LIBRARY_VERSION
+            )
+        else:
+            client_info.gapic_version = _GAPIC_LIBRARY_VERSION
         self._client_info = client_info
 
         # Parse out the default settings for retry and timeout for each RPC
@@ -183,7 +192,8 @@ class GroupServiceClient(object):
         # (Ordinarily, these are the defaults specified in the `*_config.py`
         # file next to this one.)
         self._method_configs = google.api_core.gapic_v1.config.parse_method_configs(
-            client_config['interfaces'][self._INTERFACE_NAME], )
+            client_config["interfaces"][self._INTERFACE_NAME]
+        )
 
         # Save a dictionary of cached API call functions.
         # These are the actual callables which invoke the proper
@@ -192,15 +202,17 @@ class GroupServiceClient(object):
         self._inner_api_calls = {}
 
     # Service calls
-    def list_groups(self,
-                    name,
-                    children_of_group=None,
-                    ancestors_of_group=None,
-                    descendants_of_group=None,
-                    page_size=None,
-                    retry=google.api_core.gapic_v1.method.DEFAULT,
-                    timeout=google.api_core.gapic_v1.method.DEFAULT,
-                    metadata=None):
+    def list_groups(
+        self,
+        name,
+        children_of_group=None,
+        ancestors_of_group=None,
+        descendants_of_group=None,
+        page_size=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists the existing groups.
 
@@ -220,24 +232,24 @@ class GroupServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_groups(name, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_groups(name).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
             name (str): The project whose groups are to be listed. The format is
-                ``\"projects/{project_id_or_number}\"``.
-            children_of_group (str): A group name: ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
-                Returns groups whose ``parentName`` field contains the group
-                name.  If no groups have this parent, the results are empty.
-            ancestors_of_group (str): A group name: ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
-                Returns groups that are ancestors of the specified group.
-                The groups are returned in order, starting with the immediate parent and
-                ending with the most distant ancestor.  If the specified group has no
-                immediate parent, the results are empty.
-            descendants_of_group (str): A group name: ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
-                Returns the descendants of the specified group.  This is a superset of
+                ``"projects/{project_id_or_number}"``.
+            children_of_group (str): A group name: ``"projects/{project_id_or_number}/groups/{group_id}"``.
+                Returns groups whose ``parentName`` field contains the group name. If no
+                groups have this parent, the results are empty.
+            ancestors_of_group (str): A group name: ``"projects/{project_id_or_number}/groups/{group_id}"``.
+                Returns groups that are ancestors of the specified group. The groups are
+                returned in order, starting with the immediate parent and ending with
+                the most distant ancestor. If the specified group has no immediate
+                parent, the results are empty.
+            descendants_of_group (str): A group name: ``"projects/{project_id_or_number}/groups/{group_id}"``.
+                Returns the descendants of the specified group. This is a superset of
                 the results returned by the ``childrenOfGroup`` filter, and includes
                 children-of-children, and so forth.
             page_size (int): The maximum number of resources contained in the
@@ -271,14 +283,15 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_groups' not in self._inner_api_calls:
+        if "list_groups" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_groups'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_groups,
-                    default_retry=self._method_configs['ListGroups'].retry,
-                    default_timeout=self._method_configs['ListGroups'].timeout,
-                    client_info=self._client_info,
-                )
+                "list_groups"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_groups,
+                default_retry=self._method_configs["ListGroups"].retry,
+                default_timeout=self._method_configs["ListGroups"].timeout,
+                client_info=self._client_info,
+            )
 
         # Sanity check: We have some fields which are mutually exclusive;
         # raise ValueError if more than one is sent.
@@ -298,22 +311,25 @@ class GroupServiceClient(object):
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_groups'],
+                self._inner_api_calls["list_groups"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='group',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="group",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator
 
-    def get_group(self,
-                  name,
-                  retry=google.api_core.gapic_v1.method.DEFAULT,
-                  timeout=google.api_core.gapic_v1.method.DEFAULT,
-                  metadata=None):
+    def get_group(
+        self,
+        name,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Gets a single group.
 
@@ -328,7 +344,7 @@ class GroupServiceClient(object):
 
         Args:
             name (str): The group to retrieve. The format is
-                ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
+                ``"projects/{project_id_or_number}/groups/{group_id}"``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -352,26 +368,30 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'get_group' not in self._inner_api_calls:
+        if "get_group" not in self._inner_api_calls:
             self._inner_api_calls[
-                'get_group'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.get_group,
-                    default_retry=self._method_configs['GetGroup'].retry,
-                    default_timeout=self._method_configs['GetGroup'].timeout,
-                    client_info=self._client_info,
-                )
+                "get_group"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.get_group,
+                default_retry=self._method_configs["GetGroup"].retry,
+                default_timeout=self._method_configs["GetGroup"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = group_service_pb2.GetGroupRequest(name=name, )
-        return self._inner_api_calls['get_group'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = group_service_pb2.GetGroupRequest(name=name)
+        return self._inner_api_calls["get_group"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def create_group(self,
-                     name,
-                     group,
-                     validate_only=None,
-                     retry=google.api_core.gapic_v1.method.DEFAULT,
-                     timeout=google.api_core.gapic_v1.method.DEFAULT,
-                     metadata=None):
+    def create_group(
+        self,
+        name,
+        group,
+        validate_only=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Creates a new group.
 
@@ -382,16 +402,17 @@ class GroupServiceClient(object):
             >>>
             >>> name = client.project_path('[PROJECT]')
             >>>
-            >>> # TODO: Initialize ``group``:
+            >>> # TODO: Initialize `group`:
             >>> group = {}
             >>>
             >>> response = client.create_group(name, group)
 
         Args:
             name (str): The project in which to create the group. The format is
-                ``\"projects/{project_id_or_number}\"``.
+                ``"projects/{project_id_or_number}"``.
             group (Union[dict, ~google.cloud.monitoring_v3.types.Group]): A group definition. It is an error to define the ``name`` field because
                 the system assigns the name.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.Group`
             validate_only (bool): If true, validate this request but do not create the group.
@@ -418,47 +439,50 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'create_group' not in self._inner_api_calls:
+        if "create_group" not in self._inner_api_calls:
             self._inner_api_calls[
-                'create_group'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.create_group,
-                    default_retry=self._method_configs['CreateGroup'].retry,
-                    default_timeout=self._method_configs['CreateGroup']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "create_group"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.create_group,
+                default_retry=self._method_configs["CreateGroup"].retry,
+                default_timeout=self._method_configs["CreateGroup"].timeout,
+                client_info=self._client_info,
+            )
 
         request = group_service_pb2.CreateGroupRequest(
-            name=name,
-            group=group,
-            validate_only=validate_only,
+            name=name, group=group, validate_only=validate_only
         )
-        return self._inner_api_calls['create_group'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["create_group"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def update_group(self,
-                     group,
-                     validate_only=None,
-                     retry=google.api_core.gapic_v1.method.DEFAULT,
-                     timeout=google.api_core.gapic_v1.method.DEFAULT,
-                     metadata=None):
+    def update_group(
+        self,
+        group,
+        validate_only=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
-        Updates an existing group.
-        You can change any group attributes except ``name``.
+        Updates an existing group. You can change any group attributes except
+        ``name``.
 
         Example:
             >>> from google.cloud import monitoring_v3
             >>>
             >>> client = monitoring_v3.GroupServiceClient()
             >>>
-            >>> # TODO: Initialize ``group``:
+            >>> # TODO: Initialize `group`:
             >>> group = {}
             >>>
             >>> response = client.update_group(group)
 
         Args:
-            group (Union[dict, ~google.cloud.monitoring_v3.types.Group]): The new definition of the group.  All fields of the existing group,
-                excepting ``name``, are replaced with the corresponding fields of this group.
+            group (Union[dict, ~google.cloud.monitoring_v3.types.Group]): The new definition of the group. All fields of the existing group,
+                excepting ``name``, are replaced with the corresponding fields of this
+                group.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.Group`
             validate_only (bool): If true, validate this request but do not update the existing group.
@@ -485,28 +509,30 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'update_group' not in self._inner_api_calls:
+        if "update_group" not in self._inner_api_calls:
             self._inner_api_calls[
-                'update_group'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.update_group,
-                    default_retry=self._method_configs['UpdateGroup'].retry,
-                    default_timeout=self._method_configs['UpdateGroup']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "update_group"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.update_group,
+                default_retry=self._method_configs["UpdateGroup"].retry,
+                default_timeout=self._method_configs["UpdateGroup"].timeout,
+                client_info=self._client_info,
+            )
 
         request = group_service_pb2.UpdateGroupRequest(
-            group=group,
-            validate_only=validate_only,
+            group=group, validate_only=validate_only
         )
-        return self._inner_api_calls['update_group'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        return self._inner_api_calls["update_group"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def delete_group(self,
-                     name,
-                     retry=google.api_core.gapic_v1.method.DEFAULT,
-                     timeout=google.api_core.gapic_v1.method.DEFAULT,
-                     metadata=None):
+    def delete_group(
+        self,
+        name,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Deletes an existing group.
 
@@ -521,7 +547,7 @@ class GroupServiceClient(object):
 
         Args:
             name (str): The group to delete. The format is
-                ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
+                ``"projects/{project_id_or_number}/groups/{group_id}"``.
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
                 to retry requests. If ``None`` is specified, requests will not
                 be retried.
@@ -542,28 +568,31 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'delete_group' not in self._inner_api_calls:
+        if "delete_group" not in self._inner_api_calls:
             self._inner_api_calls[
-                'delete_group'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.delete_group,
-                    default_retry=self._method_configs['DeleteGroup'].retry,
-                    default_timeout=self._method_configs['DeleteGroup']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "delete_group"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.delete_group,
+                default_retry=self._method_configs["DeleteGroup"].retry,
+                default_timeout=self._method_configs["DeleteGroup"].timeout,
+                client_info=self._client_info,
+            )
 
-        request = group_service_pb2.DeleteGroupRequest(name=name, )
-        self._inner_api_calls['delete_group'](
-            request, retry=retry, timeout=timeout, metadata=metadata)
+        request = group_service_pb2.DeleteGroupRequest(name=name)
+        self._inner_api_calls["delete_group"](
+            request, retry=retry, timeout=timeout, metadata=metadata
+        )
 
-    def list_group_members(self,
-                           name,
-                           page_size=None,
-                           filter_=None,
-                           interval=None,
-                           retry=google.api_core.gapic_v1.method.DEFAULT,
-                           timeout=google.api_core.gapic_v1.method.DEFAULT,
-                           metadata=None):
+    def list_group_members(
+        self,
+        name,
+        page_size=None,
+        filter_=None,
+        interval=None,
+        retry=google.api_core.gapic_v1.method.DEFAULT,
+        timeout=google.api_core.gapic_v1.method.DEFAULT,
+        metadata=None,
+    ):
         """
         Lists the monitored resources that are members of a group.
 
@@ -583,32 +612,34 @@ class GroupServiceClient(object):
             >>> # Alternatively:
             >>>
             >>> # Iterate over results one page at a time
-            >>> for page in client.list_group_members(name, options=CallOptions(page_token=INITIAL_PAGE)):
+            >>> for page in client.list_group_members(name).pages:
             ...     for element in page:
             ...         # process element
             ...         pass
 
         Args:
             name (str): The group whose members are listed. The format is
-                ``\"projects/{project_id_or_number}/groups/{group_id}\"``.
+                ``"projects/{project_id_or_number}/groups/{group_id}"``.
             page_size (int): The maximum number of resources contained in the
                 underlying API response. If page streaming is performed per-
                 resource, this parameter does not affect the return value. If page
                 streaming is performed per-page, this determines the maximum number
                 of resources in a page.
-            filter_ (str): An optional `list filter <https://cloud.google.com/monitoring/api/learn_more#filtering>`_ describing
-                the members to be returned.  The filter may reference the type, labels, and
-                metadata of monitored resources that comprise the group.
-                For example, to return only resources representing Compute Engine VM
-                instances, use this filter:
+            filter_ (str): An optional `list
+                filter <https://cloud.google.com/monitoring/api/learn_more#filtering>`__
+                describing the members to be returned. The filter may reference the
+                type, labels, and metadata of monitored resources that comprise the
+                group. For example, to return only resources representing Compute Engine
+                VM instances, use this filter:
 
                 ::
 
-                    resource.type = \"gce_instance\"
+                     resource.type = "gce_instance"
             interval (Union[dict, ~google.cloud.monitoring_v3.types.TimeInterval]): An optional time interval for which results should be returned. Only
                 members that were part of the group during the specified interval are
                 included in the response.  If no interval is provided then the group
                 membership over the last minute is returned.
+
                 If a dict is provided, it must be of the same form as the protobuf
                 message :class:`~google.cloud.monitoring_v3.types.TimeInterval`
             retry (Optional[google.api_core.retry.Retry]):  A retry object used
@@ -637,33 +668,30 @@ class GroupServiceClient(object):
             metadata = []
         metadata = list(metadata)
         # Wrap the transport method to add retry and timeout logic.
-        if 'list_group_members' not in self._inner_api_calls:
+        if "list_group_members" not in self._inner_api_calls:
             self._inner_api_calls[
-                'list_group_members'] = google.api_core.gapic_v1.method.wrap_method(
-                    self.transport.list_group_members,
-                    default_retry=self._method_configs[
-                        'ListGroupMembers'].retry,
-                    default_timeout=self._method_configs['ListGroupMembers']
-                    .timeout,
-                    client_info=self._client_info,
-                )
+                "list_group_members"
+            ] = google.api_core.gapic_v1.method.wrap_method(
+                self.transport.list_group_members,
+                default_retry=self._method_configs["ListGroupMembers"].retry,
+                default_timeout=self._method_configs["ListGroupMembers"].timeout,
+                client_info=self._client_info,
+            )
 
         request = group_service_pb2.ListGroupMembersRequest(
-            name=name,
-            page_size=page_size,
-            filter=filter_,
-            interval=interval,
+            name=name, page_size=page_size, filter=filter_, interval=interval
         )
         iterator = google.api_core.page_iterator.GRPCIterator(
             client=None,
             method=functools.partial(
-                self._inner_api_calls['list_group_members'],
+                self._inner_api_calls["list_group_members"],
                 retry=retry,
                 timeout=timeout,
-                metadata=metadata),
+                metadata=metadata,
+            ),
             request=request,
-            items_field='members',
-            request_token_field='page_token',
-            response_token_field='next_page_token',
+            items_field="members",
+            request_token_field="page_token",
+            response_token_field="next_page_token",
         )
         return iterator

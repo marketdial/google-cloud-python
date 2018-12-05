@@ -18,86 +18,67 @@ import synthtool as s
 from synthtool import gcp
 
 gapic = gcp.GAPICGenerator()
+common = gcp.CommonTemplates()
+versions = ["v1", "v1p1beta1", "v1p2beta1", "v1p3beta1"]
 
-versions = ['v1', 'v1p1beta1', 'v1p2beta1', 'v1p3beta1']
 
-
+# ----------------------------------------------------------------------------
+# Generate vision GAPIC layer
+# ----------------------------------------------------------------------------
 for version in versions:
-    library = gapic.py_library('vision', version)
+    library = gapic.py_library("vision", version)
 
-    s.move(library / f'google/cloud/vision_{version}/gapic')
-    s.move(library / f'google/cloud/vision_{version}/__init__.py')
-    s.move(library / f'google/cloud/vision_{version}/types.py')
-    s.move(library / f'google/cloud/vision_{version}/proto')
-    s.move(library / f'tests/unit/gapic/{version}')
+    s.move(library / f"google/cloud/vision_{version}/gapic")
+    s.move(library / f"google/cloud/vision_{version}/__init__.py")
+    s.move(library / f"google/cloud/vision_{version}/types.py")
+    s.move(library / f"google/cloud/vision_{version}/proto")
+    s.move(library / f"tests/unit/gapic/{version}")
     # don't publish docs for these versions
-    if version not in ['v1p1beta1']:
-        s.move(library / f'docs/gapic/{version}')
+    if version not in ["v1p1beta1"]:
+        s.move(library / f"docs/gapic/{version}")
 
     # Add vision helpers to each version
     s.replace(
-        f'google/cloud/vision_{version}/__init__.py',
-        f'from __future__ import absolute_import', f'\g<0>\n\n'
-        f'from google.cloud.vision_helpers.decorators import '
-        f'add_single_feature_methods\n'
-        f'from google.cloud.vision_helpers import VisionHelpers')
-
-    s.replace(
-        f'google/cloud/vision_{version}/__init__.py',
-        f'image_annotator_client',
-        f'iac')
-
-    s.replace(
-        f'google/cloud/vision_{version}/__init__.py',
-        f'from google.cloud.vision_{version}.gapic import iac',
-        f'from google.cloud.vision_{version}.gapic import '
-        f'image_annotator_client as iac')
-
-    s.replace(
-        f'google/cloud/vision_{version}/__init__.py',
-        f'class ImageAnnotatorClient\(iac.ImageAnnotatorClient\):',
-        f'@add_single_feature_methods\n'
-        f'class ImageAnnotatorClient(VisionHelpers, iac.ImageAnnotatorClient):'
+        f"google/cloud/vision_{version}/__init__.py",
+        f"from __future__ import absolute_import",
+        f"\g<0>\n\n"
+        f"from google.cloud.vision_helpers.decorators import "
+        f"add_single_feature_methods\n"
+        f"from google.cloud.vision_helpers import VisionHelpers",
     )
 
-    # Fix import of operations
     s.replace(
-        [f'google/cloud/vision_{version}/**/*.py',
-         f'tests/system/gapic/{version}/**/*.py'],
-        f'import google.api_core.operations_v1',
-        f'from google.api_core import operations_v1')
-
-    # fix issues with imports of vision from wrong directory
-    s.replace(
-        [f'google/cloud/vision_{version}/**/*.py',
-         f'tests/system/gapic/{version}/**/*.py'],
-        f'from google.cloud.gapic.vision import enums',
-        f'from google.cloud.vision_{version}.gapic import enums')
+        f"google/cloud/vision_{version}/__init__.py", f"image_annotator_client", f"iac"
+    )
 
     s.replace(
-        f'tests/system/gapic/{version}/**/*.py',
-        f'from google.cloud.gapic import vision',
-        f'import google.cloud.vision_{version} as vision')
+        f"google/cloud/vision_{version}/__init__.py",
+        f"from google.cloud.vision_{version}.gapic import iac",
+        f"from google.cloud.vision_{version}.gapic import "
+        f"image_annotator_client as iac",
+    )
 
     s.replace(
-        f'google/cloud/vision_{version}/**/*.py',
-        f'from google.cloud.gapic.vision.{version}',
-        f'from google.cloud.vision_{version}')
+        f"google/cloud/vision_{version}/__init__.py",
+        f"class ImageAnnotatorClient\(iac.ImageAnnotatorClient\):",
+        f"@add_single_feature_methods\n"
+        f"class ImageAnnotatorClient(VisionHelpers, iac.ImageAnnotatorClient):",
+    )
 
-    # under indented second line of docstring
-    s.replace(
-        "google/cloud/vision_v1p3beta1/gapic/product_search_client.py",
-        "    (- The API has a collection of ``ProductSet.*\n)"
-        "\s+(``project.*\n)\s+(products.*)",
-        "    \g<1>      \g<2>      \g<3>")
+# Fix import of operations
+targets = ["google/cloud/vision_*/**/*.py", "tests/system/gapic/*/**/*.py"]
+s.replace(
+    targets,
+    "import google.api_core.operations_v1",
+    "from google.api_core import operations_v1",
+)
 
-    s.replace(
-        'google/cloud/vision_v1p3beta1/gapic/product_search_client.py',
-        '(        \* .*\n        )([^\s*])',
-        '\g<1>  \g<2>')
+# ----------------------------------------------------------------------------
+# Add templated files
+# ----------------------------------------------------------------------------
+templated_files = common.py_library(
+    unit_cov_level=97, cov_level=100, system_test_dependencies=["../storage"]
+)
+s.move(templated_files)
 
-    # Blank line needed after bullet list
-    s.replace(
-        'google/cloud/vision_v1p3beta1/gapic/product_search_client.py',
-        "(- Each ``Product`` has a collection .*\n.*\n)(\s+\"\"\")",
-        '\g<1>\n\g<2>')
+s.shell.run(["nox", "-s", "blacken"], hide_output=False)

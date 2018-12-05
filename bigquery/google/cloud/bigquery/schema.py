@@ -18,26 +18,22 @@
 class SchemaField(object):
     """Describe a single field within a table schema.
 
-    :type name: str
-    :param name: the name of the field.
+    Args:
+        name (str): the name of the field.
 
-    :type field_type: str
-    :param field_type: the type of the field (one of 'STRING', 'INTEGER',
-                       'FLOAT', 'NUMERIC', 'BOOLEAN', 'TIMESTAMP' or
-                       'RECORD').
+        field_type (str): the type of the field. See
+            https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#schema.fields.type
 
-    :type mode: str
-    :param mode: the mode of the field (one of 'NULLABLE', 'REQUIRED',
-                 or 'REPEATED').
+        mode (str): the mode of the field.  See
+            https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#schema.fields.mode
 
-    :type description: str
-    :param description: optional description for the field.
+        description (Optional[str]):description for the field.
 
-    :type fields: tuple of :class:`~google.cloud.bigquery.schema.SchemaField`
-    :param fields: subfields (requires ``field_type`` of 'RECORD').
+        fields (Tuple[:class:`~google.cloud.bigquery.schema.SchemaField`]):
+            subfields (requires ``field_type`` of 'RECORD').
     """
-    def __init__(self, name, field_type, mode='NULLABLE',
-                 description=None, fields=()):
+
+    def __init__(self, name, field_type, mode="NULLABLE", description=None, fields=()):
         self._name = name
         self._field_type = field_type
         self._mode = mode
@@ -58,15 +54,15 @@ class SchemaField(object):
                 The ``SchemaField`` object.
         """
         # Handle optional properties with default values
-        mode = api_repr.get('mode', 'NULLABLE')
-        description = api_repr.get('description')
-        fields = api_repr.get('fields', ())
+        mode = api_repr.get("mode", "NULLABLE")
+        description = api_repr.get("description")
+        fields = api_repr.get("fields", ())
         return cls(
-            field_type=api_repr['type'].upper(),
+            field_type=api_repr["type"].upper(),
             fields=[cls.from_api_repr(f) for f in fields],
             mode=mode.upper(),
             description=description,
-            name=api_repr['name'],
+            name=api_repr["name"],
         )
 
     @property
@@ -78,8 +74,8 @@ class SchemaField(object):
     def field_type(self):
         """str: The type of the field.
 
-        Will be one of 'STRING', 'INTEGER', 'FLOAT', 'NUMERIC',
-        'BOOLEAN', 'TIMESTAMP' or 'RECORD'.
+        See:
+        https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#schema.fields.type
         """
         return self._field_type
 
@@ -87,26 +83,26 @@ class SchemaField(object):
     def mode(self):
         """str: The mode of the field.
 
-        Will be one of 'NULLABLE', 'REQUIRED', or 'REPEATED'.
+        See:
+        https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#schema.fields.mode
         """
         return self._mode
 
     @property
     def is_nullable(self):
-        """Check whether 'mode' is 'nullable'."""
-        return self._mode == 'NULLABLE'
+        """bool: whether 'mode' is 'nullable'."""
+        return self._mode == "NULLABLE"
 
     @property
     def description(self):
-        """Optional[str]: Description for the field."""
+        """Optional[str]: description for the field."""
         return self._description
 
     @property
     def fields(self):
         """tuple: Subfields contained in this field.
 
-        If ``field_type`` is not 'RECORD', this property must be
-        empty / unset.
+        Must be empty unset if ``field_type`` is not 'RECORD'.
         """
         return self._fields
 
@@ -119,16 +115,16 @@ class SchemaField(object):
         """
         # Put together the basic representation. See http://bit.ly/2hOAT5u.
         answer = {
-            'mode': self.mode.upper(),
-            'name': self.name,
-            'type': self.field_type.upper(),
-            'description': self.description,
+            "mode": self.mode.upper(),
+            "name": self.name,
+            "type": self.field_type.upper(),
+            "description": self.description,
         }
 
         # If this is a RECORD type, then sub-fields are also included,
         # add this to the serialized representation.
-        if self.field_type.upper() == 'RECORD':
-            answer['fields'] = [f.to_api_repr() for f in self.fields]
+        if self.field_type.upper() == "RECORD":
+            answer["fields"] = [f.to_api_repr() for f in self.fields]
 
         # Done; return the serialized dictionary.
         return answer
@@ -162,44 +158,41 @@ class SchemaField(object):
         return hash(self._key())
 
     def __repr__(self):
-        return 'SchemaField{}'.format(self._key())
+        return "SchemaField{}".format(self._key())
 
 
 def _parse_schema_resource(info):
     """Parse a resource fragment into a schema field.
 
-    :type info: mapping
-    :param info: should contain a "fields" key to be parsed
+    Args:
+        info: (Mapping[str->dict]): should contain a "fields" key to be parsed
 
-    :rtype:
-        list of :class:`google.cloud.bigquery.schema.SchemaField`, or
-        ``NoneType``
-    :returns: a list of parsed fields, or ``None`` if no "fields" key is
-                present in ``info``.
+    Returns:
+        (Union[Sequence[:class:`google.cloud.bigquery.schema.SchemaField`],None])
+            a list of parsed fields, or ``None`` if no "fields" key found.
     """
-    if 'fields' not in info:
+    if "fields" not in info:
         return ()
 
     schema = []
-    for r_field in info['fields']:
-        name = r_field['name']
-        field_type = r_field['type']
-        mode = r_field.get('mode', 'NULLABLE')
-        description = r_field.get('description')
+    for r_field in info["fields"]:
+        name = r_field["name"]
+        field_type = r_field["type"]
+        mode = r_field.get("mode", "NULLABLE")
+        description = r_field.get("description")
         sub_fields = _parse_schema_resource(r_field)
-        schema.append(
-            SchemaField(name, field_type, mode, description, sub_fields))
+        schema.append(SchemaField(name, field_type, mode, description, sub_fields))
     return schema
 
 
 def _build_schema_resource(fields):
     """Generate a resource fragment for a schema.
 
-    :type fields:
-        sequence of :class:`~google.cloud.bigquery.schema.SchemaField`
-    :param fields: schema to be dumped
+    Args:
+        fields [Sequence[:class:`~google.cloud.bigquery.schema.SchemaField`]):
+            schema to be dumped
 
-    :rtype: mapping
-    :returns: a mapping describing the schema of the supplied fields.
+    Returns: (Sequence[dict])
+        mappings describing the schema of the supplied fields.
     """
     return [field.to_api_repr() for field in fields]

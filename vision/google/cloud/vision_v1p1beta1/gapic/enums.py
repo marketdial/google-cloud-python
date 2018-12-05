@@ -31,6 +31,7 @@ class Likelihood(enum.IntEnum):
       LIKELY (int): It is likely that the image belongs to the specified vertical.
       VERY_LIKELY (int): It is very likely that the image belongs to the specified vertical.
     """
+
     UNKNOWN = 0
     VERY_UNLIKELY = 1
     UNLIKELY = 2
@@ -54,6 +55,7 @@ class TextAnnotation(object):
               ``SPACE``, ``LEADER_SPACE``, or ``LINE_BREAK``.
               LINE_BREAK (int): Line break that ends a paragraph.
             """
+
             UNKNOWN = 0
             SPACE = 1
             SURE_SPACE = 2
@@ -75,6 +77,7 @@ class Block(object):
           RULER (int): Horizontal/vertical line box.
           BARCODE (int): Barcode block.
         """
+
         UNKNOWN = 0
         TEXT = 1
         TABLE = 2
@@ -96,12 +99,13 @@ class Feature(object):
           LABEL_DETECTION (int): Run label detection.
           TEXT_DETECTION (int): Run OCR.
           DOCUMENT_TEXT_DETECTION (int): Run dense text document OCR. Takes precedence when both
-          DOCUMENT_TEXT_DETECTION and TEXT_DETECTION are present.
+          DOCUMENT\_TEXT\_DETECTION and TEXT\_DETECTION are present.
           SAFE_SEARCH_DETECTION (int): Run computer vision models to compute image safe-search properties.
           IMAGE_PROPERTIES (int): Compute a set of image properties, such as the image's dominant colors.
           CROP_HINTS (int): Run crop hints.
           WEB_DETECTION (int): Run web detection.
         """
+
         TYPE_UNSPECIFIED = 0
         FACE_DETECTION = 1
         LANDMARK_DETECTION = 2
@@ -119,10 +123,10 @@ class FaceAnnotation(object):
     class Landmark(object):
         class Type(enum.IntEnum):
             """
-            Face landmark (feature) type.
-            Left and right are defined from the vantage of the viewer of the image
-            without considering mirror projections typical of photos. So, ``LEFT_EYE``,
-            typically, is the person's right eye.
+            Face landmark (feature) type. Left and right are defined from the
+            vantage of the viewer of the image without considering mirror
+            projections typical of photos. So, ``LEFT_EYE``, typically, is the
+            person's right eye.
 
             Attributes:
               UNKNOWN_LANDMARK (int): Unknown face landmark detected. Should not be filled.
@@ -161,6 +165,7 @@ class FaceAnnotation(object):
               CHIN_LEFT_GONION (int): Chin left gonion.
               CHIN_RIGHT_GONION (int): Chin right gonion.
             """
+
             UNKNOWN_LANDMARK = 0
             LEFT_EYE = 1
             RIGHT_EYE = 2
