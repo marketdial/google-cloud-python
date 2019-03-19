@@ -28,6 +28,7 @@ library = gapic.py_library(
     "v2",
     config_path="/google/bigtable/artman_bigtable.yaml",
     artman_output_name="bigtable-v2",
+    include_protos=True,
 )
 
 s.move(library / "google/cloud/bigtable_v2")
@@ -39,6 +40,7 @@ library = gapic.py_library(
     "v2",
     config_path="/google/bigtable/admin/artman_bigtableadmin.yaml",
     artman_output_name="bigtable-admin-v2",
+    include_protos=True,
 )
 
 s.move(library / "google/cloud/bigtable_admin_v2")
@@ -85,6 +87,6 @@ s.replace(
 # Add templated files
 # ----------------------------------------------------------------------------
 templated_files = common.py_library(unit_cov_level=97, cov_level=99)
-s.move(templated_files)
+s.move(templated_files, excludes=['noxfile.py'])
 
 s.shell.run(["nox", "-s", "blacken"], hide_output=False)

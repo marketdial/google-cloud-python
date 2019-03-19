@@ -14,7 +14,7 @@ common helpers (e.g. base ``Client`` classes) used by all of the
    :target: https://pypi.org/project/google-cloud-core/
 .. |versions| image:: https://img.shields.io/pypi/pyversions/google-cloud-core.svg
    :target: https://pypi.org/project/google-cloud-core/
-.. _Documentation: https://googlecloudplatform.github.io/google-cloud-python/latest/core/index.html
+.. _Documentation: https://googleapis.github.io/google-cloud-python/latest/core/index.html
 
 Quick Start
 -----------
@@ -29,3 +29,11 @@ to `Python Development Environment Setup Guide`_ for Google Cloud Platform.
 
 .. _Python Development Environment Setup Guide: https://cloud.google.com/python/setup
 
+
+Supported Python Versions
+-------------------------
+Python >= 3.4
+
+Deprecated Python Versions
+--------------------------
+Python == 2.7. Python 2.7 support will be removed on January 1, 2020.

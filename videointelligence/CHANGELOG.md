@@ -4,6 +4,58 @@
 
 [1]: https://pypi.org/project/google-cloud-videointelligence/#history
 
+## 1.8.0
+
+03-06-2019 12:20 PST
+
+### New Features
+- Add videointelligence v1p3beta1 (Streaming API Support). ([#7490](https://github.com/googleapis/google-cloud-python/pull/7490))
+
+### Internal / Testing Changes
+- Copy lintified proto files (via synth). ([#7472](https://github.com/googleapis/google-cloud-python/pull/7472))
+
+## 1.7.0
+
+02-25-2019 12:25 PST
+
+
+### Implementation Changes
+- Remove unused message exports. ([#7279](https://github.com/googleapis/google-cloud-python/pull/7279))
+- Protoc-generated serialization update. ([#7099](https://github.com/googleapis/google-cloud-python/pull/7099))
+
+### New Features
+- Add text detection / object tracking feature support (via sync). ([#7415](https://github.com/googleapis/google-cloud-python/pull/7415))
+
+### Documentation
+- Updated client library documentation URLs. ([#7307](https://github.com/googleapis/google-cloud-python/pull/7307))
+- Update copyright headers.
+- Pick up stub docstring fix in GAPIC generator. ([#6986](https://github.com/googleapis/google-cloud-python/pull/6986))
+
+### Internal / Testing Changes
+- Add clarifying comment to blacken nox target. ([#7407](https://github.com/googleapis/google-cloud-python/pull/7407))
+- Copy proto files alongside protoc versions.
+- Add protos as an artifact to library. ([#7205](https://github.com/googleapis/google-cloud-python/pull/7205))
+
+## 1.6.1
+
+12-17-2018 17:09 PST
+
+### Implementation Changes
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+- Fixes to GAPIC generator. ([#6578](https://github.com/googleapis/google-cloud-python/pull/6578))
+
+### Documentation
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+
+### Internal / Testing Changes
+- Add baseline for synth.metadata
+- Update noxfile.
+- Blacken all gen'd libs ([#6792](https://github.com/googleapis/google-cloud-python/pull/6792))
+- Omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Run Black on Generated libraries ([#6666](https://github.com/googleapis/google-cloud-python/pull/6666))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+
 ## 1.6.0
 
 11-09-2018 13:36 PST

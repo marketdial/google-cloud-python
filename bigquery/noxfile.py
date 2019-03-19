@@ -22,6 +22,9 @@ import nox
 LOCAL_DEPS = (
     os.path.join('..', 'api_core[grpc]'),
     os.path.join('..', 'core'),
+    # TODO: Move bigquery_storage back to dev_install once dtypes feature is
+    #       released. Issue #7049
+    os.path.join('..', 'bigquery_storage[pandas,fastavro]'),
 )
 
 
@@ -40,9 +43,9 @@ def default(session):
 
     # Pyarrow does not support Python 3.7
     if session.python == '3.7':
-        dev_install = '.[bqstorage, pandas]'
+        dev_install = '.[pandas]'
     else:
-        dev_install = '.[bqstorage, pandas, pyarrow]'
+        dev_install = '.[pandas, pyarrow]'
     session.install('-e', dev_install)
 
     # IPython does not support Python 2 after version 5.x
@@ -108,9 +111,9 @@ def system(session):
 
 @nox.session(python=['2.7', '3.6'])
 def snippets(session):
-    """Run the system test suite."""
+    """Run the snippets test suite."""
 
-    # Sanity check: Only run system tests if the environment variable is set.
+    # Sanity check: Only run snippets tests if the environment variable is set.
     if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', ''):
         session.skip('Credentials must be set via environment variable.')
 
@@ -122,7 +125,7 @@ def snippets(session):
     session.install('-e', os.path.join('..', 'test_utils'))
     session.install('-e', '.[pandas, pyarrow]')
 
-    # Run py.test against the system tests.
+    # Run py.test against the snippets tests.
     session.run(
         'py.test', os.path.join('docs', 'snippets.py'), *session.posargs)
 

@@ -22,7 +22,7 @@ import setuptools
 
 name = 'google-cloud-trace'
 description = 'Stackdriver Trace API client library'
-version = '0.20.0'
+version = '0.20.2'
 # Should be one of:
 # 'Development Status :: 3 - Alpha'
 # 'Development Status :: 4 - Beta'
@@ -30,7 +30,7 @@ version = '0.20.0'
 release_status = 'Development Status :: 3 - Alpha'
 dependencies = [
     'google-api-core[grpc] >= 1.6.0, < 2.0.0dev',
-    'google-cloud-core >=0.28.0, <0.29dev',
+    'google-cloud-core >=0.29.0, <0.30dev',
 ]
 extras = {
 }
@@ -76,6 +76,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Operating System :: OS Independent',
         'Topic :: Internet',
     ],
@@ -84,6 +85,7 @@ setuptools.setup(
     namespace_packages=namespaces,
     install_requires=dependencies,
     extras_require=extras,
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
     include_package_data=True,
     zip_safe=False,
 )

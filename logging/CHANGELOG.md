@@ -4,6 +4,60 @@
 
 [1]: https://pypi.org/project/google-cloud-logging/#history
 
+## 1.10.0
+
+01-17-2019 15:37 PST
+
+
+### Implementation Changes
+- Change WriteLogEntries retry policy.
+- Protoc-generated serialization update. ([#7088](https://github.com/googleapis/google-cloud-python/pull/7088))
+- GAPIC generation fixes. ([#7061](https://github.com/googleapis/google-cloud-python/pull/7061))
+
+### Internal / Testing Changes
+- Update copyright headers.
+- Use 'python-3.6' for 'blacken' run. ([#7064](https://github.com/googleapis/google-cloud-python/pull/7064))
+
+## 1.9.1
+
+12-17-2018 16:49 PST
+
+
+### Implementation Changes
+- Allow setting name, args on default handler (post-blacken) ([#6828](https://github.com/googleapis/google-cloud-python/pull/6828))
+
+### Documentation
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Normalize docs for `page_size` / `max_results` / `page_token`. ([#6842](https://github.com/googleapis/google-cloud-python/pull/6842))
+
+## 1.9.0
+
+12-10-2018 12:55 PST
+
+
+### Implementation Changes
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+- Pick up fixes to GAPIC generator. ([#6631](https://github.com/googleapis/google-cloud-python/pull/6631))
+- Fix `client_info` bug, update docstrings via synth. ([#6435](https://github.com/googleapis/google-cloud-python/pull/6435))
+- Revert "Allow turning on JSON Detection in StackDriver" ([#6352](https://github.com/googleapis/google-cloud-python/pull/6352))
+- Allow turning on JSON Detection in StackDriver ([#6293](https://github.com/googleapis/google-cloud-python/pull/6293))
+
+### New Features
+- Add support for additional 'LogEntry' fields ([#6229](https://github.com/googleapis/google-cloud-python/pull/6229))
+
+### Dependencies
+- Update dependency to google-cloud-core ([#6835](https://github.com/googleapis/google-cloud-python/pull/6835))
+- Bump minimum `api_core` version for all GAPIC libs to 1.4.1. ([#6391](https://github.com/googleapis/google-cloud-python/pull/6391))
+
+
+### Internal / Testing Changes
+- Change the url to the canonical one ([#6843](https://github.com/googleapis/google-cloud-python/pull/6843))
+- Omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Blackening Continued... ([#6667](https://github.com/googleapis/google-cloud-python/pull/6667))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+- Logging: add 'synth.py'. ([#6081](https://github.com/googleapis/google-cloud-python/pull/6081))
+
 ## 1.8.0
 
 10-17-2018 14:23 PDT

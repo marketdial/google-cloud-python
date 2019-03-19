@@ -22,7 +22,7 @@ import setuptools
 
 name = 'google-cloud-bigquery'
 description = 'Google BigQuery API client library'
-version = '1.7.0'
+version = '1.10.0'
 # Should be one of:
 # 'Development Status :: 3 - Alpha'
 # 'Development Status :: 4 - Beta'
@@ -34,7 +34,7 @@ dependencies = [
     'google-resumable-media >= 0.3.1',
 ]
 extras = {
-    'bqstorage': 'google-cloud-bigquery-storage<=2.0.0dev',
+    'bqstorage': 'google-cloud-bigquery-storage >= 0.2.0dev1, <2.0.0dev',
     'pandas': 'pandas>=0.17.1',
     # Exclude PyArrow dependency from Windows Python 2.7.
     'pyarrow: platform_system != "Windows" or python_version >= "3.4"':
@@ -90,6 +90,7 @@ setuptools.setup(
     namespace_packages=namespaces,
     install_requires=dependencies,
     extras_require=extras,
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
     include_package_data=True,
     zip_safe=False,
 )

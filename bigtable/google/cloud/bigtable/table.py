@@ -17,6 +17,7 @@
 
 from grpc import StatusCode
 
+from google.api_core import timeout
 from google.api_core.exceptions import RetryError
 from google.api_core.exceptions import NotFound
 from google.api_core.retry import if_exception_type
@@ -100,14 +101,21 @@ class Table(object):
     :param app_profile_id: (Optional) The unique name of the AppProfile.
     """
 
-    def __init__(self, table_id, instance, app_profile_id=None):
+    def __init__(self, table_id, instance, mutation_timeout=None, app_profile_id=None):
         self.table_id = table_id
         self._instance = instance
         self._app_profile_id = app_profile_id
+        self.mutation_timeout = mutation_timeout
 
     @property
     def name(self):
         """Table name used in requests.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_table_name]
+            :end-before: [END bigtable_table_name]
 
         .. note::
 
@@ -131,6 +139,12 @@ class Table(object):
     def column_family(self, column_family_id, gc_rule=None):
         """Factory to create a column family associated with this table.
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_table_column_family]
+            :end-before: [END bigtable_table_column_family]
+
         :type column_family_id: str
         :param column_family_id: The ID of the column family. Must be of the
                                  form ``[_a-zA-Z0-9][-_.a-zA-Z0-9]*``.
@@ -146,6 +160,12 @@ class Table(object):
 
     def row(self, row_key, filter_=None, append=False):
         """Factory to create a row associated with this table.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_table_row]
+            :end-before: [END bigtable_table_row]
 
         .. warning::
 
@@ -188,6 +208,12 @@ class Table(object):
     def create(self, initial_split_keys=[], column_families={}):
         """Creates this table.
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_create_table]
+            :end-before: [END bigtable_create_table]
+
         .. note::
 
             A create request returns a
@@ -226,6 +252,12 @@ class Table(object):
     def exists(self):
         """Check whether the table exists.
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_check_table_exists]
+            :end-before: [END bigtable_check_table_exists]
+
         :rtype: bool
         :returns: True if the table exists, else False.
         """
@@ -237,12 +269,26 @@ class Table(object):
             return False
 
     def delete(self):
-        """Delete this table."""
+        """Delete this table.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_delete_table]
+            :end-before: [END bigtable_delete_table]
+
+        """
         table_client = self._instance._client.table_admin_client
         table_client.delete_table(name=self.name)
 
     def list_column_families(self):
         """List the column families owned by this table.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_list_column_families]
+            :end-before: [END bigtable_list_column_families]
 
         :rtype: dict
         :returns: Dictionary of column families attached to this table. Keys
@@ -265,6 +311,12 @@ class Table(object):
     def get_cluster_states(self):
         """List the cluster states owned by this table.
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_get_cluster_states]
+            :end-before: [END bigtable_get_cluster_states]
+
         :rtype: dict
         :returns: Dictionary of cluster states for this table.
                   Keys are cluster ids and values are
@@ -282,6 +334,12 @@ class Table(object):
 
     def read_row(self, row_key, filter_=None):
         """Read a single row from this table.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_read_row]
+            :end-before: [END bigtable_read_row]
 
         :type row_key: bytes
         :param row_key: The key of the row to read from.
@@ -316,6 +374,12 @@ class Table(object):
     ):
         """Read rows from this table.
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_read_rows]
+            :end-before: [END bigtable_read_rows]
+
         :type start_key: bytes
         :param start_key: (Optional) The beginning of a range of row keys to
                           read from. The range will include ``start_key``. If
@@ -341,7 +405,7 @@ class Table(object):
                       considered inclusive. The default is False (exclusive).
 
         :type row_set: :class:`row_set.RowSet`
-        :param filter_: (Optional) The row set containing multiple row keys and
+        :param row_set: (Optional) The row set containing multiple row keys and
                         row_ranges.
 
         :type retry: :class:`~google.api_core.retry.Retry`
@@ -397,7 +461,7 @@ class Table(object):
                         each row.
 
         :type row_set: :class:`row_set.RowSet`
-        :param filter_: (Optional) The row set containing multiple row keys and
+        :param row_set: (Optional) The row set containing multiple row keys and
                         row_ranges.
 
         :rtype: :class:`.PartialRowData`
@@ -407,6 +471,12 @@ class Table(object):
 
     def mutate_rows(self, rows, retry=DEFAULT_RETRY):
         """Mutates multiple rows in bulk.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_mutate_rows]
+            :end-before: [END bigtable_mutate_rows]
 
         The method tries to update all specified rows.
         If some of the rows weren't updated, it would not remove mutations.
@@ -435,12 +505,22 @@ class Table(object):
                   sent. These will be in the same order as the `rows`.
         """
         retryable_mutate_rows = _RetryableMutateRowsWorker(
-            self._instance._client, self.name, rows, app_profile_id=self._app_profile_id
+            self._instance._client,
+            self.name,
+            rows,
+            app_profile_id=self._app_profile_id,
+            timeout=self.mutation_timeout,
         )
         return retryable_mutate_rows(retry=retry)
 
     def sample_row_keys(self):
         """Read a sample of row keys in the table.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_sample_row_keys]
+            :end-before: [END bigtable_sample_row_keys]
 
         The returned row keys will delimit contiguous sections of the table of
         approximately equal size, which can be used to break up the data for
@@ -480,6 +560,12 @@ class Table(object):
     def truncate(self, timeout=None):
         """Truncate the table
 
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_truncate_table]
+            :end-before: [END bigtable_truncate_table]
+
         :type timeout: float
         :param timeout: (Optional) The amount of time, in seconds, to wait
                         for the request to complete.
@@ -503,6 +589,13 @@ class Table(object):
 
     def drop_by_prefix(self, row_key_prefix, timeout=None):
         """
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_drop_by_prefix]
+            :end-before: [END bigtable_drop_by_prefix]
+
         :type row_prefix: bytes
         :param row_prefix: Delete all rows that start with this row key
                             prefix. Prefix cannot be zero length.
@@ -530,6 +623,12 @@ class Table(object):
 
     def mutations_batcher(self, flush_count=FLUSH_COUNT, max_row_bytes=MAX_ROW_BYTES):
         """Factory to create a mutation batcher associated with this instance.
+
+        For example:
+
+        .. literalinclude:: snippets_table.py
+            :start-after: [START bigtable_mutations_batcher]
+            :end-before: [END bigtable_mutations_batcher]
 
         :type table: class
         :param table: class:`~google.cloud.bigtable.table.Table`.
@@ -565,12 +664,13 @@ class _RetryableMutateRowsWorker(object):
     )
     # pylint: enable=unsubscriptable-object
 
-    def __init__(self, client, table_name, rows, app_profile_id=None):
+    def __init__(self, client, table_name, rows, app_profile_id=None, timeout=None):
         self.client = client
         self.table_name = table_name
         self.rows = rows
         self.app_profile_id = app_profile_id
         self.responses_statuses = [None] * len(self.rows)
+        self.timeout = timeout
 
     def __call__(self, retry=DEFAULT_RETRY):
         """Attempt to mutate all rows and retry rows with transient errors.
@@ -636,7 +736,10 @@ class _RetryableMutateRowsWorker(object):
         inner_api_calls = data_client._inner_api_calls
         if "mutate_rows" not in inner_api_calls:
             default_retry = (data_client._method_configs["MutateRows"].retry,)
-            default_timeout = data_client._method_configs["MutateRows"].timeout
+            if self.timeout is None:
+                default_timeout = data_client._method_configs["MutateRows"].timeout
+            else:
+                default_timeout = timeout.ExponentialTimeout(deadline=self.timeout)
             data_client._inner_api_calls["mutate_rows"] = wrap_method(
                 data_client.transport.mutate_rows,
                 default_retry=default_retry,
@@ -791,7 +894,7 @@ def _create_row_request(
     :param app_profile_id: (Optional) The unique name of the AppProfile.
 
     :type row_set: :class:`row_set.RowSet`
-    :param filter_: (Optional) The row set containing multiple row keys and
+    :param row_set: (Optional) The row set containing multiple row keys and
                     row_ranges.
 
     :rtype: :class:`data_messages_v2_pb2.ReadRowsRequest`

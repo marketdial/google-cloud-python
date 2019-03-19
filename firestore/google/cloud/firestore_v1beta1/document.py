@@ -20,6 +20,7 @@ import six
 
 from google.api_core import exceptions
 from google.cloud.firestore_v1beta1 import _helpers
+from google.cloud.firestore_v1beta1 import field_path as field_path_module
 from google.cloud.firestore_v1beta1.proto import common_pb2
 from google.cloud.firestore_v1beta1.watch import Watch
 
@@ -98,6 +99,9 @@ class DocumentReference(object):
         else:
             return NotImplemented
 
+    def __hash__(self):
+        return hash(self._path) + hash(self._client)
+
     def __ne__(self, other):
         """Inequality check against another instance.
 
@@ -112,6 +116,15 @@ class DocumentReference(object):
             return self._client != other._client or self._path != other._path
         else:
             return NotImplemented
+
+    @property
+    def path(self):
+        """Database-relative for this document.
+
+        Returns:
+            str: The document's relative path.
+        """
+        return "/".join(self._path)
 
     @property
     def _document_path(self):
@@ -458,7 +471,9 @@ class DocumentReference(object):
         """List subcollections of the current document.
 
         Args:
-            page_size (Optional[int]]): Iterator page size.
+            page_size (Optional[int]]): The maximum number of collections
+            in each page of results from this request. Non-positive values
+            are ignored. Defaults to a sensible value set by the API.
 
         Returns:
             Sequence[~.firestore_v1beta1.collection.CollectionReference]:
@@ -545,6 +560,16 @@ class DocumentSnapshot(object):
         """google.protobuf.timestamp_pb2.Timestamp: Document's creation."""
         self.update_time = update_time
         """google.protobuf.timestamp_pb2.Timestamp: Document's last update."""
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return self._reference == other._reference and self._data == other._data
+
+    def __hash__(self):
+        seconds = self.update_time.seconds
+        nanos = self.update_time.nanos
+        return hash(self._reference) + hash(seconds) + hash(nanos)
 
     @property
     def _client(self):
@@ -648,7 +673,7 @@ class DocumentSnapshot(object):
         """
         if not self._exists:
             return None
-        nested_data = _helpers.get_nested_value(field_path, self._data)
+        nested_data = field_path_module.get_nested_value(field_path, self._data)
         return copy.deepcopy(nested_data)
 
     def to_dict(self):

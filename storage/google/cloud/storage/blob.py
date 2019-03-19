@@ -20,7 +20,7 @@
                         json_api/v1/objects
 .. _customer-supplied: https://cloud.google.com/storage/docs/\
                        encryption#customer-supplied
-.. _google-resumable-media: https://googlecloudplatform.github.io/\
+.. _google-resumable-media: https://googleapis.github.io/\
                             google-resumable-media-python/latest/\
                             google.resumable_media.requests.html
 """
@@ -159,7 +159,13 @@ class Blob(_PropertyMixin):
     """
 
     def __init__(
-        self, name, bucket, chunk_size=None, encryption_key=None, kms_key_name=None
+        self,
+        name,
+        bucket,
+        chunk_size=None,
+        encryption_key=None,
+        kms_key_name=None,
+        generation=None,
     ):
         name = _bytes_to_unicode(name)
         super(Blob, self).__init__(name=name)
@@ -176,6 +182,9 @@ class Blob(_PropertyMixin):
 
         if kms_key_name is not None:
             self._properties["kmsKeyName"] = kms_key_name
+
+        if generation is not None:
+            self._properties["generation"] = generation
 
     @property
     def chunk_size(self):
@@ -256,6 +265,24 @@ class Blob(_PropertyMixin):
         :rtype: str
         """
         return self.bucket.user_project
+
+    def _encryption_headers(self):
+        """Return any encryption headers needed to fetch the object.
+
+        :rtype: List(Tuple(str, str))
+        :returns: a list of tuples to be passed as headers.
+        """
+        return _get_encryption_headers(self._encryption_key)
+
+    @property
+    def _query_params(self):
+        """Default query parameters."""
+        params = {}
+        if self.generation is not None:
+            params["generation"] = self.generation
+        if self.user_project is not None:
+            params["userProject"] = self.user_project
+        return params
 
     @property
     def public_url(self):
@@ -344,6 +371,10 @@ class Blob(_PropertyMixin):
                             the URL. Defaults to the credentials stored on the
                             client used.
 
+        :raises: :exc:`TypeError` when expiration is not a valid type.
+        :raises: :exc:`AttributeError` if credentials is not an instance
+                of :class:`google.auth.credentials.Signing`.
+
         :rtype: str
         :returns: A signed URL you can use to access the resource
                   until expiration.
@@ -385,10 +416,8 @@ class Blob(_PropertyMixin):
         client = self._require_client(client)
         # We only need the status code (200 or not) so we seek to
         # minimize the returned payload.
-        query_params = {"fields": "name"}
-
-        if self.user_project is not None:
-            query_params["userProject"] = self.user_project
+        query_params = self._query_params
+        query_params["fields"] = "name"
 
         try:
             # We intentionally pass `_target_object=None` since fields=name
@@ -423,7 +452,9 @@ class Blob(_PropertyMixin):
                  (propagated from
                  :meth:`google.cloud.storage.bucket.Bucket.delete_blob`).
         """
-        return self.bucket.delete_blob(self.name, client=client)
+        return self.bucket.delete_blob(
+            self.name, client=client, generation=self.generation
+        )
 
     def _get_transport(self, client):
         """Return the client's transport.
@@ -1480,13 +1511,15 @@ class Blob(_PropertyMixin):
         headers = _get_encryption_headers(self._encryption_key)
         headers.update(_get_encryption_headers(source._encryption_key, source=True))
 
-        query_params = {}
+        query_params = self._query_params
+        if "generation" in query_params:
+            del query_params["generation"]
 
         if token:
             query_params["rewriteToken"] = token
 
-        if self.user_project is not None:
-            query_params["userProject"] = self.user_project
+        if source.generation:
+            query_params["sourceGeneration"] = source.generation
 
         if self.kms_key_name is not None:
             query_params["destinationKmsKeyName"] = self.kms_key_name
@@ -1512,7 +1545,9 @@ class Blob(_PropertyMixin):
         return api_response["rewriteToken"], rewritten, size
 
     def update_storage_class(self, new_class, client=None):
-        """Update blob's storage class via a rewrite-in-place.
+        """Update blob's storage class via a rewrite-in-place. This helper will
+        wait for the rewrite to complete before returning, so it may take some
+        time for large files.
 
         See
         https://cloud.google.com/storage/docs/per-object-storage-class
@@ -1530,25 +1565,13 @@ class Blob(_PropertyMixin):
         if new_class not in self._STORAGE_CLASSES:
             raise ValueError("Invalid storage class: %s" % (new_class,))
 
-        client = self._require_client(client)
+        # Update current blob's storage class prior to rewrite
+        self._patch_property("storageClass", new_class)
 
-        query_params = {}
-
-        if self.user_project is not None:
-            query_params["userProject"] = self.user_project
-
-        headers = _get_encryption_headers(self._encryption_key)
-        headers.update(_get_encryption_headers(self._encryption_key, source=True))
-
-        api_response = client._connection.api_request(
-            method="POST",
-            path=self.path + "/rewriteTo" + self.path,
-            query_params=query_params,
-            data={"storageClass": new_class},
-            headers=headers,
-            _target_object=self,
-        )
-        self._set_properties(api_response["resource"])
+        # Execute consecutive rewrite operations until operation is done
+        token, _, _ = self.rewrite(self)
+        while token is not None:
+            token, _, _ = self.rewrite(self, token=token)
 
     cache_control = _scalar_property("cacheControl")
     """HTTP 'Cache-Control' header for this object.
@@ -1815,7 +1838,7 @@ class Blob(_PropertyMixin):
     This can only be set at blob / object **creation** time. If you'd
     like to change the storage class **after** the blob / object already
     exists in a bucket, call :meth:`update_storage_class` (which uses
-    the "storage.objects.rewrite" method).
+    :meth:`rewrite`).
 
     See https://cloud.google.com/storage/docs/storage-classes
 

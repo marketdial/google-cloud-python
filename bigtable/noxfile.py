@@ -23,23 +23,6 @@ import nox
 LOCAL_DEPS = (os.path.join("..", "api_core"), os.path.join("..", "core"))
 
 @nox.session(python="3.7")
-def blacken(session):
-    """Run black.
-
-    Format code to uniform standard.
-    """
-    session.install("black")
-    session.run(
-        "black",
-        "google",
-        "tests",
-        "docs",
-        "--exclude",
-        ".*/proto/.*|.*/gapic/.*|.*/.*_pb2.py",
-    )
-
-
-@nox.session(python="3.7")
 def lint(session):
     """Run linters.
 
@@ -53,10 +36,23 @@ def lint(session):
         "google",
         "tests",
         "docs",
-        "--exclude",
-        ".*/proto/.*|.*/gapic/.*|.*/.*_pb2.py",
     )
     session.run("flake8", "google", "tests")
+
+
+@nox.session(python="3.6")
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install("black")
+    session.run(
+        "black",
+        "google",
+        "tests",
+        "docs",
+    )
 
 
 @nox.session(python="3.7")
@@ -138,3 +134,31 @@ def cover(session):
     session.run("coverage", "report", "--show-missing", "--fail-under=99")
 
     session.run("coverage", "erase")
+
+
+@nox.session(python=['2.7', '3.7'])
+def snippets(session):
+    """Run the documentation example snippets."""
+    # Sanity check: Only run snippets system tests if the environment variable
+    # is set.
+    if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', ''):
+        session.skip('Credentials must be set via environment variable.')
+
+    # Install all test dependencies, then install local packages in place.
+    session.install('mock', 'pytest')
+    for local_dep in LOCAL_DEPS:
+        session.install('-e', local_dep)
+    session.install('-e', '../test_utils/')
+    session.install('-e', '.')
+    session.run(
+        'py.test',
+        '--quiet',
+        os.path.join('docs', 'snippets.py'),
+        *session.posargs
+    )
+    session.run(
+        'py.test',
+        '--quiet',
+        os.path.join('docs', 'snippets_table.py'),
+        *session.posargs
+    )

@@ -4,6 +4,84 @@
 
 [1]: https://pypi.org/project/google-cloud-speech/#history
 
+## 1.0.0
+
+03-18-2019 08:05 PDT
+
+
+### Implementation Changes
+- Remove unused message exports. ([#7275](https://github.com/googleapis/google-cloud-python/pull/7275))
+
+### New Features
+- Promote google-cloud-speech to GA ([#7525](https://github.com/googleapis/google-cloud-python/pull/7525))
+
+### Documentation
+- Updated client library documentation URLs. ([#7307](https://github.com/googleapis/google-cloud-python/pull/7307))
+
+### Internal / Testing Changes
+- Speech: copy lintified proto files (via synth).
+- Add clarifying comment to blacken nox target. ([#7404](https://github.com/googleapis/google-cloud-python/pull/7404))
+- Copy proto files alongside protoc versions. Remove unneeded utf-8 header.
+
+## 0.36.3
+
+01-31-2019 09:57 PST
+
+
+### New Features
+- Add 'RecognitionConfig.audio_channel_count' field via synth. ([#7240](https://github.com/googleapis/google-cloud-python/pull/7240))
+
+### Documentation
+- Modify file headers. ([#7158](https://github.com/googleapis/google-cloud-python/pull/7158))
+
+### Internal / Testing Changes
+- Add protos as an artifact to library ([#7205](https://github.com/googleapis/google-cloud-python/pull/7205))
+
+## 0.36.2
+
+01-10-2019 15:36 PST
+
+### Implementation Changes
+- Protoc-generated serialization update. ([#7106](https://github.com/googleapis/google-cloud-python/pull/7106))
+
+### Documentation
+- Regenerate speech to change quote chars in docstr.
+- Pick up stub docstring fix in GAPIC generator. ([#6982](https://github.com/googleapis/google-cloud-python/pull/6982))
+
+## 0.36.1
+
+12-18-2018 09:46 PST
+
+
+### Implementation Changes
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+- Pick up fixes to GAIPC generator. ([#6508](https://github.com/googleapis/google-cloud-python/pull/6508))
+- Add `result_end_time`, docstring changes via synth. ([#6462](https://github.com/googleapis/google-cloud-python/pull/6462))
+- Assorted synth fixups / cleanups ([#6400](https://github.com/googleapis/google-cloud-python/pull/6400))
+- Fix `client_info` bug, update docstrings and timeouts. ([#6421](https://github.com/googleapis/google-cloud-python/pull/6421))
+- Re-generate library using speech/synth.py ([#5979](https://github.com/googleapis/google-cloud-python/pull/5979))
+
+### Dependencies
+- Bump minimum `api_core` version for all GAPIC libs to 1.4.1. ([#6391](https://github.com/googleapis/google-cloud-python/pull/6391))
+
+### Documentation
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Clarify passed arguments in speech examples. ([#6857](https://github.com/googleapis/google-cloud-python/pull/6857))
+- Docs: normalize use of support level badges ([#6159](https://github.com/googleapis/google-cloud-python/pull/6159))
+- Fix client library URL. ([#6052](https://github.com/googleapis/google-cloud-python/pull/6052))
+- Prep docs for repo split. ([#6017](https://github.com/googleapis/google-cloud-python/pull/6017))
+
+### Internal / Testing Changes
+- Synth.metadata. ([#6868](https://github.com/googleapis/google-cloud-python/pull/6868))
+- Update noxfile.
+- Blacken all gen'd libs ([#6792](https://github.com/googleapis/google-cloud-python/pull/6792))
+- Omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Run Black on Generated libraries ([#6666](https://github.com/googleapis/google-cloud-python/pull/6666))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+- Add / fix badges for PyPI / versions. ([#6158](https://github.com/googleapis/google-cloud-python/pull/6158))
+- Use new Nox ([#6175](https://github.com/googleapis/google-cloud-python/pull/6175))
+
 ## 0.36.0
 
 ### New Features

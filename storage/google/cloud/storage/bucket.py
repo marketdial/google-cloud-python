@@ -36,7 +36,6 @@ from google.cloud.storage._helpers import _validate_name
 from google.cloud.storage.acl import BucketACL
 from google.cloud.storage.acl import DefaultObjectACL
 from google.cloud.storage.blob import Blob
-from google.cloud.storage.blob import _get_encryption_headers
 from google.cloud.storage.notification import BucketNotification
 from google.cloud.storage.notification import NONE_PAYLOAD_FORMAT
 
@@ -272,6 +271,96 @@ class LifecycleRuleSetStorageClass(dict):
         return instance
 
 
+class IAMConfiguration(dict):
+    """Map a bucket's IAM configuration.
+
+    :type bucket: :class:`Bucket`
+    :params bucket: Bucket for which this instance is the policy.
+
+    :type bucket_policy_only_enabled: bool
+    :params bucket_policy_only_enabled: (optional) whether the IAM-only policy is enabled for the bucket.
+
+    :type bucket_policy_only_locked_time: :class:`datetime.datetime`
+    :params bucket_policy_only_locked_time: (optional) When the bucket's IAM-only policy was ehabled.  This value should normally only be set by the back-end API.
+    """
+
+    def __init__(
+        self,
+        bucket,
+        bucket_policy_only_enabled=False,
+        bucket_policy_only_locked_time=None,
+    ):
+        data = {"bucketPolicyOnly": {"enabled": bucket_policy_only_enabled}}
+        if bucket_policy_only_locked_time is not None:
+            data["bucketPolicyOnly"]["lockedTime"] = _datetime_to_rfc3339(
+                bucket_policy_only_locked_time
+            )
+        super(IAMConfiguration, self).__init__(data)
+        self._bucket = bucket
+
+    @classmethod
+    def from_api_repr(cls, resource, bucket):
+        """Factory:  construct instance from resource.
+
+        :type bucket: :class:`Bucket`
+        :params bucket: Bucket for which this instance is the policy.
+
+        :type resource: dict
+        :param resource: mapping as returned from API call.
+
+        :rtype: :class:`IAMConfiguration`
+        :returns: Instance created from resource.
+        """
+        instance = cls(bucket)
+        instance.update(resource)
+        return instance
+
+    @property
+    def bucket(self):
+        """Bucket for which this instance is the policy.
+
+        :rtype: :class:`Bucket`
+        :returns: the instance's bucket.
+        """
+        return self._bucket
+
+    @property
+    def bucket_policy_only_enabled(self):
+        """If set, access checks only use bucket-level IAM policies or above.
+
+        :rtype: bool
+        :returns: whether the bucket is configured to allow only IAM.
+        """
+        bpo = self.get("bucketPolicyOnly", {})
+        return bpo.get("enabled", False)
+
+    @bucket_policy_only_enabled.setter
+    def bucket_policy_only_enabled(self, value):
+        bpo = self.setdefault("bucketPolicyOnly", {})
+        bpo["enabled"] = bool(value)
+        self.bucket._patch_property("iamConfiguration", self)
+
+    @property
+    def bucket_policy_only_locked_time(self):
+        """Deadline for changing :attr:`bucket_policy_only_enabled` from true to false.
+
+        If the bucket's :attr:`bucket_policy_only_enabled` is true, this property
+        is time time after which that setting becomes immutable.
+
+        If the bucket's :attr:`bucket_policy_only_enabled` is false, this property
+        is ``None``.
+
+        :rtype: Union[:class:`datetime.datetime`, None]
+        :returns:  (readonly) Time after which :attr:`bucket_policy_only_enabled` will
+                   be frozen as true.
+        """
+        bpo = self.get("bucketPolicyOnly", {})
+        stamp = bpo.get("lockedTime")
+        if stamp is not None:
+            stamp = _rfc3339_to_datetime(stamp)
+        return stamp
+
+
 class Bucket(_PropertyMixin):
     """A class representing a Bucket on Cloud Storage.
 
@@ -345,7 +434,14 @@ class Bucket(_PropertyMixin):
         """
         return self._user_project
 
-    def blob(self, blob_name, chunk_size=None, encryption_key=None, kms_key_name=None):
+    def blob(
+        self,
+        blob_name,
+        chunk_size=None,
+        encryption_key=None,
+        kms_key_name=None,
+        generation=None,
+    ):
         """Factory constructor for blob object.
 
         .. note::
@@ -368,6 +464,10 @@ class Bucket(_PropertyMixin):
         :param kms_key_name:
             Optional resource name of KMS key used to encrypt blob's content.
 
+        :type generation: long
+        :param generation: Optional. If present, selects a specific revision of
+                           this object.
+
         :rtype: :class:`google.cloud.storage.blob.Blob`
         :returns: The blob object created.
         """
@@ -377,6 +477,7 @@ class Bucket(_PropertyMixin):
             chunk_size=chunk_size,
             encryption_key=encryption_key,
             kms_key_name=kms_key_name,
+            generation=generation,
         )
 
     def notification(
@@ -549,7 +650,9 @@ class Bucket(_PropertyMixin):
 
         return self.path_helper(self.name)
 
-    def get_blob(self, blob_name, client=None, encryption_key=None, **kwargs):
+    def get_blob(
+        self, blob_name, client=None, encryption_key=None, generation=None, **kwargs
+    ):
         """Get a blob object by name.
 
         This will return None if the blob doesn't exist:
@@ -574,6 +677,10 @@ class Bucket(_PropertyMixin):
             See
             https://cloud.google.com/storage/docs/encryption#customer-supplied.
 
+        :type generation: long
+        :param generation: Optional. If present, selects a specific revision of
+                           this object.
+
         :type kwargs: dict
         :param kwargs: Keyword arguments to pass to the
                        :class:`~google.cloud.storage.blob.Blob` constructor.
@@ -581,31 +688,22 @@ class Bucket(_PropertyMixin):
         :rtype: :class:`google.cloud.storage.blob.Blob` or None
         :returns: The blob object if it exists, otherwise None.
         """
-        client = self._require_client(client)
-        query_params = {}
-
-        if self.user_project is not None:
-            query_params["userProject"] = self.user_project
         blob = Blob(
-            bucket=self, name=blob_name, encryption_key=encryption_key, **kwargs
+            bucket=self,
+            name=blob_name,
+            encryption_key=encryption_key,
+            generation=generation,
+            **kwargs
         )
         try:
-            headers = _get_encryption_headers(encryption_key)
-            response = client._connection.api_request(
-                method="GET",
-                path=blob.path,
-                query_params=query_params,
-                headers=headers,
-                _target_object=blob,
-            )
-            # NOTE: We assume response.get('name') matches `blob_name`.
-            blob._set_properties(response)
             # NOTE: This will not fail immediately in a batch. However, when
             #       Batch.finish() is called, the resulting `NotFound` will be
             #       raised.
-            return blob
+            blob.reload(client=client)
         except NotFound:
             return None
+        else:
+            return blob
 
     def list_blobs(
         self,
@@ -623,12 +721,18 @@ class Bucket(_PropertyMixin):
         If :attr:`user_project` is set, bills the API request to that project.
 
         :type max_results: int
-        :param max_results: (Optional) Maximum number of blobs to return.
+        :param max_results:
+            (Optional) The maximum number of blobs in each page of results
+            from this request. Non-positive values are ignored. Defaults to
+            a sensible value set by the API.
 
         :type page_token: str
-        :param page_token: (Optional) Opaque marker for the next "page" of
-                           blobs. If not passed, will return the first page
-                           of blobs.
+        :param page_token:
+            (Optional) If present, return the next batch of blobs, using the
+            value, which must correspond to the ``nextPageToken`` value
+            returned in the previous response.  Deprecated: use the ``pages``
+            property of the returned iterator instead of manually passing the
+            token.
 
         :type prefix: str
         :param prefix: (Optional) prefix used to filter blobs.
@@ -785,7 +889,7 @@ class Bucket(_PropertyMixin):
             _target_object=None,
         )
 
-    def delete_blob(self, blob_name, client=None):
+    def delete_blob(self, blob_name, client=None, generation=None):
         """Deletes a blob from the current bucket.
 
         If the blob isn't found (backend 404), raises a
@@ -807,6 +911,10 @@ class Bucket(_PropertyMixin):
         :param client: Optional. The client to use.  If not passed, falls back
                        to the ``client`` stored on the current bucket.
 
+        :type generation: long
+        :param generation: Optional. If present, permanently deletes a specific
+                           revision of this object.
+
         :raises: :class:`google.cloud.exceptions.NotFound` (to suppress
                  the exception, call ``delete_blobs``, passing a no-op
                  ``on_error`` callback, e.g.:
@@ -817,19 +925,15 @@ class Bucket(_PropertyMixin):
 
         """
         client = self._require_client(client)
-        query_params = {}
+        blob = Blob(blob_name, bucket=self, generation=generation)
 
-        if self.user_project is not None:
-            query_params["userProject"] = self.user_project
-
-        blob_path = Blob.path_helper(self.path, blob_name)
         # We intentionally pass `_target_object=None` since a DELETE
         # request has no response value (whether in a standard request or
         # in a batch request).
         client._connection.api_request(
             method="DELETE",
-            path=blob_path,
-            query_params=query_params,
+            path=blob.path,
+            query_params=blob._query_params,
             _target_object=None,
         )
 
@@ -1127,6 +1231,16 @@ class Bucket(_PropertyMixin):
                   resource has not been loaded from the server.
         """
         return self._properties.get("id")
+
+    @property
+    def iam_configuration(self):
+        """Retrieve IAM configuration for this bucket.
+
+        :rtype: :class:`IAMConfiguration`
+        :returns: an instance for managing the bucket's IAM configuration.
+        """
+        info = self._properties.get("iamConfiguration", {})
+        return IAMConfiguration.from_api_repr(info, self)
 
     @property
     def lifecycle_rules(self):

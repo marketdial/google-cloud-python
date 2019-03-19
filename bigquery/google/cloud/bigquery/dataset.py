@@ -24,6 +24,19 @@ from google.cloud.bigquery import _helpers
 from google.cloud.bigquery.table import TableReference
 
 
+def _get_table_reference(self, table_id):
+    """Constructs a TableReference.
+
+    Args:
+        table_id (str): The ID of the table.
+
+    Returns:
+        google.cloud.bigquery.table.TableReference:
+            A table reference for a table in this dataset.
+    """
+    return TableReference(self, table_id)
+
+
 class AccessEntry(object):
     """Represents grant of an access role to an entity.
 
@@ -191,17 +204,7 @@ class DatasetReference(object):
         """str: URL path for the dataset based on project and dataset ID."""
         return "/projects/%s/datasets/%s" % (self.project, self.dataset_id)
 
-    def table(self, table_id):
-        """Constructs a TableReference.
-
-        Args:
-            table_id (str): The ID of the table.
-
-        Returns:
-            google.cloud.bigquery.table.TableReference:
-                A table reference for a table in this dataset.
-        """
-        return TableReference(self, table_id)
+    table = _get_table_reference
 
     @classmethod
     def from_api_repr(cls, resource):
@@ -306,8 +309,13 @@ class Dataset(object):
     https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets
 
     Args:
-        dataset_ref (google.cloud.bigquery.dataset.DatasetReference):
-            a pointer to a dataset
+        dataset_ref (Union[ \
+            :class:`~google.cloud.bigquery.dataset.DatasetReference`, \
+            str, \
+        ]):
+            A pointer to a dataset. If ``dataset_ref`` is a string, it must
+            include both the project ID and the dataset ID, separated by
+            ``.``.
     """
 
     _PROPERTY_TO_API_FIELD = {
@@ -318,6 +326,8 @@ class Dataset(object):
     }
 
     def __init__(self, dataset_ref):
+        if isinstance(dataset_ref, six.string_types):
+            dataset_ref = DatasetReference.from_string(dataset_ref)
         self._properties = {"datasetReference": dataset_ref.to_api_repr(), "labels": {}}
 
     @property
@@ -571,17 +581,7 @@ class Dataset(object):
 
         return partial
 
-    def table(self, table_id):
-        """Constructs a TableReference.
-
-        Args:
-            table_id (str): the ID of the table.
-
-        Returns:
-            google.cloud.bigquery.table.TableReference:
-                A TableReference for a table in this dataset.
-        """
-        return TableReference(self.reference, table_id)
+    table = _get_table_reference
 
     def __repr__(self):
         return "Dataset({})".format(repr(self.reference))
@@ -661,14 +661,4 @@ class DatasetListItem(object):
         """
         return DatasetReference(self.project, self.dataset_id)
 
-    def table(self, table_id):
-        """Constructs a TableReference.
-
-        Args:
-            table_id (str): the ID of the table.
-
-        Returns:
-            google.cloud.bigquery.table.TableReference:
-                A TableReference for a table in this dataset.
-        """
-        return TableReference(self.reference, table_id)
+    table = _get_table_reference

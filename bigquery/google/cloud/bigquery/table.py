@@ -16,8 +16,10 @@
 
 from __future__ import absolute_import
 
+import collections
 import copy
 import datetime
+import json
 import operator
 import warnings
 
@@ -346,8 +348,13 @@ class Table(object):
     https://cloud.google.com/bigquery/docs/reference/rest/v2/tables
 
     Args:
-        table_ref (google.cloud.bigquery.table.TableReference):
-            A pointer to a table
+        table_ref (Union[ \
+            :class:`~google.cloud.bigquery.table.TableReference`, \
+            str, \
+        ]):
+            A pointer to a table. If ``table_ref`` is a string, it must
+            included a project ID, dataset ID, and table ID, each separated
+            by ``.``.
         schema (List[google.cloud.bigquery.schema.SchemaField]):
             The table's schema
     """
@@ -365,6 +372,8 @@ class Table(object):
     }
 
     def __init__(self, table_ref, schema=None):
+        if isinstance(table_ref, six.string_types):
+            table_ref = TableReference.from_string(table_ref)
         self._properties = {"tableReference": table_ref.to_api_repr(), "labels": {}}
         # Let the @property do validation.
         if schema is not None:
@@ -812,8 +821,6 @@ class Table(object):
         Args:
             resource (Dict[str, object]):
                 Table resource representation from the API
-            dataset (google.cloud.bigquery.dataset.Dataset):
-                The dataset containing the table.
 
         Returns:
             google.cloud.bigquery.table.Table: Table parsed from ``resource``.
@@ -1239,9 +1246,22 @@ class RowIterator(HTTPIterator):
         page_token (str): A token identifying a page in a result set to start
             fetching results from.
         max_results (int, optional): The maximum number of results to fetch.
-        page_size (int, optional): The number of items to return per page.
+        page_size (int, optional): The maximum number of rows in each page
+            of results from this request. Non-positive values are ignored.
+            Defaults to a sensible value set by the API.
         extra_params (Dict[str, object]):
             Extra query string parameters for the API call.
+        table (Union[ \
+            :class:`~google.cloud.bigquery.table.Table`, \
+            :class:`~google.cloud.bigquery.table.TableReference`, \
+        ]):
+            Optional. The table which these rows belong to, or a reference to
+            it. Used to call the BigQuery Storage API to fetch rows.
+        selected_fields (Sequence[ \
+            google.cloud.bigquery.schema.SchemaField, \
+        ]):
+            Optional. A subset of columns to select from this table.
+
     """
 
     def __init__(
@@ -1254,6 +1274,8 @@ class RowIterator(HTTPIterator):
         max_results=None,
         page_size=None,
         extra_params=None,
+        table=None,
+        selected_fields=None,
     ):
         super(RowIterator, self).__init__(
             client,
@@ -1271,6 +1293,9 @@ class RowIterator(HTTPIterator):
         self._field_to_index = _helpers._field_to_index_mapping(schema)
         self._total_rows = None
         self._page_size = page_size
+        self._table = table
+        self._selected_fields = selected_fields
+        self._project = client.project
 
     def _get_next_page_response(self):
         """Requests the next page from the path provided.
@@ -1296,8 +1321,98 @@ class RowIterator(HTTPIterator):
         """int: The total number of rows in the table."""
         return self._total_rows
 
-    def to_dataframe(self):
-        """Create a pandas DataFrame from the query results.
+    def _to_dataframe_dtypes(self, page, column_names, dtypes):
+        columns = collections.defaultdict(list)
+        for row in page:
+            for column in column_names:
+                columns[column].append(row[column])
+        for column in dtypes:
+            columns[column] = pandas.Series(columns[column], dtype=dtypes[column])
+        return pandas.DataFrame(columns, columns=column_names)
+
+    def _to_dataframe_tabledata_list(self, dtypes):
+        """Use (slower, but free) tabledata.list to construct a DataFrame."""
+        column_names = [field.name for field in self.schema]
+        frames = []
+        for page in iter(self.pages):
+            frames.append(self._to_dataframe_dtypes(page, column_names, dtypes))
+        return pandas.concat(frames)
+
+    def _to_dataframe_bqstorage(self, bqstorage_client, dtypes):
+        """Use (faster, but billable) BQ Storage API to construct DataFrame."""
+        import concurrent.futures
+        from google.cloud import bigquery_storage_v1beta1
+
+        if "$" in self._table.table_id:
+            raise ValueError(
+                "Reading from a specific partition is not currently supported."
+            )
+        if "@" in self._table.table_id:
+            raise ValueError(
+                "Reading from a specific snapshot is not currently supported."
+            )
+
+        read_options = bigquery_storage_v1beta1.types.TableReadOptions()
+        if self._selected_fields is not None:
+            for field in self._selected_fields:
+                read_options.selected_fields.append(field.name)
+
+        session = bqstorage_client.create_read_session(
+            self._table.to_bqstorage(),
+            "projects/{}".format(self._project),
+            read_options=read_options,
+        )
+
+        # We need to parse the schema manually so that we can rearrange the
+        # columns.
+        schema = json.loads(session.avro_schema.schema)
+        columns = [field["name"] for field in schema["fields"]]
+
+        # Avoid reading rows from an empty table. pandas.concat will fail on an
+        # empty list.
+        if not session.streams:
+            return pandas.DataFrame(columns=columns)
+
+        def get_dataframe(stream):
+            position = bigquery_storage_v1beta1.types.StreamPosition(stream=stream)
+            rowstream = bqstorage_client.read_rows(position)
+            return rowstream.to_dataframe(session, dtypes=dtypes)
+
+        with concurrent.futures.ThreadPoolExecutor() as pool:
+            frames = pool.map(get_dataframe, session.streams)
+
+        # rowstream.to_dataframe() does not preserve column order. Rearrange at
+        # the end using manually-parsed schema.
+        return pandas.concat(frames)[columns]
+
+    def to_dataframe(self, bqstorage_client=None, dtypes=None):
+        """Create a pandas DataFrame by loading all pages of a query.
+
+
+        Args:
+            bqstorage_client ( \
+                google.cloud.bigquery_storage_v1beta1.BigQueryStorageClient \
+            ):
+                **Alpha Feature** Optional. A BigQuery Storage API client. If
+                supplied, use the faster BigQuery Storage API to fetch rows
+                from BigQuery. This API is a billable API.
+
+                This method requires the ``fastavro`` and
+                ``google-cloud-bigquery-storage`` libraries.
+
+                Reading from a specific partition or snapshot is not
+                currently supported by this method.
+
+                **Caution**: There is a known issue reading small anonymous
+                query result tables with the BQ Storage API. Write your query
+                results to a destination table to work around this issue.
+            dtypes ( \
+                Map[str, Union[str, pandas.Series.dtype]] \
+            ):
+                Optional. A dictionary of column names pandas ``dtype``s. The
+                provided ``dtype`` is used when constructing the series for
+                the column specified. Otherwise, the default pandas behavior
+                is used.
 
         Returns:
             pandas.DataFrame:
@@ -1311,12 +1426,13 @@ class RowIterator(HTTPIterator):
         """
         if pandas is None:
             raise ValueError(_NO_PANDAS_ERROR)
+        if dtypes is None:
+            dtypes = {}
 
-        column_headers = [field.name for field in self.schema]
-        # Use generator, rather than pulling the whole rowset into memory.
-        rows = (row.values() for row in iter(self))
-
-        return pandas.DataFrame(rows, columns=column_headers)
+        if bqstorage_client is not None:
+            return self._to_dataframe_bqstorage(bqstorage_client, dtypes)
+        else:
+            return self._to_dataframe_tabledata_list(dtypes)
 
 
 class _EmptyRowIterator(object):
@@ -1331,7 +1447,19 @@ class _EmptyRowIterator(object):
     pages = ()
     total_rows = 0
 
-    def to_dataframe(self):
+    def to_dataframe(self, bqstorage_client=None, dtypes=None):
+        """Create an empty dataframe.
+
+        Args:
+            bqstorage_client (Any):
+                Ignored. Added for compatibility with RowIterator.
+            dtypes (Any):
+                Ignored. Added for compatibility with RowIterator.
+
+        Returns:
+            pandas.DataFrame:
+                An empty :class:`~pandas.DataFrame`.
+        """
         if pandas is None:
             raise ValueError(_NO_PANDAS_ERROR)
         return pandas.DataFrame()

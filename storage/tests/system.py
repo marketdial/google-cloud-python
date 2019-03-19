@@ -27,6 +27,7 @@ from google.cloud.storage._helpers import _base64_md5hash
 from google.cloud.storage.bucket import LifecycleRuleDelete
 from google.cloud.storage.bucket import LifecycleRuleSetStorageClass
 from google.cloud import kms
+import google.oauth2
 
 from test_utils.retry import RetryErrors
 from test_utils.system import unique_resource_id
@@ -42,8 +43,10 @@ def _bad_copy(bad_request):
     return err_msg.startswith("No file found in request. (POST") and "copyTo" in err_msg
 
 
-retry_429 = RetryErrors(exceptions.TooManyRequests)
-retry_429_503 = RetryErrors([exceptions.TooManyRequests, exceptions.ServiceUnavailable])
+retry_429 = RetryErrors(exceptions.TooManyRequests, max_tries=6)
+retry_429_503 = RetryErrors(
+    [exceptions.TooManyRequests, exceptions.ServiceUnavailable], max_tries=6
+)
 retry_bad_copy = RetryErrors(exceptions.BadRequest, error_predicate=_bad_copy)
 
 
@@ -77,12 +80,13 @@ def setUpModule():
     # In the **very** rare case the bucket name is reserved, this
     # fails with a ConnectionError.
     Config.TEST_BUCKET = Config.CLIENT.bucket(bucket_name)
+    Config.TEST_BUCKET.versioning_enabled = True
     retry_429(Config.TEST_BUCKET.create)()
 
 
 def tearDownModule():
     errors = (exceptions.Conflict, exceptions.TooManyRequests)
-    retry = RetryErrors(errors, max_tries=6)
+    retry = RetryErrors(errors, max_tries=9)
     retry(Config.TEST_BUCKET.delete)(force=True)
 
 
@@ -413,6 +417,20 @@ class TestStorageWriteFiles(TestStorageFiles):
 
         # Exercise 'objects.insert' w/ userProject.
         blob.upload_from_filename(file_data["path"])
+        gen0 = blob.generation
+
+        # Upload a second generation of the blob
+        blob.upload_from_string(b"gen1")
+        gen1 = blob.generation
+
+        blob0 = with_user_project.blob("SmallFile", generation=gen0)
+        blob1 = with_user_project.blob("SmallFile", generation=gen1)
+
+        # Exercise 'objects.get' w/ generation
+        self.assertEqual(with_user_project.get_blob(blob.name).generation, gen1)
+        self.assertEqual(
+            with_user_project.get_blob(blob.name, generation=gen0).generation, gen0
+        )
 
         try:
             # Exercise 'objects.get' (metadata) w/ userProject.
@@ -420,22 +438,31 @@ class TestStorageWriteFiles(TestStorageFiles):
             blob.reload()
 
             # Exercise 'objects.get' (media) w/ userProject.
-            downloaded = blob.download_as_string()
-            self.assertEqual(downloaded, file_contents)
+            self.assertEqual(blob0.download_as_string(), file_contents)
+            self.assertEqual(blob1.download_as_string(), b"gen1")
 
             # Exercise 'objects.patch' w/ userProject.
-            blob.content_language = "en"
-            blob.patch()
-            self.assertEqual(blob.content_language, "en")
+            blob0.content_language = "en"
+            blob0.patch()
+            self.assertEqual(blob0.content_language, "en")
+            self.assertIsNone(blob1.content_language)
 
             # Exercise 'objects.update' w/ userProject.
             metadata = {"foo": "Foo", "bar": "Bar"}
-            blob.metadata = metadata
-            blob.update()
-            self.assertEqual(blob.metadata, metadata)
+            blob0.metadata = metadata
+            blob0.update()
+            self.assertEqual(blob0.metadata, metadata)
+            self.assertIsNone(blob1.metadata)
         finally:
             # Exercise 'objects.delete' (metadata) w/ userProject.
-            blob.delete()
+            blobs = with_user_project.list_blobs(prefix=blob.name, versions=True)
+            self.assertEqual([each.generation for each in blobs], [gen0, gen1])
+
+            blob0.delete()
+            blobs = with_user_project.list_blobs(prefix=blob.name, versions=True)
+            self.assertEqual([each.generation for each in blobs], [gen1])
+
+            blob1.delete()
 
     @unittest.skipUnless(USER_PROJECT, "USER_PROJECT not set in environment.")
     def test_blob_acl_w_user_project(self):
@@ -703,6 +730,12 @@ class TestStorageSignURLs(TestStorageFiles):
     def setUp(self):
         super(TestStorageSignURLs, self).setUp()
 
+        if (
+            type(Config.CLIENT._credentials)
+            is not google.oauth2.service_account.credentials
+        ):
+            self.skipTest("Signing tests requires a service account credential")
+
         logo_path = self.FILES["logo"]["path"]
         with open(logo_path, "rb") as file_obj:
             self.LOCAL_FILE = file_obj.read()
@@ -963,6 +996,38 @@ class TestStorageRewrite(TestStorageFiles):
             retry_429(created.delete)(force=True)
 
 
+class TestStorageUpdateStorageClass(TestStorageFiles):
+    def test_update_storage_class_small_file(self):
+        blob = self.bucket.blob("SmallFile")
+
+        file_data = self.FILES["simple"]
+        blob.upload_from_filename(file_data["path"])
+        self.case_blobs_to_delete.append(blob)
+
+        blob.update_storage_class("NEARLINE")
+        blob.reload()
+        self.assertEqual(blob.storage_class, "NEARLINE")
+
+        blob.update_storage_class("COLDLINE")
+        blob.reload()
+        self.assertEqual(blob.storage_class, "COLDLINE")
+
+    def test_update_storage_class_large_file(self):
+        blob = self.bucket.blob("BigFile")
+
+        file_data = self.FILES["big"]
+        blob.upload_from_filename(file_data["path"])
+        self.case_blobs_to_delete.append(blob)
+
+        blob.update_storage_class("NEARLINE")
+        blob.reload()
+        self.assertEqual(blob.storage_class, "NEARLINE")
+
+        blob.update_storage_class("COLDLINE")
+        blob.reload()
+        self.assertEqual(blob.storage_class, "COLDLINE")
+
+
 class TestStorageNotificationCRUD(unittest.TestCase):
 
     topic = None
@@ -1109,6 +1174,7 @@ class TestKMSIntegration(TestStorageFiles):
     @classmethod
     def setUpClass(cls):
         super(TestKMSIntegration, cls).setUpClass()
+        _empty_bucket(cls.bucket)
 
     def setUp(self):
         super(TestKMSIntegration, self).setUp()
@@ -1431,3 +1497,87 @@ class TestRetentionPolicy(unittest.TestCase):
         bucket.retention_period = None
         with self.assertRaises(exceptions.Forbidden):
             bucket.patch()
+
+
+class TestIAMConfiguration(unittest.TestCase):
+    def setUp(self):
+        self.case_buckets_to_delete = []
+
+    def tearDown(self):
+        for bucket_name in self.case_buckets_to_delete:
+            bucket = Config.CLIENT.bucket(bucket_name)
+            retry_429(bucket.delete)(force=True)
+
+    def test_new_bucket_w_bpo(self):
+        new_bucket_name = "new-w-bpo" + unique_resource_id("-")
+        self.assertRaises(
+            exceptions.NotFound, Config.CLIENT.get_bucket, new_bucket_name
+        )
+        bucket = Config.CLIENT.bucket(new_bucket_name)
+        bucket.iam_configuration.bucket_policy_only_enabled = True
+        retry_429(bucket.create)()
+        self.case_buckets_to_delete.append(new_bucket_name)
+
+        bucket_acl = bucket.acl
+        with self.assertRaises(exceptions.BadRequest):
+            bucket_acl.reload()
+
+        bucket_acl.loaded = True  # Fake that we somehow loaded the ACL
+        bucket_acl.all().grant_read()
+        with self.assertRaises(exceptions.BadRequest):
+            bucket_acl.save()
+
+        blob_name = "my-blob.txt"
+        blob = bucket.blob(blob_name)
+        payload = b"DEADBEEF"
+        blob.upload_from_string(payload)
+
+        found = bucket.get_blob(blob_name)
+        self.assertEqual(found.download_as_string(), payload)
+
+        blob_acl = blob.acl
+        with self.assertRaises(exceptions.BadRequest):
+            blob_acl.reload()
+
+        blob_acl.loaded = True  # Fake that we somehow loaded the ACL
+        blob_acl.all().grant_read()
+        with self.assertRaises(exceptions.BadRequest):
+            blob_acl.save()
+
+    def test_bpo_set_unset_preserves_acls(self):
+        new_bucket_name = "bpo-acls" + unique_resource_id("-")
+        self.assertRaises(
+            exceptions.NotFound, Config.CLIENT.get_bucket, new_bucket_name
+        )
+        bucket = retry_429(Config.CLIENT.create_bucket)(new_bucket_name)
+        self.case_buckets_to_delete.append(new_bucket_name)
+
+        blob_name = "my-blob.txt"
+        blob = bucket.blob(blob_name)
+        payload = b"DEADBEEF"
+        blob.upload_from_string(payload)
+
+        # Preserve ACLs before setting BPO
+        bucket_acl_before = list(bucket.acl)
+        blob_acl_before = list(bucket.acl)
+
+        # Set BPO
+        bucket.iam_configuration.bucket_policy_only_enabled = True
+        bucket.patch()
+
+        # While BPO is set, cannot get / set ACLs
+        with self.assertRaises(exceptions.BadRequest):
+            bucket.acl.reload()
+
+        # Clear BPO
+        bucket.iam_configuration.bucket_policy_only_enabled = False
+        bucket.patch()
+
+        # Query ACLs after clearing BPO
+        bucket.acl.reload()
+        bucket_acl_after = list(bucket.acl)
+        blob.acl.reload()
+        blob_acl_after = list(bucket.acl)
+
+        self.assertEqual(bucket_acl_before, bucket_acl_after)
+        self.assertEqual(blob_acl_before, blob_acl_after)

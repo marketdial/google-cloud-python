@@ -4,6 +4,54 @@
 
 [1]: https://pypi.org/project/google-cloud-pubsub/#history
 
+## 0.40.0
+
+03-15-2019 14:09 PDT
+
+
+### Implementation Changes
+- Propagate 'RetryError' in 'PublisherClient.publish'. ([#7071](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7071))
+- Protoc-generated serialization update.. ([#7091](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7091))
+
+### New Features
+- Add 'authentication_method' to 'PushConfig' (via synth). ([#7512](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7512))
+- Add protos as an artifact to library ([#7205](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7205))
+- Pub/sub: pass transport w/ custom channel to GAPIC API clients. ([#7008](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7008))
+
+### Dependencies
+
+### Documentation
+- Updated client library documentation URLs. ([#7307](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7307))
+- Update copyright headers
+- Fix broken docstring cross-reference links. ([#7132](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7132))
+- Docstring changes from updates to .proto files. ([#7054](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/7054))
+- Pick up stub docstring fix in GAPIC generator. ([#6978](https://github.com/GoogleCloudPlatform/google-cloud-python/pull/6978))
+
+### Internal / Testing Changes
+- Copy proto files alongside protoc versions.
+
+## 0.39.1
+
+12-17-2018 16:57 PST
+
+
+### Implementation Changes
+- Initialize `StreamingPullFuture._cancelled` as True. ([#6901](https://github.com/googleapis/google-cloud-python/pull/6901))
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+
+### Documentation
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Emphasize that returned futures may differ from stdlib futures. ([#6875](https://github.com/googleapis/google-cloud-python/pull/6875))
+
+### Internal / Testing Changes
+- Add baseline for synth.metadata
+- Update noxfile.
+- blacken all gen'd libs ([#6792](https://github.com/googleapis/google-cloud-python/pull/6792))
+- omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Run Black on Generated libraries ([#6666](https://github.com/googleapis/google-cloud-python/pull/6666))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+
 ## 0.39.0
 
 11-27-2018 13:32 PST

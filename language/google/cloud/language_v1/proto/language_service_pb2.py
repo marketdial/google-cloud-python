@@ -9,7 +9,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 
 # @@protoc_insertion_point(imports)
 
@@ -23,8 +22,11 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     name="google/cloud/language_v1/proto/language_service.proto",
     package="google.cloud.language.v1",
     syntax="proto3",
+    serialized_options=_b(
+        "\n\034com.google.cloud.language.v1B\024LanguageServiceProtoP\001Z@google.golang.org/genproto/googleapis/cloud/language/v1;language"
+    ),
     serialized_pb=_b(
-        '\n5google/cloud/language_v1/proto/language_service.proto\x12\x18google.cloud.language.v1\x1a\x1cgoogle/api/annotations.proto"\xc3\x01\n\x08\x44ocument\x12\x35\n\x04type\x18\x01 \x01(\x0e\x32\'.google.cloud.language.v1.Document.Type\x12\x11\n\x07\x63ontent\x18\x02 \x01(\tH\x00\x12\x19\n\x0fgcs_content_uri\x18\x03 \x01(\tH\x00\x12\x10\n\x08language\x18\x04 \x01(\t"6\n\x04Type\x12\x14\n\x10TYPE_UNSPECIFIED\x10\x00\x12\x0e\n\nPLAIN_TEXT\x10\x01\x12\x08\n\x04HTML\x10\x02\x42\x08\n\x06source"t\n\x08Sentence\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12\x36\n\tsentiment\x18\x02 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment"\xbe\x03\n\x06\x45ntity\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x33\n\x04type\x18\x02 \x01(\x0e\x32%.google.cloud.language.v1.Entity.Type\x12@\n\x08metadata\x18\x03 \x03(\x0b\x32..google.cloud.language.v1.Entity.MetadataEntry\x12\x10\n\x08salience\x18\x04 \x01(\x02\x12\x39\n\x08mentions\x18\x05 \x03(\x0b\x32\'.google.cloud.language.v1.EntityMention\x12\x36\n\tsentiment\x18\x06 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01"y\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06PERSON\x10\x01\x12\x0c\n\x08LOCATION\x10\x02\x12\x10\n\x0cORGANIZATION\x10\x03\x12\t\n\x05\x45VENT\x10\x04\x12\x0f\n\x0bWORK_OF_ART\x10\x05\x12\x11\n\rCONSUMER_GOOD\x10\x06\x12\t\n\x05OTHER\x10\x07"\xcb\x01\n\x05Token\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12>\n\x0epart_of_speech\x18\x02 \x01(\x0b\x32&.google.cloud.language.v1.PartOfSpeech\x12\x41\n\x0f\x64\x65pendency_edge\x18\x03 \x01(\x0b\x32(.google.cloud.language.v1.DependencyEdge\x12\r\n\x05lemma\x18\x04 \x01(\t"-\n\tSentiment\x12\x11\n\tmagnitude\x18\x02 \x01(\x02\x12\r\n\x05score\x18\x03 \x01(\x02"\xa3\x10\n\x0cPartOfSpeech\x12\x37\n\x03tag\x18\x01 \x01(\x0e\x32*.google.cloud.language.v1.PartOfSpeech.Tag\x12=\n\x06\x61spect\x18\x02 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Aspect\x12\x39\n\x04\x63\x61se\x18\x03 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Case\x12\x39\n\x04\x66orm\x18\x04 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Form\x12=\n\x06gender\x18\x05 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Gender\x12\x39\n\x04mood\x18\x06 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Mood\x12=\n\x06number\x18\x07 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Number\x12=\n\x06person\x18\x08 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Person\x12=\n\x06proper\x18\t \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Proper\x12G\n\x0breciprocity\x18\n \x01(\x0e\x32\x32.google.cloud.language.v1.PartOfSpeech.Reciprocity\x12;\n\x05tense\x18\x0b \x01(\x0e\x32,.google.cloud.language.v1.PartOfSpeech.Tense\x12;\n\x05voice\x18\x0c \x01(\x0e\x32,.google.cloud.language.v1.PartOfSpeech.Voice"\x8d\x01\n\x03Tag\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x41\x44J\x10\x01\x12\x07\n\x03\x41\x44P\x10\x02\x12\x07\n\x03\x41\x44V\x10\x03\x12\x08\n\x04\x43ONJ\x10\x04\x12\x07\n\x03\x44\x45T\x10\x05\x12\x08\n\x04NOUN\x10\x06\x12\x07\n\x03NUM\x10\x07\x12\x08\n\x04PRON\x10\x08\x12\x07\n\x03PRT\x10\t\x12\t\n\x05PUNCT\x10\n\x12\x08\n\x04VERB\x10\x0b\x12\x05\n\x01X\x10\x0c\x12\t\n\x05\x41\x46\x46IX\x10\r"O\n\x06\x41spect\x12\x12\n\x0e\x41SPECT_UNKNOWN\x10\x00\x12\x0e\n\nPERFECTIVE\x10\x01\x12\x10\n\x0cIMPERFECTIVE\x10\x02\x12\x0f\n\x0bPROGRESSIVE\x10\x03"\xf8\x01\n\x04\x43\x61se\x12\x10\n\x0c\x43\x41SE_UNKNOWN\x10\x00\x12\x0e\n\nACCUSATIVE\x10\x01\x12\r\n\tADVERBIAL\x10\x02\x12\x11\n\rCOMPLEMENTIVE\x10\x03\x12\n\n\x06\x44\x41TIVE\x10\x04\x12\x0c\n\x08GENITIVE\x10\x05\x12\x10\n\x0cINSTRUMENTAL\x10\x06\x12\x0c\n\x08LOCATIVE\x10\x07\x12\x0e\n\nNOMINATIVE\x10\x08\x12\x0b\n\x07OBLIQUE\x10\t\x12\r\n\tPARTITIVE\x10\n\x12\x11\n\rPREPOSITIONAL\x10\x0b\x12\x12\n\x0eREFLEXIVE_CASE\x10\x0c\x12\x11\n\rRELATIVE_CASE\x10\r\x12\x0c\n\x08VOCATIVE\x10\x0e"\xaf\x01\n\x04\x46orm\x12\x10\n\x0c\x46ORM_UNKNOWN\x10\x00\x12\x0c\n\x08\x41\x44NOMIAL\x10\x01\x12\r\n\tAUXILIARY\x10\x02\x12\x12\n\x0e\x43OMPLEMENTIZER\x10\x03\x12\x10\n\x0c\x46INAL_ENDING\x10\x04\x12\n\n\x06GERUND\x10\x05\x12\n\n\x06REALIS\x10\x06\x12\x0c\n\x08IRREALIS\x10\x07\x12\t\n\x05SHORT\x10\x08\x12\x08\n\x04LONG\x10\t\x12\t\n\x05ORDER\x10\n\x12\x0c\n\x08SPECIFIC\x10\x0b"E\n\x06Gender\x12\x12\n\x0eGENDER_UNKNOWN\x10\x00\x12\x0c\n\x08\x46\x45MININE\x10\x01\x12\r\n\tMASCULINE\x10\x02\x12\n\n\x06NEUTER\x10\x03"\x7f\n\x04Mood\x12\x10\n\x0cMOOD_UNKNOWN\x10\x00\x12\x14\n\x10\x43ONDITIONAL_MOOD\x10\x01\x12\x0e\n\nIMPERATIVE\x10\x02\x12\x0e\n\nINDICATIVE\x10\x03\x12\x11\n\rINTERROGATIVE\x10\x04\x12\x0b\n\x07JUSSIVE\x10\x05\x12\x0f\n\x0bSUBJUNCTIVE\x10\x06"@\n\x06Number\x12\x12\n\x0eNUMBER_UNKNOWN\x10\x00\x12\x0c\n\x08SINGULAR\x10\x01\x12\n\n\x06PLURAL\x10\x02\x12\x08\n\x04\x44UAL\x10\x03"T\n\x06Person\x12\x12\n\x0ePERSON_UNKNOWN\x10\x00\x12\t\n\x05\x46IRST\x10\x01\x12\n\n\x06SECOND\x10\x02\x12\t\n\x05THIRD\x10\x03\x12\x14\n\x10REFLEXIVE_PERSON\x10\x04"8\n\x06Proper\x12\x12\n\x0ePROPER_UNKNOWN\x10\x00\x12\n\n\x06PROPER\x10\x01\x12\x0e\n\nNOT_PROPER\x10\x02"J\n\x0bReciprocity\x12\x17\n\x13RECIPROCITY_UNKNOWN\x10\x00\x12\x0e\n\nRECIPROCAL\x10\x01\x12\x12\n\x0eNON_RECIPROCAL\x10\x02"s\n\x05Tense\x12\x11\n\rTENSE_UNKNOWN\x10\x00\x12\x15\n\x11\x43ONDITIONAL_TENSE\x10\x01\x12\n\n\x06\x46UTURE\x10\x02\x12\x08\n\x04PAST\x10\x03\x12\x0b\n\x07PRESENT\x10\x04\x12\r\n\tIMPERFECT\x10\x05\x12\x0e\n\nPLUPERFECT\x10\x06"B\n\x05Voice\x12\x11\n\rVOICE_UNKNOWN\x10\x00\x12\n\n\x06\x41\x43TIVE\x10\x01\x12\r\n\tCAUSATIVE\x10\x02\x12\x0b\n\x07PASSIVE\x10\x03"\x95\x08\n\x0e\x44\x65pendencyEdge\x12\x18\n\x10head_token_index\x18\x01 \x01(\x05\x12=\n\x05label\x18\x02 \x01(\x0e\x32..google.cloud.language.v1.DependencyEdge.Label"\xa9\x07\n\x05Label\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x41\x42\x42REV\x10\x01\x12\t\n\x05\x41\x43OMP\x10\x02\x12\t\n\x05\x41\x44VCL\x10\x03\x12\n\n\x06\x41\x44VMOD\x10\x04\x12\x08\n\x04\x41MOD\x10\x05\x12\t\n\x05\x41PPOS\x10\x06\x12\x08\n\x04\x41TTR\x10\x07\x12\x07\n\x03\x41UX\x10\x08\x12\x0b\n\x07\x41UXPASS\x10\t\x12\x06\n\x02\x43\x43\x10\n\x12\t\n\x05\x43\x43OMP\x10\x0b\x12\x08\n\x04\x43ONJ\x10\x0c\x12\t\n\x05\x43SUBJ\x10\r\x12\r\n\tCSUBJPASS\x10\x0e\x12\x07\n\x03\x44\x45P\x10\x0f\x12\x07\n\x03\x44\x45T\x10\x10\x12\r\n\tDISCOURSE\x10\x11\x12\x08\n\x04\x44OBJ\x10\x12\x12\x08\n\x04\x45XPL\x10\x13\x12\x0c\n\x08GOESWITH\x10\x14\x12\x08\n\x04IOBJ\x10\x15\x12\x08\n\x04MARK\x10\x16\x12\x07\n\x03MWE\x10\x17\x12\x07\n\x03MWV\x10\x18\x12\x07\n\x03NEG\x10\x19\x12\x06\n\x02NN\x10\x1a\x12\x0c\n\x08NPADVMOD\x10\x1b\x12\t\n\x05NSUBJ\x10\x1c\x12\r\n\tNSUBJPASS\x10\x1d\x12\x07\n\x03NUM\x10\x1e\x12\n\n\x06NUMBER\x10\x1f\x12\x05\n\x01P\x10 \x12\r\n\tPARATAXIS\x10!\x12\x0b\n\x07PARTMOD\x10"\x12\t\n\x05PCOMP\x10#\x12\x08\n\x04POBJ\x10$\x12\x08\n\x04POSS\x10%\x12\x0b\n\x07POSTNEG\x10&\x12\x0b\n\x07PRECOMP\x10\'\x12\x0b\n\x07PRECONJ\x10(\x12\n\n\x06PREDET\x10)\x12\x08\n\x04PREF\x10*\x12\x08\n\x04PREP\x10+\x12\t\n\x05PRONL\x10,\x12\x07\n\x03PRT\x10-\x12\x06\n\x02PS\x10.\x12\x0c\n\x08QUANTMOD\x10/\x12\t\n\x05RCMOD\x10\x30\x12\x0c\n\x08RCMODREL\x10\x31\x12\t\n\x05RDROP\x10\x32\x12\x07\n\x03REF\x10\x33\x12\x0b\n\x07REMNANT\x10\x34\x12\x0e\n\nREPARANDUM\x10\x35\x12\x08\n\x04ROOT\x10\x36\x12\x08\n\x04SNUM\x10\x37\x12\x08\n\x04SUFF\x10\x38\x12\x08\n\x04TMOD\x10\x39\x12\t\n\x05TOPIC\x10:\x12\x08\n\x04VMOD\x10;\x12\x0c\n\x08VOCATIVE\x10<\x12\t\n\x05XCOMP\x10=\x12\n\n\x06SUFFIX\x10>\x12\t\n\x05TITLE\x10?\x12\x0c\n\x08\x41\x44VPHMOD\x10@\x12\x0b\n\x07\x41UXCAUS\x10\x41\x12\t\n\x05\x41UXVV\x10\x42\x12\t\n\x05\x44TMOD\x10\x43\x12\x0b\n\x07\x46OREIGN\x10\x44\x12\x06\n\x02KW\x10\x45\x12\x08\n\x04LIST\x10\x46\x12\x08\n\x04NOMC\x10G\x12\x0c\n\x08NOMCSUBJ\x10H\x12\x10\n\x0cNOMCSUBJPASS\x10I\x12\x08\n\x04NUMC\x10J\x12\x07\n\x03\x43OP\x10K\x12\x0e\n\nDISLOCATED\x10L\x12\x07\n\x03\x41SP\x10M\x12\x08\n\x04GMOD\x10N\x12\x08\n\x04GOBJ\x10O\x12\n\n\x06INFMOD\x10P\x12\x07\n\x03MES\x10Q\x12\t\n\x05NCOMP\x10R"\xe7\x01\n\rEntityMention\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12:\n\x04type\x18\x02 \x01(\x0e\x32,.google.cloud.language.v1.EntityMention.Type\x12\x36\n\tsentiment\x18\x03 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment"0\n\x04Type\x12\x10\n\x0cTYPE_UNKNOWN\x10\x00\x12\n\n\x06PROPER\x10\x01\x12\n\n\x06\x43OMMON\x10\x02"1\n\x08TextSpan\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x14\n\x0c\x62\x65gin_offset\x18\x02 \x01(\x05":\n\x16\x43lassificationCategory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02"\x8e\x01\n\x17\x41nalyzeSentimentRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"\xa4\x01\n\x18\x41nalyzeSentimentResponse\x12?\n\x12\x64ocument_sentiment\x18\x01 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x12\x10\n\x08language\x18\x02 \x01(\t\x12\x35\n\tsentences\x18\x03 \x03(\x0b\x32".google.cloud.language.v1.Sentence"\x94\x01\n\x1d\x41nalyzeEntitySentimentRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"f\n\x1e\x41nalyzeEntitySentimentResponse\x12\x32\n\x08\x65ntities\x18\x01 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12\x10\n\x08language\x18\x02 \x01(\t"\x8d\x01\n\x16\x41nalyzeEntitiesRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"_\n\x17\x41nalyzeEntitiesResponse\x12\x32\n\x08\x65ntities\x18\x01 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12\x10\n\x08language\x18\x02 \x01(\t"\x8b\x01\n\x14\x41nalyzeSyntaxRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"\x91\x01\n\x15\x41nalyzeSyntaxResponse\x12\x35\n\tsentences\x18\x01 \x03(\x0b\x32".google.cloud.language.v1.Sentence\x12/\n\x06tokens\x18\x02 \x03(\x0b\x32\x1f.google.cloud.language.v1.Token\x12\x10\n\x08language\x18\x03 \x01(\t"K\n\x13\x43lassifyTextRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document"\\\n\x14\x43lassifyTextResponse\x12\x44\n\ncategories\x18\x01 \x03(\x0b\x32\x30.google.cloud.language.v1.ClassificationCategory"\xf0\x02\n\x13\x41nnotateTextRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12H\n\x08\x66\x65\x61tures\x18\x02 \x01(\x0b\x32\x36.google.cloud.language.v1.AnnotateTextRequest.Features\x12=\n\rencoding_type\x18\x03 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType\x1a\x99\x01\n\x08\x46\x65\x61tures\x12\x16\n\x0e\x65xtract_syntax\x18\x01 \x01(\x08\x12\x18\n\x10\x65xtract_entities\x18\x02 \x01(\x08\x12"\n\x1a\x65xtract_document_sentiment\x18\x03 \x01(\x08\x12 \n\x18\x65xtract_entity_sentiment\x18\x04 \x01(\x08\x12\x15\n\rclassify_text\x18\x06 \x01(\x08"\xcb\x02\n\x14\x41nnotateTextResponse\x12\x35\n\tsentences\x18\x01 \x03(\x0b\x32".google.cloud.language.v1.Sentence\x12/\n\x06tokens\x18\x02 \x03(\x0b\x32\x1f.google.cloud.language.v1.Token\x12\x32\n\x08\x65ntities\x18\x03 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12?\n\x12\x64ocument_sentiment\x18\x04 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x44\n\ncategories\x18\x06 \x03(\x0b\x32\x30.google.cloud.language.v1.ClassificationCategory*8\n\x0c\x45ncodingType\x12\x08\n\x04NONE\x10\x00\x12\x08\n\x04UTF8\x10\x01\x12\t\n\x05UTF16\x10\x02\x12\t\n\x05UTF32\x10\x03\x32\xe3\x07\n\x0fLanguageService\x12\xa4\x01\n\x10\x41nalyzeSentiment\x12\x31.google.cloud.language.v1.AnalyzeSentimentRequest\x1a\x32.google.cloud.language.v1.AnalyzeSentimentResponse")\x82\xd3\xe4\x93\x02#"\x1e/v1/documents:analyzeSentiment:\x01*\x12\xa0\x01\n\x0f\x41nalyzeEntities\x12\x30.google.cloud.language.v1.AnalyzeEntitiesRequest\x1a\x31.google.cloud.language.v1.AnalyzeEntitiesResponse"(\x82\xd3\xe4\x93\x02""\x1d/v1/documents:analyzeEntities:\x01*\x12\xbc\x01\n\x16\x41nalyzeEntitySentiment\x12\x37.google.cloud.language.v1.AnalyzeEntitySentimentRequest\x1a\x38.google.cloud.language.v1.AnalyzeEntitySentimentResponse"/\x82\xd3\xe4\x93\x02)"$/v1/documents:analyzeEntitySentiment:\x01*\x12\x98\x01\n\rAnalyzeSyntax\x12..google.cloud.language.v1.AnalyzeSyntaxRequest\x1a/.google.cloud.language.v1.AnalyzeSyntaxResponse"&\x82\xd3\xe4\x93\x02 "\x1b/v1/documents:analyzeSyntax:\x01*\x12\x94\x01\n\x0c\x43lassifyText\x12-.google.cloud.language.v1.ClassifyTextRequest\x1a..google.cloud.language.v1.ClassifyTextResponse"%\x82\xd3\xe4\x93\x02\x1f"\x1a/v1/documents:classifyText:\x01*\x12\x94\x01\n\x0c\x41nnotateText\x12-.google.cloud.language.v1.AnnotateTextRequest\x1a..google.cloud.language.v1.AnnotateTextResponse"%\x82\xd3\xe4\x93\x02\x1f"\x1a/v1/documents:annotateText:\x01*Bx\n\x1c\x63om.google.cloud.language.v1B\x14LanguageServiceProtoP\x01Z@google.golang.org/genproto/googleapis/cloud/language/v1;languageb\x06proto3'
+        '\n5google/cloud/language_v1/proto/language_service.proto\x12\x18google.cloud.language.v1\x1a\x1cgoogle/api/annotations.proto"\xc3\x01\n\x08\x44ocument\x12\x35\n\x04type\x18\x01 \x01(\x0e\x32\'.google.cloud.language.v1.Document.Type\x12\x11\n\x07\x63ontent\x18\x02 \x01(\tH\x00\x12\x19\n\x0fgcs_content_uri\x18\x03 \x01(\tH\x00\x12\x10\n\x08language\x18\x04 \x01(\t"6\n\x04Type\x12\x14\n\x10TYPE_UNSPECIFIED\x10\x00\x12\x0e\n\nPLAIN_TEXT\x10\x01\x12\x08\n\x04HTML\x10\x02\x42\x08\n\x06source"t\n\x08Sentence\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12\x36\n\tsentiment\x18\x02 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment"\xff\x03\n\x06\x45ntity\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x33\n\x04type\x18\x02 \x01(\x0e\x32%.google.cloud.language.v1.Entity.Type\x12@\n\x08metadata\x18\x03 \x03(\x0b\x32..google.cloud.language.v1.Entity.MetadataEntry\x12\x10\n\x08salience\x18\x04 \x01(\x02\x12\x39\n\x08mentions\x18\x05 \x03(\x0b\x32\'.google.cloud.language.v1.EntityMention\x12\x36\n\tsentiment\x18\x06 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01"\xb9\x01\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06PERSON\x10\x01\x12\x0c\n\x08LOCATION\x10\x02\x12\x10\n\x0cORGANIZATION\x10\x03\x12\t\n\x05\x45VENT\x10\x04\x12\x0f\n\x0bWORK_OF_ART\x10\x05\x12\x11\n\rCONSUMER_GOOD\x10\x06\x12\t\n\x05OTHER\x10\x07\x12\x10\n\x0cPHONE_NUMBER\x10\t\x12\x0b\n\x07\x41\x44\x44RESS\x10\n\x12\x08\n\x04\x44\x41TE\x10\x0b\x12\n\n\x06NUMBER\x10\x0c\x12\t\n\x05PRICE\x10\r"\xcb\x01\n\x05Token\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12>\n\x0epart_of_speech\x18\x02 \x01(\x0b\x32&.google.cloud.language.v1.PartOfSpeech\x12\x41\n\x0f\x64\x65pendency_edge\x18\x03 \x01(\x0b\x32(.google.cloud.language.v1.DependencyEdge\x12\r\n\x05lemma\x18\x04 \x01(\t"-\n\tSentiment\x12\x11\n\tmagnitude\x18\x02 \x01(\x02\x12\r\n\x05score\x18\x03 \x01(\x02"\xa3\x10\n\x0cPartOfSpeech\x12\x37\n\x03tag\x18\x01 \x01(\x0e\x32*.google.cloud.language.v1.PartOfSpeech.Tag\x12=\n\x06\x61spect\x18\x02 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Aspect\x12\x39\n\x04\x63\x61se\x18\x03 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Case\x12\x39\n\x04\x66orm\x18\x04 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Form\x12=\n\x06gender\x18\x05 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Gender\x12\x39\n\x04mood\x18\x06 \x01(\x0e\x32+.google.cloud.language.v1.PartOfSpeech.Mood\x12=\n\x06number\x18\x07 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Number\x12=\n\x06person\x18\x08 \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Person\x12=\n\x06proper\x18\t \x01(\x0e\x32-.google.cloud.language.v1.PartOfSpeech.Proper\x12G\n\x0breciprocity\x18\n \x01(\x0e\x32\x32.google.cloud.language.v1.PartOfSpeech.Reciprocity\x12;\n\x05tense\x18\x0b \x01(\x0e\x32,.google.cloud.language.v1.PartOfSpeech.Tense\x12;\n\x05voice\x18\x0c \x01(\x0e\x32,.google.cloud.language.v1.PartOfSpeech.Voice"\x8d\x01\n\x03Tag\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x41\x44J\x10\x01\x12\x07\n\x03\x41\x44P\x10\x02\x12\x07\n\x03\x41\x44V\x10\x03\x12\x08\n\x04\x43ONJ\x10\x04\x12\x07\n\x03\x44\x45T\x10\x05\x12\x08\n\x04NOUN\x10\x06\x12\x07\n\x03NUM\x10\x07\x12\x08\n\x04PRON\x10\x08\x12\x07\n\x03PRT\x10\t\x12\t\n\x05PUNCT\x10\n\x12\x08\n\x04VERB\x10\x0b\x12\x05\n\x01X\x10\x0c\x12\t\n\x05\x41\x46\x46IX\x10\r"O\n\x06\x41spect\x12\x12\n\x0e\x41SPECT_UNKNOWN\x10\x00\x12\x0e\n\nPERFECTIVE\x10\x01\x12\x10\n\x0cIMPERFECTIVE\x10\x02\x12\x0f\n\x0bPROGRESSIVE\x10\x03"\xf8\x01\n\x04\x43\x61se\x12\x10\n\x0c\x43\x41SE_UNKNOWN\x10\x00\x12\x0e\n\nACCUSATIVE\x10\x01\x12\r\n\tADVERBIAL\x10\x02\x12\x11\n\rCOMPLEMENTIVE\x10\x03\x12\n\n\x06\x44\x41TIVE\x10\x04\x12\x0c\n\x08GENITIVE\x10\x05\x12\x10\n\x0cINSTRUMENTAL\x10\x06\x12\x0c\n\x08LOCATIVE\x10\x07\x12\x0e\n\nNOMINATIVE\x10\x08\x12\x0b\n\x07OBLIQUE\x10\t\x12\r\n\tPARTITIVE\x10\n\x12\x11\n\rPREPOSITIONAL\x10\x0b\x12\x12\n\x0eREFLEXIVE_CASE\x10\x0c\x12\x11\n\rRELATIVE_CASE\x10\r\x12\x0c\n\x08VOCATIVE\x10\x0e"\xaf\x01\n\x04\x46orm\x12\x10\n\x0c\x46ORM_UNKNOWN\x10\x00\x12\x0c\n\x08\x41\x44NOMIAL\x10\x01\x12\r\n\tAUXILIARY\x10\x02\x12\x12\n\x0e\x43OMPLEMENTIZER\x10\x03\x12\x10\n\x0c\x46INAL_ENDING\x10\x04\x12\n\n\x06GERUND\x10\x05\x12\n\n\x06REALIS\x10\x06\x12\x0c\n\x08IRREALIS\x10\x07\x12\t\n\x05SHORT\x10\x08\x12\x08\n\x04LONG\x10\t\x12\t\n\x05ORDER\x10\n\x12\x0c\n\x08SPECIFIC\x10\x0b"E\n\x06Gender\x12\x12\n\x0eGENDER_UNKNOWN\x10\x00\x12\x0c\n\x08\x46\x45MININE\x10\x01\x12\r\n\tMASCULINE\x10\x02\x12\n\n\x06NEUTER\x10\x03"\x7f\n\x04Mood\x12\x10\n\x0cMOOD_UNKNOWN\x10\x00\x12\x14\n\x10\x43ONDITIONAL_MOOD\x10\x01\x12\x0e\n\nIMPERATIVE\x10\x02\x12\x0e\n\nINDICATIVE\x10\x03\x12\x11\n\rINTERROGATIVE\x10\x04\x12\x0b\n\x07JUSSIVE\x10\x05\x12\x0f\n\x0bSUBJUNCTIVE\x10\x06"@\n\x06Number\x12\x12\n\x0eNUMBER_UNKNOWN\x10\x00\x12\x0c\n\x08SINGULAR\x10\x01\x12\n\n\x06PLURAL\x10\x02\x12\x08\n\x04\x44UAL\x10\x03"T\n\x06Person\x12\x12\n\x0ePERSON_UNKNOWN\x10\x00\x12\t\n\x05\x46IRST\x10\x01\x12\n\n\x06SECOND\x10\x02\x12\t\n\x05THIRD\x10\x03\x12\x14\n\x10REFLEXIVE_PERSON\x10\x04"8\n\x06Proper\x12\x12\n\x0ePROPER_UNKNOWN\x10\x00\x12\n\n\x06PROPER\x10\x01\x12\x0e\n\nNOT_PROPER\x10\x02"J\n\x0bReciprocity\x12\x17\n\x13RECIPROCITY_UNKNOWN\x10\x00\x12\x0e\n\nRECIPROCAL\x10\x01\x12\x12\n\x0eNON_RECIPROCAL\x10\x02"s\n\x05Tense\x12\x11\n\rTENSE_UNKNOWN\x10\x00\x12\x15\n\x11\x43ONDITIONAL_TENSE\x10\x01\x12\n\n\x06\x46UTURE\x10\x02\x12\x08\n\x04PAST\x10\x03\x12\x0b\n\x07PRESENT\x10\x04\x12\r\n\tIMPERFECT\x10\x05\x12\x0e\n\nPLUPERFECT\x10\x06"B\n\x05Voice\x12\x11\n\rVOICE_UNKNOWN\x10\x00\x12\n\n\x06\x41\x43TIVE\x10\x01\x12\r\n\tCAUSATIVE\x10\x02\x12\x0b\n\x07PASSIVE\x10\x03"\x95\x08\n\x0e\x44\x65pendencyEdge\x12\x18\n\x10head_token_index\x18\x01 \x01(\x05\x12=\n\x05label\x18\x02 \x01(\x0e\x32..google.cloud.language.v1.DependencyEdge.Label"\xa9\x07\n\x05Label\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x41\x42\x42REV\x10\x01\x12\t\n\x05\x41\x43OMP\x10\x02\x12\t\n\x05\x41\x44VCL\x10\x03\x12\n\n\x06\x41\x44VMOD\x10\x04\x12\x08\n\x04\x41MOD\x10\x05\x12\t\n\x05\x41PPOS\x10\x06\x12\x08\n\x04\x41TTR\x10\x07\x12\x07\n\x03\x41UX\x10\x08\x12\x0b\n\x07\x41UXPASS\x10\t\x12\x06\n\x02\x43\x43\x10\n\x12\t\n\x05\x43\x43OMP\x10\x0b\x12\x08\n\x04\x43ONJ\x10\x0c\x12\t\n\x05\x43SUBJ\x10\r\x12\r\n\tCSUBJPASS\x10\x0e\x12\x07\n\x03\x44\x45P\x10\x0f\x12\x07\n\x03\x44\x45T\x10\x10\x12\r\n\tDISCOURSE\x10\x11\x12\x08\n\x04\x44OBJ\x10\x12\x12\x08\n\x04\x45XPL\x10\x13\x12\x0c\n\x08GOESWITH\x10\x14\x12\x08\n\x04IOBJ\x10\x15\x12\x08\n\x04MARK\x10\x16\x12\x07\n\x03MWE\x10\x17\x12\x07\n\x03MWV\x10\x18\x12\x07\n\x03NEG\x10\x19\x12\x06\n\x02NN\x10\x1a\x12\x0c\n\x08NPADVMOD\x10\x1b\x12\t\n\x05NSUBJ\x10\x1c\x12\r\n\tNSUBJPASS\x10\x1d\x12\x07\n\x03NUM\x10\x1e\x12\n\n\x06NUMBER\x10\x1f\x12\x05\n\x01P\x10 \x12\r\n\tPARATAXIS\x10!\x12\x0b\n\x07PARTMOD\x10"\x12\t\n\x05PCOMP\x10#\x12\x08\n\x04POBJ\x10$\x12\x08\n\x04POSS\x10%\x12\x0b\n\x07POSTNEG\x10&\x12\x0b\n\x07PRECOMP\x10\'\x12\x0b\n\x07PRECONJ\x10(\x12\n\n\x06PREDET\x10)\x12\x08\n\x04PREF\x10*\x12\x08\n\x04PREP\x10+\x12\t\n\x05PRONL\x10,\x12\x07\n\x03PRT\x10-\x12\x06\n\x02PS\x10.\x12\x0c\n\x08QUANTMOD\x10/\x12\t\n\x05RCMOD\x10\x30\x12\x0c\n\x08RCMODREL\x10\x31\x12\t\n\x05RDROP\x10\x32\x12\x07\n\x03REF\x10\x33\x12\x0b\n\x07REMNANT\x10\x34\x12\x0e\n\nREPARANDUM\x10\x35\x12\x08\n\x04ROOT\x10\x36\x12\x08\n\x04SNUM\x10\x37\x12\x08\n\x04SUFF\x10\x38\x12\x08\n\x04TMOD\x10\x39\x12\t\n\x05TOPIC\x10:\x12\x08\n\x04VMOD\x10;\x12\x0c\n\x08VOCATIVE\x10<\x12\t\n\x05XCOMP\x10=\x12\n\n\x06SUFFIX\x10>\x12\t\n\x05TITLE\x10?\x12\x0c\n\x08\x41\x44VPHMOD\x10@\x12\x0b\n\x07\x41UXCAUS\x10\x41\x12\t\n\x05\x41UXVV\x10\x42\x12\t\n\x05\x44TMOD\x10\x43\x12\x0b\n\x07\x46OREIGN\x10\x44\x12\x06\n\x02KW\x10\x45\x12\x08\n\x04LIST\x10\x46\x12\x08\n\x04NOMC\x10G\x12\x0c\n\x08NOMCSUBJ\x10H\x12\x10\n\x0cNOMCSUBJPASS\x10I\x12\x08\n\x04NUMC\x10J\x12\x07\n\x03\x43OP\x10K\x12\x0e\n\nDISLOCATED\x10L\x12\x07\n\x03\x41SP\x10M\x12\x08\n\x04GMOD\x10N\x12\x08\n\x04GOBJ\x10O\x12\n\n\x06INFMOD\x10P\x12\x07\n\x03MES\x10Q\x12\t\n\x05NCOMP\x10R"\xe7\x01\n\rEntityMention\x12\x30\n\x04text\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.TextSpan\x12:\n\x04type\x18\x02 \x01(\x0e\x32,.google.cloud.language.v1.EntityMention.Type\x12\x36\n\tsentiment\x18\x03 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment"0\n\x04Type\x12\x10\n\x0cTYPE_UNKNOWN\x10\x00\x12\n\n\x06PROPER\x10\x01\x12\n\n\x06\x43OMMON\x10\x02"1\n\x08TextSpan\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x14\n\x0c\x62\x65gin_offset\x18\x02 \x01(\x05":\n\x16\x43lassificationCategory\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02"\x8e\x01\n\x17\x41nalyzeSentimentRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"\xa4\x01\n\x18\x41nalyzeSentimentResponse\x12?\n\x12\x64ocument_sentiment\x18\x01 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x12\x10\n\x08language\x18\x02 \x01(\t\x12\x35\n\tsentences\x18\x03 \x03(\x0b\x32".google.cloud.language.v1.Sentence"\x94\x01\n\x1d\x41nalyzeEntitySentimentRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"f\n\x1e\x41nalyzeEntitySentimentResponse\x12\x32\n\x08\x65ntities\x18\x01 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12\x10\n\x08language\x18\x02 \x01(\t"\x8d\x01\n\x16\x41nalyzeEntitiesRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"_\n\x17\x41nalyzeEntitiesResponse\x12\x32\n\x08\x65ntities\x18\x01 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12\x10\n\x08language\x18\x02 \x01(\t"\x8b\x01\n\x14\x41nalyzeSyntaxRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12=\n\rencoding_type\x18\x02 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType"\x91\x01\n\x15\x41nalyzeSyntaxResponse\x12\x35\n\tsentences\x18\x01 \x03(\x0b\x32".google.cloud.language.v1.Sentence\x12/\n\x06tokens\x18\x02 \x03(\x0b\x32\x1f.google.cloud.language.v1.Token\x12\x10\n\x08language\x18\x03 \x01(\t"K\n\x13\x43lassifyTextRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document"\\\n\x14\x43lassifyTextResponse\x12\x44\n\ncategories\x18\x01 \x03(\x0b\x32\x30.google.cloud.language.v1.ClassificationCategory"\xf0\x02\n\x13\x41nnotateTextRequest\x12\x34\n\x08\x64ocument\x18\x01 \x01(\x0b\x32".google.cloud.language.v1.Document\x12H\n\x08\x66\x65\x61tures\x18\x02 \x01(\x0b\x32\x36.google.cloud.language.v1.AnnotateTextRequest.Features\x12=\n\rencoding_type\x18\x03 \x01(\x0e\x32&.google.cloud.language.v1.EncodingType\x1a\x99\x01\n\x08\x46\x65\x61tures\x12\x16\n\x0e\x65xtract_syntax\x18\x01 \x01(\x08\x12\x18\n\x10\x65xtract_entities\x18\x02 \x01(\x08\x12"\n\x1a\x65xtract_document_sentiment\x18\x03 \x01(\x08\x12 \n\x18\x65xtract_entity_sentiment\x18\x04 \x01(\x08\x12\x15\n\rclassify_text\x18\x06 \x01(\x08"\xcb\x02\n\x14\x41nnotateTextResponse\x12\x35\n\tsentences\x18\x01 \x03(\x0b\x32".google.cloud.language.v1.Sentence\x12/\n\x06tokens\x18\x02 \x03(\x0b\x32\x1f.google.cloud.language.v1.Token\x12\x32\n\x08\x65ntities\x18\x03 \x03(\x0b\x32 .google.cloud.language.v1.Entity\x12?\n\x12\x64ocument_sentiment\x18\x04 \x01(\x0b\x32#.google.cloud.language.v1.Sentiment\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x44\n\ncategories\x18\x06 \x03(\x0b\x32\x30.google.cloud.language.v1.ClassificationCategory*8\n\x0c\x45ncodingType\x12\x08\n\x04NONE\x10\x00\x12\x08\n\x04UTF8\x10\x01\x12\t\n\x05UTF16\x10\x02\x12\t\n\x05UTF32\x10\x03\x32\xe3\x07\n\x0fLanguageService\x12\xa4\x01\n\x10\x41nalyzeSentiment\x12\x31.google.cloud.language.v1.AnalyzeSentimentRequest\x1a\x32.google.cloud.language.v1.AnalyzeSentimentResponse")\x82\xd3\xe4\x93\x02#"\x1e/v1/documents:analyzeSentiment:\x01*\x12\xa0\x01\n\x0f\x41nalyzeEntities\x12\x30.google.cloud.language.v1.AnalyzeEntitiesRequest\x1a\x31.google.cloud.language.v1.AnalyzeEntitiesResponse"(\x82\xd3\xe4\x93\x02""\x1d/v1/documents:analyzeEntities:\x01*\x12\xbc\x01\n\x16\x41nalyzeEntitySentiment\x12\x37.google.cloud.language.v1.AnalyzeEntitySentimentRequest\x1a\x38.google.cloud.language.v1.AnalyzeEntitySentimentResponse"/\x82\xd3\xe4\x93\x02)"$/v1/documents:analyzeEntitySentiment:\x01*\x12\x98\x01\n\rAnalyzeSyntax\x12..google.cloud.language.v1.AnalyzeSyntaxRequest\x1a/.google.cloud.language.v1.AnalyzeSyntaxResponse"&\x82\xd3\xe4\x93\x02 "\x1b/v1/documents:analyzeSyntax:\x01*\x12\x94\x01\n\x0c\x43lassifyText\x12-.google.cloud.language.v1.ClassifyTextRequest\x1a..google.cloud.language.v1.ClassifyTextResponse"%\x82\xd3\xe4\x93\x02\x1f"\x1a/v1/documents:classifyText:\x01*\x12\x94\x01\n\x0c\x41nnotateText\x12-.google.cloud.language.v1.AnnotateTextRequest\x1a..google.cloud.language.v1.AnnotateTextResponse"%\x82\xd3\xe4\x93\x02\x1f"\x1a/v1/documents:annotateText:\x01*Bx\n\x1c\x63om.google.cloud.language.v1B\x14LanguageServiceProtoP\x01Z@google.golang.org/genproto/googleapis/cloud/language/v1;languageb\x06proto3'
     ),
     dependencies=[google_dot_api_dot_annotations__pb2.DESCRIPTOR],
 )
@@ -36,22 +38,22 @@ _ENCODINGTYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="NONE", index=0, number=0, options=None, type=None
+            name="NONE", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="UTF8", index=1, number=1, options=None, type=None
+            name="UTF8", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="UTF16", index=2, number=2, options=None, type=None
+            name="UTF16", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="UTF32", index=3, number=3, options=None, type=None
+            name="UTF32", index=3, number=3, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=6584,
-    serialized_end=6640,
+    serialized_options=None,
+    serialized_start=6649,
+    serialized_end=6705,
 )
 _sym_db.RegisterEnumDescriptor(_ENCODINGTYPE)
 
@@ -69,17 +71,21 @@ _DOCUMENT_TYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="TYPE_UNSPECIFIED", index=0, number=0, options=None, type=None
+            name="TYPE_UNSPECIFIED",
+            index=0,
+            number=0,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="PLAIN_TEXT", index=1, number=1, options=None, type=None
+            name="PLAIN_TEXT", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="HTML", index=2, number=2, options=None, type=None
+            name="HTML", index=2, number=2, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
+    serialized_options=None,
     serialized_start=245,
     serialized_end=299,
 )
@@ -92,34 +98,49 @@ _ENTITY_TYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="UNKNOWN", index=0, number=0, options=None, type=None
+            name="UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PERSON", index=1, number=1, options=None, type=None
+            name="PERSON", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="LOCATION", index=2, number=2, options=None, type=None
+            name="LOCATION", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ORGANIZATION", index=3, number=3, options=None, type=None
+            name="ORGANIZATION", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="EVENT", index=4, number=4, options=None, type=None
+            name="EVENT", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="WORK_OF_ART", index=5, number=5, options=None, type=None
+            name="WORK_OF_ART", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CONSUMER_GOOD", index=6, number=6, options=None, type=None
+            name="CONSUMER_GOOD", index=6, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="OTHER", index=7, number=7, options=None, type=None
+            name="OTHER", index=7, number=7, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PHONE_NUMBER", index=8, number=9, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="ADDRESS", index=9, number=10, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="DATE", index=10, number=11, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="NUMBER", index=11, number=12, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PRICE", index=12, number=13, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=755,
-    serialized_end=876,
+    serialized_options=None,
+    serialized_start=756,
+    serialized_end=941,
 )
 _sym_db.RegisterEnumDescriptor(_ENTITY_TYPE)
 
@@ -130,52 +151,52 @@ _PARTOFSPEECH_TAG = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="UNKNOWN", index=0, number=0, options=None, type=None
+            name="UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADJ", index=1, number=1, options=None, type=None
+            name="ADJ", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADP", index=2, number=2, options=None, type=None
+            name="ADP", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADV", index=3, number=3, options=None, type=None
+            name="ADV", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CONJ", index=4, number=4, options=None, type=None
+            name="CONJ", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DET", index=5, number=5, options=None, type=None
+            name="DET", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOUN", index=6, number=6, options=None, type=None
+            name="NOUN", index=6, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NUM", index=7, number=7, options=None, type=None
+            name="NUM", index=7, number=7, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRON", index=8, number=8, options=None, type=None
+            name="PRON", index=8, number=8, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRT", index=9, number=9, options=None, type=None
+            name="PRT", index=9, number=9, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PUNCT", index=10, number=10, options=None, type=None
+            name="PUNCT", index=10, number=10, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="VERB", index=11, number=11, options=None, type=None
+            name="VERB", index=11, number=11, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="X", index=12, number=12, options=None, type=None
+            name="X", index=12, number=12, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AFFIX", index=13, number=13, options=None, type=None
+            name="AFFIX", index=13, number=13, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=1893,
-    serialized_end=2034,
+    serialized_options=None,
+    serialized_start=1958,
+    serialized_end=2099,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_TAG)
 
@@ -186,22 +207,22 @@ _PARTOFSPEECH_ASPECT = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="ASPECT_UNKNOWN", index=0, number=0, options=None, type=None
+            name="ASPECT_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PERFECTIVE", index=1, number=1, options=None, type=None
+            name="PERFECTIVE", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="IMPERFECTIVE", index=2, number=2, options=None, type=None
+            name="IMPERFECTIVE", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PROGRESSIVE", index=3, number=3, options=None, type=None
+            name="PROGRESSIVE", index=3, number=3, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2036,
-    serialized_end=2115,
+    serialized_options=None,
+    serialized_start=2101,
+    serialized_end=2180,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_ASPECT)
 
@@ -212,55 +233,67 @@ _PARTOFSPEECH_CASE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="CASE_UNKNOWN", index=0, number=0, options=None, type=None
+            name="CASE_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ACCUSATIVE", index=1, number=1, options=None, type=None
+            name="ACCUSATIVE", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADVERBIAL", index=2, number=2, options=None, type=None
+            name="ADVERBIAL", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="COMPLEMENTIVE", index=3, number=3, options=None, type=None
+            name="COMPLEMENTIVE", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DATIVE", index=4, number=4, options=None, type=None
+            name="DATIVE", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="GENITIVE", index=5, number=5, options=None, type=None
+            name="GENITIVE", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="INSTRUMENTAL", index=6, number=6, options=None, type=None
+            name="INSTRUMENTAL", index=6, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="LOCATIVE", index=7, number=7, options=None, type=None
+            name="LOCATIVE", index=7, number=7, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOMINATIVE", index=8, number=8, options=None, type=None
+            name="NOMINATIVE", index=8, number=8, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="OBLIQUE", index=9, number=9, options=None, type=None
+            name="OBLIQUE", index=9, number=9, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PARTITIVE", index=10, number=10, options=None, type=None
+            name="PARTITIVE", index=10, number=10, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PREPOSITIONAL", index=11, number=11, options=None, type=None
+            name="PREPOSITIONAL",
+            index=11,
+            number=11,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="REFLEXIVE_CASE", index=12, number=12, options=None, type=None
+            name="REFLEXIVE_CASE",
+            index=12,
+            number=12,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="RELATIVE_CASE", index=13, number=13, options=None, type=None
+            name="RELATIVE_CASE",
+            index=13,
+            number=13,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="VOCATIVE", index=14, number=14, options=None, type=None
+            name="VOCATIVE", index=14, number=14, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2118,
-    serialized_end=2366,
+    serialized_options=None,
+    serialized_start=2183,
+    serialized_end=2431,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_CASE)
 
@@ -271,46 +304,46 @@ _PARTOFSPEECH_FORM = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="FORM_UNKNOWN", index=0, number=0, options=None, type=None
+            name="FORM_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADNOMIAL", index=1, number=1, options=None, type=None
+            name="ADNOMIAL", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AUXILIARY", index=2, number=2, options=None, type=None
+            name="AUXILIARY", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="COMPLEMENTIZER", index=3, number=3, options=None, type=None
+            name="COMPLEMENTIZER", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="FINAL_ENDING", index=4, number=4, options=None, type=None
+            name="FINAL_ENDING", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="GERUND", index=5, number=5, options=None, type=None
+            name="GERUND", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="REALIS", index=6, number=6, options=None, type=None
+            name="REALIS", index=6, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="IRREALIS", index=7, number=7, options=None, type=None
+            name="IRREALIS", index=7, number=7, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SHORT", index=8, number=8, options=None, type=None
+            name="SHORT", index=8, number=8, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="LONG", index=9, number=9, options=None, type=None
+            name="LONG", index=9, number=9, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ORDER", index=10, number=10, options=None, type=None
+            name="ORDER", index=10, number=10, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SPECIFIC", index=11, number=11, options=None, type=None
+            name="SPECIFIC", index=11, number=11, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2369,
-    serialized_end=2544,
+    serialized_options=None,
+    serialized_start=2434,
+    serialized_end=2609,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_FORM)
 
@@ -321,22 +354,22 @@ _PARTOFSPEECH_GENDER = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="GENDER_UNKNOWN", index=0, number=0, options=None, type=None
+            name="GENDER_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="FEMININE", index=1, number=1, options=None, type=None
+            name="FEMININE", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="MASCULINE", index=2, number=2, options=None, type=None
+            name="MASCULINE", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NEUTER", index=3, number=3, options=None, type=None
+            name="NEUTER", index=3, number=3, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2546,
-    serialized_end=2615,
+    serialized_options=None,
+    serialized_start=2611,
+    serialized_end=2680,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_GENDER)
 
@@ -347,31 +380,35 @@ _PARTOFSPEECH_MOOD = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="MOOD_UNKNOWN", index=0, number=0, options=None, type=None
+            name="MOOD_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CONDITIONAL_MOOD", index=1, number=1, options=None, type=None
+            name="CONDITIONAL_MOOD",
+            index=1,
+            number=1,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="IMPERATIVE", index=2, number=2, options=None, type=None
+            name="IMPERATIVE", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="INDICATIVE", index=3, number=3, options=None, type=None
+            name="INDICATIVE", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="INTERROGATIVE", index=4, number=4, options=None, type=None
+            name="INTERROGATIVE", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="JUSSIVE", index=5, number=5, options=None, type=None
+            name="JUSSIVE", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SUBJUNCTIVE", index=6, number=6, options=None, type=None
+            name="SUBJUNCTIVE", index=6, number=6, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2617,
-    serialized_end=2744,
+    serialized_options=None,
+    serialized_start=2682,
+    serialized_end=2809,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_MOOD)
 
@@ -382,22 +419,22 @@ _PARTOFSPEECH_NUMBER = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="NUMBER_UNKNOWN", index=0, number=0, options=None, type=None
+            name="NUMBER_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SINGULAR", index=1, number=1, options=None, type=None
+            name="SINGULAR", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PLURAL", index=2, number=2, options=None, type=None
+            name="PLURAL", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DUAL", index=3, number=3, options=None, type=None
+            name="DUAL", index=3, number=3, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2746,
-    serialized_end=2810,
+    serialized_options=None,
+    serialized_start=2811,
+    serialized_end=2875,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_NUMBER)
 
@@ -408,25 +445,29 @@ _PARTOFSPEECH_PERSON = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="PERSON_UNKNOWN", index=0, number=0, options=None, type=None
+            name="PERSON_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="FIRST", index=1, number=1, options=None, type=None
+            name="FIRST", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SECOND", index=2, number=2, options=None, type=None
+            name="SECOND", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="THIRD", index=3, number=3, options=None, type=None
+            name="THIRD", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="REFLEXIVE_PERSON", index=4, number=4, options=None, type=None
+            name="REFLEXIVE_PERSON",
+            index=4,
+            number=4,
+            serialized_options=None,
+            type=None,
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2812,
-    serialized_end=2896,
+    serialized_options=None,
+    serialized_start=2877,
+    serialized_end=2961,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_PERSON)
 
@@ -437,19 +478,19 @@ _PARTOFSPEECH_PROPER = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="PROPER_UNKNOWN", index=0, number=0, options=None, type=None
+            name="PROPER_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PROPER", index=1, number=1, options=None, type=None
+            name="PROPER", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOT_PROPER", index=2, number=2, options=None, type=None
+            name="NOT_PROPER", index=2, number=2, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2898,
-    serialized_end=2954,
+    serialized_options=None,
+    serialized_start=2963,
+    serialized_end=3019,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_PROPER)
 
@@ -460,19 +501,23 @@ _PARTOFSPEECH_RECIPROCITY = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="RECIPROCITY_UNKNOWN", index=0, number=0, options=None, type=None
+            name="RECIPROCITY_UNKNOWN",
+            index=0,
+            number=0,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="RECIPROCAL", index=1, number=1, options=None, type=None
+            name="RECIPROCAL", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NON_RECIPROCAL", index=2, number=2, options=None, type=None
+            name="NON_RECIPROCAL", index=2, number=2, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=2956,
-    serialized_end=3030,
+    serialized_options=None,
+    serialized_start=3021,
+    serialized_end=3095,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_RECIPROCITY)
 
@@ -483,31 +528,35 @@ _PARTOFSPEECH_TENSE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="TENSE_UNKNOWN", index=0, number=0, options=None, type=None
+            name="TENSE_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CONDITIONAL_TENSE", index=1, number=1, options=None, type=None
+            name="CONDITIONAL_TENSE",
+            index=1,
+            number=1,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="FUTURE", index=2, number=2, options=None, type=None
+            name="FUTURE", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PAST", index=3, number=3, options=None, type=None
+            name="PAST", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRESENT", index=4, number=4, options=None, type=None
+            name="PRESENT", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="IMPERFECT", index=5, number=5, options=None, type=None
+            name="IMPERFECT", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PLUPERFECT", index=6, number=6, options=None, type=None
+            name="PLUPERFECT", index=6, number=6, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=3032,
-    serialized_end=3147,
+    serialized_options=None,
+    serialized_start=3097,
+    serialized_end=3212,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_TENSE)
 
@@ -518,22 +567,22 @@ _PARTOFSPEECH_VOICE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="VOICE_UNKNOWN", index=0, number=0, options=None, type=None
+            name="VOICE_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ACTIVE", index=1, number=1, options=None, type=None
+            name="ACTIVE", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CAUSATIVE", index=2, number=2, options=None, type=None
+            name="CAUSATIVE", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PASSIVE", index=3, number=3, options=None, type=None
+            name="PASSIVE", index=3, number=3, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=3149,
-    serialized_end=3215,
+    serialized_options=None,
+    serialized_start=3214,
+    serialized_end=3280,
 )
 _sym_db.RegisterEnumDescriptor(_PARTOFSPEECH_VOICE)
 
@@ -544,259 +593,259 @@ _DEPENDENCYEDGE_LABEL = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="UNKNOWN", index=0, number=0, options=None, type=None
+            name="UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ABBREV", index=1, number=1, options=None, type=None
+            name="ABBREV", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ACOMP", index=2, number=2, options=None, type=None
+            name="ACOMP", index=2, number=2, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADVCL", index=3, number=3, options=None, type=None
+            name="ADVCL", index=3, number=3, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADVMOD", index=4, number=4, options=None, type=None
+            name="ADVMOD", index=4, number=4, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AMOD", index=5, number=5, options=None, type=None
+            name="AMOD", index=5, number=5, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="APPOS", index=6, number=6, options=None, type=None
+            name="APPOS", index=6, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ATTR", index=7, number=7, options=None, type=None
+            name="ATTR", index=7, number=7, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AUX", index=8, number=8, options=None, type=None
+            name="AUX", index=8, number=8, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AUXPASS", index=9, number=9, options=None, type=None
+            name="AUXPASS", index=9, number=9, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CC", index=10, number=10, options=None, type=None
+            name="CC", index=10, number=10, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CCOMP", index=11, number=11, options=None, type=None
+            name="CCOMP", index=11, number=11, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CONJ", index=12, number=12, options=None, type=None
+            name="CONJ", index=12, number=12, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CSUBJ", index=13, number=13, options=None, type=None
+            name="CSUBJ", index=13, number=13, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="CSUBJPASS", index=14, number=14, options=None, type=None
+            name="CSUBJPASS", index=14, number=14, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DEP", index=15, number=15, options=None, type=None
+            name="DEP", index=15, number=15, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DET", index=16, number=16, options=None, type=None
+            name="DET", index=16, number=16, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DISCOURSE", index=17, number=17, options=None, type=None
+            name="DISCOURSE", index=17, number=17, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DOBJ", index=18, number=18, options=None, type=None
+            name="DOBJ", index=18, number=18, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="EXPL", index=19, number=19, options=None, type=None
+            name="EXPL", index=19, number=19, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="GOESWITH", index=20, number=20, options=None, type=None
+            name="GOESWITH", index=20, number=20, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="IOBJ", index=21, number=21, options=None, type=None
+            name="IOBJ", index=21, number=21, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="MARK", index=22, number=22, options=None, type=None
+            name="MARK", index=22, number=22, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="MWE", index=23, number=23, options=None, type=None
+            name="MWE", index=23, number=23, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="MWV", index=24, number=24, options=None, type=None
+            name="MWV", index=24, number=24, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NEG", index=25, number=25, options=None, type=None
+            name="NEG", index=25, number=25, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NN", index=26, number=26, options=None, type=None
+            name="NN", index=26, number=26, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NPADVMOD", index=27, number=27, options=None, type=None
+            name="NPADVMOD", index=27, number=27, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NSUBJ", index=28, number=28, options=None, type=None
+            name="NSUBJ", index=28, number=28, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NSUBJPASS", index=29, number=29, options=None, type=None
+            name="NSUBJPASS", index=29, number=29, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NUM", index=30, number=30, options=None, type=None
+            name="NUM", index=30, number=30, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NUMBER", index=31, number=31, options=None, type=None
+            name="NUMBER", index=31, number=31, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="P", index=32, number=32, options=None, type=None
+            name="P", index=32, number=32, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PARATAXIS", index=33, number=33, options=None, type=None
+            name="PARATAXIS", index=33, number=33, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PARTMOD", index=34, number=34, options=None, type=None
+            name="PARTMOD", index=34, number=34, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PCOMP", index=35, number=35, options=None, type=None
+            name="PCOMP", index=35, number=35, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="POBJ", index=36, number=36, options=None, type=None
+            name="POBJ", index=36, number=36, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="POSS", index=37, number=37, options=None, type=None
+            name="POSS", index=37, number=37, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="POSTNEG", index=38, number=38, options=None, type=None
+            name="POSTNEG", index=38, number=38, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRECOMP", index=39, number=39, options=None, type=None
+            name="PRECOMP", index=39, number=39, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRECONJ", index=40, number=40, options=None, type=None
+            name="PRECONJ", index=40, number=40, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PREDET", index=41, number=41, options=None, type=None
+            name="PREDET", index=41, number=41, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PREF", index=42, number=42, options=None, type=None
+            name="PREF", index=42, number=42, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PREP", index=43, number=43, options=None, type=None
+            name="PREP", index=43, number=43, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRONL", index=44, number=44, options=None, type=None
+            name="PRONL", index=44, number=44, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PRT", index=45, number=45, options=None, type=None
+            name="PRT", index=45, number=45, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PS", index=46, number=46, options=None, type=None
+            name="PS", index=46, number=46, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="QUANTMOD", index=47, number=47, options=None, type=None
+            name="QUANTMOD", index=47, number=47, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="RCMOD", index=48, number=48, options=None, type=None
+            name="RCMOD", index=48, number=48, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="RCMODREL", index=49, number=49, options=None, type=None
+            name="RCMODREL", index=49, number=49, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="RDROP", index=50, number=50, options=None, type=None
+            name="RDROP", index=50, number=50, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="REF", index=51, number=51, options=None, type=None
+            name="REF", index=51, number=51, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="REMNANT", index=52, number=52, options=None, type=None
+            name="REMNANT", index=52, number=52, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="REPARANDUM", index=53, number=53, options=None, type=None
+            name="REPARANDUM", index=53, number=53, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ROOT", index=54, number=54, options=None, type=None
+            name="ROOT", index=54, number=54, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SNUM", index=55, number=55, options=None, type=None
+            name="SNUM", index=55, number=55, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SUFF", index=56, number=56, options=None, type=None
+            name="SUFF", index=56, number=56, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="TMOD", index=57, number=57, options=None, type=None
+            name="TMOD", index=57, number=57, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="TOPIC", index=58, number=58, options=None, type=None
+            name="TOPIC", index=58, number=58, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="VMOD", index=59, number=59, options=None, type=None
+            name="VMOD", index=59, number=59, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="VOCATIVE", index=60, number=60, options=None, type=None
+            name="VOCATIVE", index=60, number=60, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="XCOMP", index=61, number=61, options=None, type=None
+            name="XCOMP", index=61, number=61, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="SUFFIX", index=62, number=62, options=None, type=None
+            name="SUFFIX", index=62, number=62, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="TITLE", index=63, number=63, options=None, type=None
+            name="TITLE", index=63, number=63, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ADVPHMOD", index=64, number=64, options=None, type=None
+            name="ADVPHMOD", index=64, number=64, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AUXCAUS", index=65, number=65, options=None, type=None
+            name="AUXCAUS", index=65, number=65, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="AUXVV", index=66, number=66, options=None, type=None
+            name="AUXVV", index=66, number=66, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DTMOD", index=67, number=67, options=None, type=None
+            name="DTMOD", index=67, number=67, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="FOREIGN", index=68, number=68, options=None, type=None
+            name="FOREIGN", index=68, number=68, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="KW", index=69, number=69, options=None, type=None
+            name="KW", index=69, number=69, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="LIST", index=70, number=70, options=None, type=None
+            name="LIST", index=70, number=70, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOMC", index=71, number=71, options=None, type=None
+            name="NOMC", index=71, number=71, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOMCSUBJ", index=72, number=72, options=None, type=None
+            name="NOMCSUBJ", index=72, number=72, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NOMCSUBJPASS", index=73, number=73, options=None, type=None
+            name="NOMCSUBJPASS", index=73, number=73, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NUMC", index=74, number=74, options=None, type=None
+            name="NUMC", index=74, number=74, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="COP", index=75, number=75, options=None, type=None
+            name="COP", index=75, number=75, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DISLOCATED", index=76, number=76, options=None, type=None
+            name="DISLOCATED", index=76, number=76, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="ASP", index=77, number=77, options=None, type=None
+            name="ASP", index=77, number=77, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="GMOD", index=78, number=78, options=None, type=None
+            name="GMOD", index=78, number=78, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="GOBJ", index=79, number=79, options=None, type=None
+            name="GOBJ", index=79, number=79, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="INFMOD", index=80, number=80, options=None, type=None
+            name="INFMOD", index=80, number=80, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="MES", index=81, number=81, options=None, type=None
+            name="MES", index=81, number=81, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="NCOMP", index=82, number=82, options=None, type=None
+            name="NCOMP", index=82, number=82, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=3326,
-    serialized_end=4263,
+    serialized_options=None,
+    serialized_start=3391,
+    serialized_end=4328,
 )
 _sym_db.RegisterEnumDescriptor(_DEPENDENCYEDGE_LABEL)
 
@@ -807,19 +856,19 @@ _ENTITYMENTION_TYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="TYPE_UNKNOWN", index=0, number=0, options=None, type=None
+            name="TYPE_UNKNOWN", index=0, number=0, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="PROPER", index=1, number=1, options=None, type=None
+            name="PROPER", index=1, number=1, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="COMMON", index=2, number=2, options=None, type=None
+            name="COMMON", index=2, number=2, serialized_options=None, type=None
         ),
     ],
     containing_type=None,
-    options=None,
-    serialized_start=4449,
-    serialized_end=4497,
+    serialized_options=None,
+    serialized_start=4514,
+    serialized_end=4562,
 )
 _sym_db.RegisterEnumDescriptor(_ENTITYMENTION_TYPE)
 
@@ -846,7 +895,7 @@ _DOCUMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -864,7 +913,7 @@ _DOCUMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -882,7 +931,7 @@ _DOCUMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -900,14 +949,14 @@ _DOCUMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[_DOCUMENT_TYPE],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
@@ -947,7 +996,7 @@ _SENTENCE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -965,14 +1014,14 @@ _SENTENCE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
@@ -1004,7 +1053,7 @@ _ENTITY_METADATAENTRY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1022,14 +1071,14 @@ _ENTITY_METADATAENTRY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b("8\001")),
+    serialized_options=_b("8\001"),
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
@@ -1060,7 +1109,7 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1078,7 +1127,7 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1096,7 +1145,7 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1114,7 +1163,7 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1132,7 +1181,7 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1150,20 +1199,20 @@ _ENTITY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[_ENTITY_METADATAENTRY],
     enum_types=[_ENTITY_TYPE],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
     serialized_start=430,
-    serialized_end=876,
+    serialized_end=941,
 )
 
 
@@ -1189,7 +1238,7 @@ _TOKEN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1207,7 +1256,7 @@ _TOKEN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1225,7 +1274,7 @@ _TOKEN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1243,20 +1292,20 @@ _TOKEN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=879,
-    serialized_end=1082,
+    serialized_start=944,
+    serialized_end=1147,
 )
 
 
@@ -1282,7 +1331,7 @@ _SENTIMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1300,20 +1349,20 @@ _SENTIMENT = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1084,
-    serialized_end=1129,
+    serialized_start=1149,
+    serialized_end=1194,
 )
 
 
@@ -1339,7 +1388,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1357,7 +1406,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1375,7 +1424,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1393,7 +1442,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1411,7 +1460,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1429,7 +1478,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1447,7 +1496,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1465,7 +1514,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1483,7 +1532,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1501,7 +1550,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1519,7 +1568,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1537,7 +1586,7 @@ _PARTOFSPEECH = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
@@ -1557,13 +1606,13 @@ _PARTOFSPEECH = _descriptor.Descriptor(
         _PARTOFSPEECH_TENSE,
         _PARTOFSPEECH_VOICE,
     ],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1132,
-    serialized_end=3215,
+    serialized_start=1197,
+    serialized_end=3280,
 )
 
 
@@ -1589,7 +1638,7 @@ _DEPENDENCYEDGE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1607,20 +1656,20 @@ _DEPENDENCYEDGE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[_DEPENDENCYEDGE_LABEL],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=3218,
-    serialized_end=4263,
+    serialized_start=3283,
+    serialized_end=4328,
 )
 
 
@@ -1646,7 +1695,7 @@ _ENTITYMENTION = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1664,7 +1713,7 @@ _ENTITYMENTION = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1682,20 +1731,20 @@ _ENTITYMENTION = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[_ENTITYMENTION_TYPE],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4266,
-    serialized_end=4497,
+    serialized_start=4331,
+    serialized_end=4562,
 )
 
 
@@ -1721,7 +1770,7 @@ _TEXTSPAN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1739,20 +1788,20 @@ _TEXTSPAN = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4499,
-    serialized_end=4548,
+    serialized_start=4564,
+    serialized_end=4613,
 )
 
 
@@ -1778,7 +1827,7 @@ _CLASSIFICATIONCATEGORY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1796,20 +1845,20 @@ _CLASSIFICATIONCATEGORY = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4550,
-    serialized_end=4608,
+    serialized_start=4615,
+    serialized_end=4673,
 )
 
 
@@ -1835,7 +1884,7 @@ _ANALYZESENTIMENTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1853,20 +1902,20 @@ _ANALYZESENTIMENTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4611,
-    serialized_end=4753,
+    serialized_start=4676,
+    serialized_end=4818,
 )
 
 
@@ -1892,7 +1941,7 @@ _ANALYZESENTIMENTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1910,7 +1959,7 @@ _ANALYZESENTIMENTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1928,20 +1977,20 @@ _ANALYZESENTIMENTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4756,
-    serialized_end=4920,
+    serialized_start=4821,
+    serialized_end=4985,
 )
 
 
@@ -1967,7 +2016,7 @@ _ANALYZEENTITYSENTIMENTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -1985,20 +2034,20 @@ _ANALYZEENTITYSENTIMENTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=4923,
-    serialized_end=5071,
+    serialized_start=4988,
+    serialized_end=5136,
 )
 
 
@@ -2024,7 +2073,7 @@ _ANALYZEENTITYSENTIMENTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2042,20 +2091,20 @@ _ANALYZEENTITYSENTIMENTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5073,
-    serialized_end=5175,
+    serialized_start=5138,
+    serialized_end=5240,
 )
 
 
@@ -2081,7 +2130,7 @@ _ANALYZEENTITIESREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2099,20 +2148,20 @@ _ANALYZEENTITIESREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5178,
-    serialized_end=5319,
+    serialized_start=5243,
+    serialized_end=5384,
 )
 
 
@@ -2138,7 +2187,7 @@ _ANALYZEENTITIESRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2156,20 +2205,20 @@ _ANALYZEENTITIESRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5321,
-    serialized_end=5416,
+    serialized_start=5386,
+    serialized_end=5481,
 )
 
 
@@ -2195,7 +2244,7 @@ _ANALYZESYNTAXREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2213,20 +2262,20 @@ _ANALYZESYNTAXREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5419,
-    serialized_end=5558,
+    serialized_start=5484,
+    serialized_end=5623,
 )
 
 
@@ -2252,7 +2301,7 @@ _ANALYZESYNTAXRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2270,7 +2319,7 @@ _ANALYZESYNTAXRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2288,20 +2337,20 @@ _ANALYZESYNTAXRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5561,
-    serialized_end=5706,
+    serialized_start=5626,
+    serialized_end=5771,
 )
 
 
@@ -2327,20 +2376,20 @@ _CLASSIFYTEXTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         )
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5708,
-    serialized_end=5783,
+    serialized_start=5773,
+    serialized_end=5848,
 )
 
 
@@ -2366,20 +2415,20 @@ _CLASSIFYTEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         )
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5785,
-    serialized_end=5877,
+    serialized_start=5850,
+    serialized_end=5942,
 )
 
 
@@ -2405,7 +2454,7 @@ _ANNOTATETEXTREQUEST_FEATURES = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2423,7 +2472,7 @@ _ANNOTATETEXTREQUEST_FEATURES = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2441,7 +2490,7 @@ _ANNOTATETEXTREQUEST_FEATURES = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2459,7 +2508,7 @@ _ANNOTATETEXTREQUEST_FEATURES = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2477,20 +2526,20 @@ _ANNOTATETEXTREQUEST_FEATURES = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=6095,
-    serialized_end=6248,
+    serialized_start=6160,
+    serialized_end=6313,
 )
 
 _ANNOTATETEXTREQUEST = _descriptor.Descriptor(
@@ -2515,7 +2564,7 @@ _ANNOTATETEXTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2533,7 +2582,7 @@ _ANNOTATETEXTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2551,20 +2600,20 @@ _ANNOTATETEXTREQUEST = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[_ANNOTATETEXTREQUEST_FEATURES],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=5880,
-    serialized_end=6248,
+    serialized_start=5945,
+    serialized_end=6313,
 )
 
 
@@ -2590,7 +2639,7 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2608,7 +2657,7 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2626,7 +2675,7 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2644,7 +2693,7 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2662,7 +2711,7 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
@@ -2680,20 +2729,20 @@ _ANNOTATETEXTRESPONSE = _descriptor.Descriptor(
             containing_type=None,
             is_extension=False,
             extension_scope=None,
-            options=None,
+            serialized_options=None,
             file=DESCRIPTOR,
         ),
     ],
     extensions=[],
     nested_types=[],
     enum_types=[],
-    options=None,
+    serialized_options=None,
     is_extendable=False,
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=6251,
-    serialized_end=6582,
+    serialized_start=6316,
+    serialized_end=6647,
 )
 
 _DOCUMENT.fields_by_name["type"].enum_type = _DOCUMENT_TYPE
@@ -3103,7 +3152,8 @@ ClassificationCategory = _reflection.GeneratedProtocolMessageType(
   
   Attributes:
       name:
-          The name of the category representing the document.
+          The name of the category representing the document, from the
+          `predefined taxonomy </natural-language/docs/categories>`__.
       confidence:
           The classifier's confidence of the category. Number represents
           how certain the classifier is that this category represents
@@ -3422,26 +3472,17 @@ AnnotateTextResponse = _reflection.GeneratedProtocolMessageType(
 _sym_db.RegisterMessage(AnnotateTextResponse)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(
-    descriptor_pb2.FileOptions(),
-    _b(
-        "\n\034com.google.cloud.language.v1B\024LanguageServiceProtoP\001Z@google.golang.org/genproto/googleapis/cloud/language/v1;language"
-    ),
-)
-_ENTITY_METADATAENTRY.has_options = True
-_ENTITY_METADATAENTRY._options = _descriptor._ParseOptions(
-    descriptor_pb2.MessageOptions(), _b("8\001")
-)
+DESCRIPTOR._options = None
+_ENTITY_METADATAENTRY._options = None
 
 _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
     name="LanguageService",
     full_name="google.cloud.language.v1.LanguageService",
     file=DESCRIPTOR,
     index=0,
-    options=None,
-    serialized_start=6643,
-    serialized_end=7638,
+    serialized_options=None,
+    serialized_start=6708,
+    serialized_end=7703,
     methods=[
         _descriptor.MethodDescriptor(
             name="AnalyzeSentiment",
@@ -3450,9 +3491,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_ANALYZESENTIMENTREQUEST,
             output_type=_ANALYZESENTIMENTRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002#"\036/v1/documents:analyzeSentiment:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002#"\036/v1/documents:analyzeSentiment:\001*'
             ),
         ),
         _descriptor.MethodDescriptor(
@@ -3462,9 +3502,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_ANALYZEENTITIESREQUEST,
             output_type=_ANALYZEENTITIESRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002""\035/v1/documents:analyzeEntities:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002""\035/v1/documents:analyzeEntities:\001*'
             ),
         ),
         _descriptor.MethodDescriptor(
@@ -3474,9 +3513,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_ANALYZEENTITYSENTIMENTREQUEST,
             output_type=_ANALYZEENTITYSENTIMENTRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002)"$/v1/documents:analyzeEntitySentiment:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002)"$/v1/documents:analyzeEntitySentiment:\001*'
             ),
         ),
         _descriptor.MethodDescriptor(
@@ -3486,9 +3524,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_ANALYZESYNTAXREQUEST,
             output_type=_ANALYZESYNTAXRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002 "\033/v1/documents:analyzeSyntax:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002 "\033/v1/documents:analyzeSyntax:\001*'
             ),
         ),
         _descriptor.MethodDescriptor(
@@ -3498,9 +3535,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_CLASSIFYTEXTREQUEST,
             output_type=_CLASSIFYTEXTRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002\037"\032/v1/documents:classifyText:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002\037"\032/v1/documents:classifyText:\001*'
             ),
         ),
         _descriptor.MethodDescriptor(
@@ -3510,9 +3546,8 @@ _LANGUAGESERVICE = _descriptor.ServiceDescriptor(
             containing_service=None,
             input_type=_ANNOTATETEXTREQUEST,
             output_type=_ANNOTATETEXTRESPONSE,
-            options=_descriptor._ParseOptions(
-                descriptor_pb2.MethodOptions(),
-                _b('\202\323\344\223\002\037"\032/v1/documents:annotateText:\001*'),
+            serialized_options=_b(
+                '\202\323\344\223\002\037"\032/v1/documents:annotateText:\001*'
             ),
         ),
     ],

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import itertools
+import json
 import unittest
 
 import mock
@@ -29,6 +30,14 @@ except (ImportError, AttributeError):  # pragma: NO COVER
     pandas = None
 
 from google.cloud.bigquery.dataset import DatasetReference
+
+
+def _mock_client():
+    from google.cloud.bigquery import client
+
+    mock_client = mock.create_autospec(client.Client)
+    mock_client.project = "my-project"
+    return mock_client
 
 
 class _SchemaBase(object):
@@ -494,6 +503,17 @@ class TestTable(unittest.TestCase, _SchemaBase):
         table = self._make_one(table_ref, schema=[full_name, age])
 
         self.assertEqual(table.schema, [full_name, age])
+
+    def test_ctor_string(self):
+        table = self._make_one("some-project.some_dset.some_tbl")
+        self.assertEqual(table.project, "some-project")
+        self.assertEqual(table.dataset_id, "some_dset")
+        self.assertEqual(table.table_id, "some_tbl")
+
+    def test_ctor_string_wo_project_id(self):
+        with pytest.raises(ValueError):
+            # Project ID is missing.
+            self._make_one("some_dset.some_tbl")
 
     def test_num_bytes_getter(self):
         dataset = DatasetReference(self.PROJECT, self.DS_ID)
@@ -1289,7 +1309,7 @@ class TestRowIterator(unittest.TestCase):
         from google.cloud.bigquery.table import _item_to_row
         from google.cloud.bigquery.table import _rows_page_start
 
-        client = mock.sentinel.client
+        client = _mock_client()
         api_request = mock.sentinel.api_request
         path = "/foo"
         schema = []
@@ -1322,7 +1342,7 @@ class TestRowIterator(unittest.TestCase):
         ]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": rows})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
         self.assertEqual(row_iterator.num_results, 0)
 
         rows_iter = iter(row_iterator)
@@ -1356,7 +1376,7 @@ class TestRowIterator(unittest.TestCase):
         api_request = mock.Mock(return_value={"rows": rows})
 
         row_iterator = RowIterator(
-            mock.sentinel.client, api_request, path, schema, page_size=4
+            _mock_client(), api_request, path, schema, page_size=4
         )
         row_iterator._get_next_page_response()
 
@@ -1383,7 +1403,7 @@ class TestRowIterator(unittest.TestCase):
         ]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": rows})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
 
         df = row_iterator.to_dataframe()
 
@@ -1404,7 +1424,7 @@ class TestRowIterator(unittest.TestCase):
         ]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": []})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
 
         df = row_iterator.to_dataframe()
 
@@ -1435,7 +1455,7 @@ class TestRowIterator(unittest.TestCase):
         rows = [{"f": [{"v": field} for field in row]} for row in row_data]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": rows})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
 
         df = row_iterator.to_dataframe()
 
@@ -1463,21 +1483,22 @@ class TestRowIterator(unittest.TestCase):
             SchemaField("start_timestamp", "TIMESTAMP"),
             SchemaField("seconds", "INT64"),
             SchemaField("miles", "FLOAT64"),
+            SchemaField("km", "FLOAT64"),
             SchemaField("payment_type", "STRING"),
             SchemaField("complete", "BOOL"),
             SchemaField("date", "DATE"),
         ]
         row_data = [
-            ["1.4338368E9", "420", "1.1", "Cash", "true", "1999-12-01"],
-            ["1.3878117E9", "2580", "17.7", "Cash", "false", "1953-06-14"],
-            ["1.3855653E9", "2280", "4.4", "Credit", "true", "1981-11-04"],
+            ["1.4338368E9", "420", "1.1", "1.77", "Cash", "true", "1999-12-01"],
+            ["1.3878117E9", "2580", "17.7", "28.5", "Cash", "false", "1953-06-14"],
+            ["1.3855653E9", "2280", "4.4", "7.1", "Credit", "true", "1981-11-04"],
         ]
         rows = [{"f": [{"v": field} for field in row]} for row in row_data]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": rows})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
 
-        df = row_iterator.to_dataframe()
+        df = row_iterator.to_dataframe(dtypes={"km": "float16"})
 
         self.assertIsInstance(df, pandas.DataFrame)
         self.assertEqual(len(df), 3)  # verify the number of rows
@@ -1487,6 +1508,7 @@ class TestRowIterator(unittest.TestCase):
         self.assertEqual(df.start_timestamp.dtype.name, "datetime64[ns, UTC]")
         self.assertEqual(df.seconds.dtype.name, "int64")
         self.assertEqual(df.miles.dtype.name, "float64")
+        self.assertEqual(df.km.dtype.name, "float16")
         self.assertEqual(df.payment_type.dtype.name, "object")
         self.assertEqual(df.complete.dtype.name, "bool")
         self.assertEqual(df.date.dtype.name, "object")
@@ -1506,10 +1528,149 @@ class TestRowIterator(unittest.TestCase):
         ]
         path = "/foo"
         api_request = mock.Mock(return_value={"rows": rows})
-        row_iterator = RowIterator(mock.sentinel.client, api_request, path, schema)
+        row_iterator = RowIterator(_mock_client(), api_request, path, schema)
 
         with self.assertRaises(ValueError):
             row_iterator.to_dataframe()
+
+    @unittest.skipIf(pandas is None, "Requires `pandas`")
+    @unittest.skipIf(
+        bigquery_storage_v1beta1 is None, "Requires `google-cloud-bigquery-storage`"
+    )
+    def test_to_dataframe_w_bqstorage_empty(self):
+        from google.cloud.bigquery import schema
+        from google.cloud.bigquery import table as mut
+
+        bqstorage_client = mock.create_autospec(
+            bigquery_storage_v1beta1.BigQueryStorageClient
+        )
+        session = bigquery_storage_v1beta1.types.ReadSession()
+        session.avro_schema.schema = json.dumps(
+            {
+                "fields": [
+                    {"name": "colA"},
+                    # Not alphabetical to test column order.
+                    {"name": "colC"},
+                    {"name": "colB"},
+                ]
+            }
+        )
+        bqstorage_client.create_read_session.return_value = session
+
+        row_iterator = mut.RowIterator(
+            _mock_client(),
+            None,  # api_request: ignored
+            None,  # path: ignored
+            [
+                schema.SchemaField("colA", "IGNORED"),
+                schema.SchemaField("colC", "IGNORED"),
+                schema.SchemaField("colB", "IGNORED"),
+            ],
+            table=mut.TableReference.from_string("proj.dset.tbl"),
+        )
+
+        got = row_iterator.to_dataframe(bqstorage_client)
+        column_names = ["colA", "colC", "colB"]
+        self.assertEqual(list(got), column_names)
+        self.assertTrue(got.empty)
+
+    @unittest.skipIf(pandas is None, "Requires `pandas`")
+    @unittest.skipIf(
+        bigquery_storage_v1beta1 is None, "Requires `google-cloud-bigquery-storage`"
+    )
+    def test_to_dataframe_w_bqstorage_nonempty(self):
+        from google.cloud.bigquery import schema
+        from google.cloud.bigquery import table as mut
+        from google.cloud.bigquery_storage_v1beta1 import reader
+
+        mock_rowstream = mock.create_autospec(reader.ReadRowsStream)
+        mock_rowstream.to_dataframe.return_value = pandas.DataFrame(
+            [
+                {"colA": 1, "colB": "abc", "colC": 2.0},
+                {"colA": -1, "colB": "def", "colC": 4.0},
+            ]
+        )
+        bqstorage_client = mock.create_autospec(
+            bigquery_storage_v1beta1.BigQueryStorageClient
+        )
+        session = bigquery_storage_v1beta1.types.ReadSession(
+            streams=[{"name": "/projects/proj/dataset/dset/tables/tbl/streams/1234"}]
+        )
+        session.avro_schema.schema = json.dumps(
+            {
+                "fields": [
+                    {"name": "colA"},
+                    # Not alphabetical to test column order.
+                    {"name": "colC"},
+                    {"name": "colB"},
+                ]
+            }
+        )
+        bqstorage_client.create_read_session.return_value = session
+        bqstorage_client.read_rows.return_value = mock_rowstream
+        schema = [
+            schema.SchemaField("colA", "IGNORED"),
+            schema.SchemaField("colC", "IGNORED"),
+            schema.SchemaField("colB", "IGNORED"),
+        ]
+
+        row_iterator = mut.RowIterator(
+            _mock_client(),
+            None,  # api_request: ignored
+            None,  # path: ignored
+            schema,
+            table=mut.TableReference.from_string("proj.dset.tbl"),
+            selected_fields=schema,
+        )
+
+        got = row_iterator.to_dataframe(bqstorage_client)
+        column_names = ["colA", "colC", "colB"]
+        self.assertEqual(list(got), column_names)
+        self.assertEqual(len(got.index), 2)
+
+    @unittest.skipIf(
+        bigquery_storage_v1beta1 is None, "Requires `google-cloud-bigquery-storage`"
+    )
+    def test_to_dataframe_w_bqstorage_partition(self):
+        from google.cloud.bigquery import schema
+        from google.cloud.bigquery import table as mut
+
+        bqstorage_client = mock.create_autospec(
+            bigquery_storage_v1beta1.BigQueryStorageClient
+        )
+
+        row_iterator = mut.RowIterator(
+            _mock_client(),
+            None,  # api_request: ignored
+            None,  # path: ignored
+            [schema.SchemaField("colA", "IGNORED")],
+            table=mut.TableReference.from_string("proj.dset.tbl$20181225"),
+        )
+
+        with pytest.raises(ValueError):
+            row_iterator.to_dataframe(bqstorage_client)
+
+    @unittest.skipIf(
+        bigquery_storage_v1beta1 is None, "Requires `google-cloud-bigquery-storage`"
+    )
+    def test_to_dataframe_w_bqstorage_snapshot(self):
+        from google.cloud.bigquery import schema
+        from google.cloud.bigquery import table as mut
+
+        bqstorage_client = mock.create_autospec(
+            bigquery_storage_v1beta1.BigQueryStorageClient
+        )
+
+        row_iterator = mut.RowIterator(
+            _mock_client(),
+            None,  # api_request: ignored
+            None,  # path: ignored
+            [schema.SchemaField("colA", "IGNORED")],
+            table=mut.TableReference.from_string("proj.dset.tbl@1234567890000"),
+        )
+
+        with pytest.raises(ValueError):
+            row_iterator.to_dataframe(bqstorage_client)
 
 
 class TestTimePartitioning(unittest.TestCase):

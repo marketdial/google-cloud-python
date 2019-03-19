@@ -18,15 +18,16 @@ A :class:`~.firestore_v1beta1.query.Query` can be created directly from
 a :class:`~.firestore_v1beta1.collection.Collection` and that can be
 a more common way to create a query than direct usage of the constructor.
 """
-
-
 import copy
 import math
+import warnings
 
 from google.protobuf import wrappers_pb2
+import six
 
 from google.cloud.firestore_v1beta1 import _helpers
 from google.cloud.firestore_v1beta1 import document
+from google.cloud.firestore_v1beta1 import field_path as field_path_module
 from google.cloud.firestore_v1beta1 import transforms
 from google.cloud.firestore_v1beta1.gapic import enums
 from google.cloud.firestore_v1beta1.proto import query_pb2
@@ -61,10 +62,6 @@ _NO_ORDERS_FOR_CURSOR = (
     "come from fields set in ``order_by()``."
 )
 _MISMATCH_CURSOR_W_ORDER_BY = "The cursor {!r} does not match the order fields {!r}."
-_EMPTY_DOC_TEMPLATE = (
-    "Unexpected server response. All responses other than the first must "
-    "contain a document. The response at index {} was\n{}."
-)
 
 
 class Query(object):
@@ -141,6 +138,20 @@ class Query(object):
         self._start_at = start_at
         self._end_at = end_at
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return (
+            self._parent == other._parent
+            and self._projection == other._projection
+            and self._field_filters == other._field_filters
+            and self._orders == other._orders
+            and self._limit == other._limit
+            and self._offset == other._offset
+            and self._start_at == other._start_at
+            and self._end_at == other._end_at
+        )
+
     @property
     def _client(self):
         """The client of the parent collection.
@@ -175,7 +186,7 @@ class Query(object):
         """
         field_paths = list(field_paths)
         for field_path in field_paths:
-            _helpers.split_field_path(field_path)  # raises
+            field_path_module.split_field_path(field_path)  # raises
 
         new_projection = query_pb2.StructuredQuery.Projection(
             fields=[
@@ -224,7 +235,7 @@ class Query(object):
             ValueError: If ``value`` is a NaN or :data:`None` and
                 ``op_string`` is not ``==``.
         """
-        _helpers.split_field_path(field_path)  # raises
+        field_path_module.split_field_path(field_path)  # raises
 
         if value is None:
             if op_string != _EQ_OP:
@@ -261,6 +272,14 @@ class Query(object):
             end_at=self._end_at,
         )
 
+    @staticmethod
+    def _make_order(field_path, direction):
+        """Helper for :meth:`order_by`."""
+        return query_pb2.StructuredQuery.Order(
+            field=query_pb2.StructuredQuery.FieldReference(field_path=field_path),
+            direction=_enum_from_direction(direction),
+        )
+
     def order_by(self, field_path, direction=ASCENDING):
         """Modify the query to add an order clause on a specific field.
 
@@ -288,12 +307,9 @@ class Query(object):
             ValueError: If ``direction`` is not one of :attr:`ASCENDING` or
                 :attr:`DESCENDING`.
         """
-        _helpers.split_field_path(field_path)  # raises
+        field_path_module.split_field_path(field_path)  # raises
 
-        order_pb = query_pb2.StructuredQuery.Order(
-            field=query_pb2.StructuredQuery.FieldReference(field_path=field_path),
-            direction=_enum_from_direction(direction),
-        )
+        order_pb = self._make_order(field_path, direction)
 
         new_orders = self._orders + (order_pb,)
         return self.__class__(
@@ -387,7 +403,10 @@ class Query(object):
         if isinstance(document_fields, tuple):
             document_fields = list(document_fields)
         elif isinstance(document_fields, document.DocumentSnapshot):
-            document_fields = document_fields.to_dict()
+            if document_fields.reference._path[:-1] != self._parent._path:
+                raise ValueError(
+                    "Cannot use snapshot from another collection as a cursor."
+                )
         else:
             # NOTE: We copy so that the caller can't modify after calling.
             document_fields = copy.deepcopy(document_fields)
@@ -563,6 +582,40 @@ class Query(object):
 
         return projection
 
+    def _normalize_orders(self):
+        """Helper:  adjust orders based on cursors, where clauses."""
+        orders = list(self._orders)
+        _has_snapshot_cursor = False
+
+        if self._start_at:
+            if isinstance(self._start_at[0], document.DocumentSnapshot):
+                _has_snapshot_cursor = True
+
+        if self._end_at:
+            if isinstance(self._end_at[0], document.DocumentSnapshot):
+                _has_snapshot_cursor = True
+
+        if _has_snapshot_cursor:
+            should_order = [
+                _enum_from_op_string(key)
+                for key in _COMPARISON_OPERATORS
+                if key not in (_EQ_OP, "array_contains")
+            ]
+            order_keys = [order.field.field_path for order in orders]
+            for filter_ in self._field_filters:
+                field = filter_.field.field_path
+                if filter_.op in should_order and field not in order_keys:
+                    orders.append(self._make_order(field, "ASCENDING"))
+            if not orders:
+                orders.append(self._make_order("__name__", "ASCENDING"))
+            else:
+                order_keys = [order.field.field_path for order in orders]
+                if "__name__" not in order_keys:
+                    direction = orders[-1].direction  # enum?
+                    orders.append(self._make_order("__name__", direction))
+
+        return orders
+
     def _normalize_cursor(self, cursor, orders):
         """Helper: convert cursor to a list of values based on orders."""
         if cursor is None:
@@ -575,13 +628,18 @@ class Query(object):
 
         order_keys = [order.field.field_path for order in orders]
 
+        if isinstance(document_fields, document.DocumentSnapshot):
+            snapshot = document_fields
+            document_fields = snapshot.to_dict()
+            document_fields["__name__"] = snapshot.reference
+
         if isinstance(document_fields, dict):
             # Transform to list using orders
             values = []
             data = document_fields
             for order_key in order_keys:
                 try:
-                    values.append(_helpers.get_nested_value(order_key, data))
+                    values.append(field_path_module.get_nested_value(order_key, data))
                 except KeyError:
                     msg = _MISSING_ORDER_BY.format(order_key, data)
                     raise ValueError(msg)
@@ -600,10 +658,8 @@ class Query(object):
                 msg = _INVALID_CURSOR_TRANSFORM
                 raise ValueError(msg)
 
-            if key == "__name__" and "/" not in field:
-                document_fields[index] = "{}/{}/{}".format(
-                    self._client._database_string, "/".join(self._parent._path), field
-                )
+            if key == "__name__" and isinstance(field, six.string_types):
+                document_fields[index] = self._parent.document(field)
 
         return document_fields, before
 
@@ -615,8 +671,9 @@ class Query(object):
             query protobuf.
         """
         projection = self._normalize_projection(self._projection)
-        start_at = self._normalize_cursor(self._start_at, self._orders)
-        end_at = self._normalize_cursor(self._end_at, self._orders)
+        orders = self._normalize_orders()
+        start_at = self._normalize_cursor(self._start_at, orders)
+        end_at = self._normalize_cursor(self._end_at, orders)
 
         query_kwargs = {
             "select": projection,
@@ -626,7 +683,7 @@ class Query(object):
                 )
             ],
             "where": self._filters_pb(),
-            "order_by": self._orders,
+            "order_by": orders,
             "start_at": _cursor_pb(start_at),
             "end_at": _cursor_pb(end_at),
         }
@@ -638,10 +695,27 @@ class Query(object):
         return query_pb2.StructuredQuery(**query_kwargs)
 
     def get(self, transaction=None):
+        """Deprecated alias for :meth:`stream`."""
+        warnings.warn(
+            "'Query.get' is deprecated:  please use 'Query.stream' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.stream(transaction=transaction)
+
+    def stream(self, transaction=None):
         """Read the documents in the collection that match this query.
 
-        This sends a ``RunQuery`` RPC and then consumes each document
-        returned in the stream of ``RunQueryResponse`` messages.
+        This sends a ``RunQuery`` RPC and then returns an iterator which
+        consumes each document returned in the stream of ``RunQueryResponse``
+        messages.
+
+        .. note::
+
+           The underlying stream of responses will time out after
+           the ``max_rpc_timeout_millis`` value set in the GAPIC
+           client configuration for the ``RunQuery`` API.  Snapshots
+           not consumed from the iterator before that point will be lost.
 
         If a ``transaction`` is used and it already has write operations
         added, this method cannot be used (i.e. read-after-write is not
@@ -655,12 +729,6 @@ class Query(object):
         Yields:
             ~.firestore_v1beta1.document.DocumentSnapshot: The next
             document that fulfills the query.
-
-        Raises:
-            ValueError: If the first response in the stream is empty, but
-                then more responses follow.
-            ValueError: If a response other than the first does not contain
-                a document.
         """
         parent_path, expected_prefix = self._parent._parent_info()
         response_iterator = self._client._firestore_api.run_query(
@@ -670,24 +738,11 @@ class Query(object):
             metadata=self._client._rpc_metadata,
         )
 
-        empty_stream = False
-        for index, response_pb in enumerate(response_iterator):
-            if empty_stream:
-                raise ValueError(
-                    "First response in stream was empty",
-                    "Received second response",
-                    response_pb,
-                )
-
-            snapshot, skipped_results = _query_response_to_snapshot(
-                response_pb, self._parent, expected_prefix
+        for response in response_iterator:
+            snapshot = _query_response_to_snapshot(
+                response, self._parent, expected_prefix
             )
-            if snapshot is None:
-                if index != 0:
-                    msg = _EMPTY_DOC_TEMPLATE.format(index, response_pb)
-                    raise ValueError(msg)
-                empty_stream = skipped_results == 0
-            else:
+            if snapshot is not None:
                 yield snapshot
 
     def on_snapshot(self, callback):
@@ -706,8 +761,8 @@ class Query(object):
             db = firestore.Client()
             query_ref = db.collection(u'users').where("user", "==", u'Ada')
 
-            def on_snapshot(query_snapshot):
-                for doc in query_snapshot.documents:
+            def on_snapshot(docs, changes, read_time):
+                for doc in docs:
                     print(u'{} => {}'.format(doc.id, doc.to_dict()))
 
             # Watch this query
@@ -824,6 +879,9 @@ def _enum_from_direction(direction):
     Raises:
         ValueError: If ``direction`` is not a valid direction.
     """
+    if isinstance(direction, int):
+        return direction
+
     if direction == Query.ASCENDING:
         return enums.StructuredQuery.Direction.ASCENDING
     elif direction == Query.DESCENDING:
@@ -891,13 +949,12 @@ def _query_response_to_snapshot(response_pb, collection, expected_prefix):
             directly from ``collection`` via :meth:`_parent_info`.
 
     Returns:
-        Tuple[Optional[~.firestore.document.DocumentSnapshot], int]: A
-        snapshot of the data returned in the query and the number of skipped
-        results. If ``response_pb.document`` is not set, the snapshot will be
-        :data:`None`.
+        Optional[~.firestore.document.DocumentSnapshot]: A
+        snapshot of the data returned in the query. If ``response_pb.document``
+        is not set, the snapshot will be :data:`None`.
     """
     if not response_pb.HasField("document"):
-        return None, response_pb.skipped_results
+        return None
 
     document_id = _helpers.get_doc_id(response_pb.document, expected_prefix)
     reference = collection.document(document_id)
@@ -910,4 +967,4 @@ def _query_response_to_snapshot(response_pb, collection, expected_prefix):
         create_time=response_pb.document.create_time,
         update_time=response_pb.document.update_time,
     )
-    return snapshot, response_pb.skipped_results
+    return snapshot

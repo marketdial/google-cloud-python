@@ -4,6 +4,42 @@
 
 [1]: https://pypi.org/project/google-api-core/#history
 
+## 1.8.1
+
+03-12-2019 12:45 PDT
+
+### Implementation Changes
+- Protect the creation of a background thread in BackgroundConsumer and wait on it starting. ([#7499](https://github.com/googleapis/google-cloud-python/pull/7499))
+
+## 1.8.0
+
+02-23-2019 15:46 PST
+
+
+### New Features
+- Add support to unwrap Anys into wrapped pb2 objects. ([#7430](https://github.com/googleapis/google-cloud-python/pull/7430))
+- Add `Operation.deserialize`. ([#7427](https://github.com/googleapis/google-cloud-python/pull/7427))
+
+### Documentation
+- Updated client library documentation URLs. ([#7307](https://github.com/googleapis/google-cloud-python/pull/7307))
+
+### Internal / Testing Changes
+- Fix new lint failure. ([#7382](https://github.com/googleapis/google-cloud-python/pull/7382))
+
+## 1.7.0
+
+12-17-2018 13:56 PST
+
+### New Features
+- Support converting `DatetimeWithNanos` to / from `google.protobuf.timestamp_pb2.Timestamp`. ([#6919](https://github.com/googleapis/google-cloud-python/pull/6919))
+
+### Documentation
+- Document Python 2 deprecation. ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Add usage example for `google.api_core.iam.Polcy`. ([#6855](https://github.com/googleapis/google-cloud-python/pull/6855))
+
+### Internal / Testing Changes
+- Work around pytype big for `ABCMeta.register`. ([#6873](https://github.com/googleapis/google-cloud-python/pull/6873))
+
 ## 1.6.0
 
 11-30-2018 12:45 PST

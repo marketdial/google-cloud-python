@@ -1,0 +1,49 @@
+{
+  "updateTime": "2019-03-14T12:23:10.390493Z",
+  "sources": [
+    {
+      "generator": {
+        "name": "artman",
+        "version": "0.16.17",
+        "dockerImage": "googleapis/artman@sha256:7231f27272231a884e09edb5953148c85ecd8467780d33c4a35c3e507885715b"
+      }
+    },
+    {
+      "git": {
+        "name": "googleapis",
+        "remote": "https://github.com/googleapis/googleapis.git",
+        "sha": "d05a746ba27b89374c7407c88c0d5dabfb0afc7c",
+        "internalRef": "238372434"
+      }
+    },
+    {
+      "template": {
+        "name": "python_library",
+        "origin": "synthtool.gcp",
+        "version": "2019.2.26"
+      }
+    }
+  ],
+  "destinations": [
+    {
+      "client": {
+        "source": "googleapis",
+        "apiName": "securitycenter",
+        "apiVersion": "v1beta1",
+        "language": "python",
+        "generator": "gapic",
+        "config": "google/cloud/securitycenter/artman_securitycenter_v1beta1.yaml"
+      }
+    },
+    {
+      "client": {
+        "source": "googleapis",
+        "apiName": "securitycenter",
+        "apiVersion": "v1",
+        "language": "python",
+        "generator": "gapic",
+        "config": "google/cloud/securitycenter/artman_securitycenter_v1.yaml"
+      }
+    }
+  ]
+}

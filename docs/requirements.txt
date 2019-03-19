@@ -11,6 +11,7 @@ grpcio-gcp >= 0.2.2
 -e automl/
 -e bigquery/
 -e bigquery_datatransfer/
+-e bigquery_storage/
 -e bigtable/
 -e container/
 -e dataproc/
@@ -18,7 +19,9 @@ grpcio-gcp >= 0.2.2
 -e dlp/
 -e dns/
 -e firestore/
+-e iam/
 -e iot/
+-e irm/
 -e kms/
 -e language/
 -e logging/
@@ -33,6 +36,7 @@ grpcio-gcp >= 0.2.2
 -e securitycenter/
 -e spanner/
 -e speech/
+-e talent/
 -e tasks/
 -e texttospeech/
 -e trace/

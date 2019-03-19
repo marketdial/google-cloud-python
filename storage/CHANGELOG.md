@@ -4,6 +4,57 @@
 
 [1]: https://pypi.org/project/google-cloud-storage/#history
 
+## 1.14.0
+
+02-06-2019 12:49 PST
+
+
+### New Features
+- Add 'Bucket.iam_configuration' property, enabling Bucket-Policy-Only. ([#7066](https://github.com/googleapis/google-cloud-python/pull/7066))
+
+### Documentation
+- Improve docs for 'generate_signed_url'. ([#7201](https://github.com/googleapis/google-cloud-python/pull/7201))
+
+## 1.13.2
+
+12-17-2018 17:02 PST
+
+
+### Implementation Changes
+- Update `Blob.update_storage_class` to support rewrite tokens. ([#6527](https://github.com/googleapis/google-cloud-python/pull/6527))
+
+### Internal / Testing Changes
+- Skip signing tests for insufficient credentials ([#6917](https://github.com/googleapis/google-cloud-python/pull/6917))
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Normalize docs for `page_size` / `max_results` / `page_token`. ([#6842](https://github.com/googleapis/google-cloud-python/pull/6842))
+
+## 1.13.1
+
+12-10-2018 13:31 PST
+
+
+### Implementation Changes
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+- Accomodate new back-end restriction on retention period. ([#6388](https://github.com/googleapis/google-cloud-python/pull/6388))
+- Avoid deleting a blob renamed to itself ([#6365](https://github.com/googleapis/google-cloud-python/pull/6365))
+
+### Dependencies
+- Update dependency to google-cloud-core ([#6835](https://github.com/googleapis/google-cloud-python/pull/6835))
+- Bump minimum `api_core` version for all GAPIC libs to 1.4.1. ([#6391](https://github.com/googleapis/google-cloud-python/pull/6391))
+
+### Documentation
+- Normalize use of support level badges ([#6159](https://github.com/googleapis/google-cloud-python/pull/6159))
+
+### Internal / Testing Changes
+- Blacken libraries ([#6794](https://github.com/googleapis/google-cloud-python/pull/6794))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+- Harden teardown in system tests. ([#6444](https://github.com/googleapis/google-cloud-python/pull/6444))
+- Harden `create_bucket` call in systests vs. 429 TooManyRequests. ([#6401](https://github.com/googleapis/google-cloud-python/pull/6401))
+- Skip public bucket test in VPC Service Controls  ([#6230](https://github.com/googleapis/google-cloud-python/pull/6230))
+- Fix lint failure. ([#6219](https://github.com/googleapis/google-cloud-python/pull/6219))
+- Disable test running in VPC Service Controls  restricted environment ([#6215](https://github.com/googleapis/google-cloud-python/pull/6215))
+- Use new Nox ([#6175](https://github.com/googleapis/google-cloud-python/pull/6175))
+
 ## 1.13.0
 
 ### New Features

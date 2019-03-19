@@ -4,6 +4,68 @@
 
 [1]: https://pypi.org/project/google-cloud-spanner/#history
 
+## 1.8.0
+
+03-05-2019 12:57 PST
+
+
+### Implementation Changes
+- Protoc-generated serialization update. ([#7095](https://github.com/googleapis/google-cloud-python/pull/7095))
+- Fix typo in exported param type name. ([#7295](https://github.com/googleapis/google-cloud-python/pull/7295))
+
+### New Features
+- Add Batch DML support. ([#7485](https://github.com/googleapis/google-cloud-python/pull/7485))
+
+### Documentation
+- Copy lintified proto files, update docstrings (via synth). ([#7453](https://github.com/googleapis/google-cloud-python/pull/7453))
+- Fix Batch object creation instructions. ([#7341](https://github.com/googleapis/google-cloud-python/pull/7341))
+- Updated client library documentation URLs. ([#7307](https://github.com/googleapis/google-cloud-python/pull/7307))
+- Fix README to install spanner instead of datastore. ([#7301](https://github.com/googleapis/google-cloud-python/pull/7301))
+
+### Internal / Testing Changes
+- Add clarifying comment to blacken nox target. ([#7403](https://github.com/googleapis/google-cloud-python/pull/7403))
+- Ensure that GRPC config file is included in MANIFEST.in after templating. ([#7046](https://github.com/googleapis/google-cloud-python/pull/7046))
+- Add protos as an artifact to library. ([#7205](https://github.com/googleapis/google-cloud-python/pull/7205))
+- Update copyright headers.
+
+## 1.7.1
+
+12-14-2018 15:18 PST
+
+
+### Documentation
+- Announce Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+- Normalize documentation for 'page_size' / 'max_results' / 'page_token' ([#6842](https://github.com/googleapis/google-cloud-python/pull/6842))
+
+### Internal / Testing Changes
+- Include grpc config in manifest ([#6928](https://github.com/googleapis/google-cloud-python/pull/6928))
+
+## 1.7.0
+
+12-10-2018 13:10 PST
+
+
+### Implementation Changes
+- Add PingingPool and TransactionPingingPool to toplevel module ([#6886](https://github.com/googleapis/google-cloud-python/pull/6886))
+- Add `operation_id` parameter to `Database.update_ddl`. ([#6825](https://github.com/googleapis/google-cloud-python/pull/6825))
+- Pick up changes to GAPIC method configuration ([#6615](https://github.com/googleapis/google-cloud-python/pull/6615))
+- Add timeout + retry settings to Sessions/Snapshots ([#6536](https://github.com/googleapis/google-cloud-python/pull/6536))
+- Pick up fixes to GAPIC generator. ([#6576](https://github.com/googleapis/google-cloud-python/pull/6576))
+
+### Dependencies
+- Update dependency to google-cloud-core ([#6835](https://github.com/googleapis/google-cloud-python/pull/6835))
+
+### Internal / Testing Changes
+- Add baseline for synth.metadata
+- Blacken. ([#6846](https://github.com/googleapis/google-cloud-python/pull/6846))
+- Update noxfile.
+- Blacken all gen'd libs ([#6792](https://github.com/googleapis/google-cloud-python/pull/6792))
+- Omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Run Black on Generated libraries ([#6666](https://github.com/googleapis/google-cloud-python/pull/6666))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+- Add tags to DML system tests ([#6580](https://github.com/googleapis/google-cloud-python/pull/6580))
+
 ## 1.6.1
 
 11-09-2018 14:49 PST

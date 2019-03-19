@@ -6,9 +6,9 @@ Python Client for Cloud Scheduler API (`Alpha`_)
 - `Client Library Documentation`_
 - `Product Documentation`_
 
-.. _Alpha: https://github.com/GoogleCloudPlatform/google-cloud-python/blob/master/README.rst
+.. _Alpha: https://github.com/googleapis/google-cloud-python/blob/master/README.rst
 .. _Cloud Scheduler API: https://cloud.google.com/scheduler
-.. _Client Library Documentation: https://googlecloudplatform.github.io/google-cloud-python/latest/scheduler/usage.html
+.. _Client Library Documentation: https://googleapis.github.io/google-cloud-python/latest/scheduler/index.html
 .. _Product Documentation:  https://cloud.google.com/scheduler
 
 Quick Start
@@ -24,7 +24,7 @@ In order to use this library, you first need to go through the following steps:
 .. _Select or create a Cloud Platform project.: https://console.cloud.google.com/project
 .. _Enable billing for your project.: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
 .. _Enable the Cloud Scheduler API.:  https://cloud.google.com/scheduler
-.. _Setup Authentication.: https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html
+.. _Setup Authentication.: https://googleapis.github.io/google-cloud-python/latest/core/auth.html
 
 Installation
 ~~~~~~~~~~~~
@@ -38,6 +38,15 @@ install permissions, and without clashing with the installed system
 dependencies.
 
 .. _`virtualenv`: https://virtualenv.pypa.io/en/latest/
+
+
+Supported Python Versions
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Python >= 3.4
+
+Deprecated Python Versions
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Python == 2.7. Python 2.7 support will be removed on January 1, 2020.
 
 
 Mac/Linux
@@ -72,4 +81,4 @@ Next Steps
    APIs that we cover.
 
 .. _Cloud Scheduler API Product documentation:  https://cloud.google.com/scheduler
-.. _repository’s main README: https://github.com/GoogleCloudPlatform/google-cloud-python/blob/master/README.rst
+.. _repository’s main README: https://github.com/googleapis/google-cloud-python/blob/master/README.rst

@@ -4,6 +4,48 @@
 
 [1]: https://pypi.org/project/google-cloud-vision/#history
 
+## 0.36.0
+
+02-25-2019 15:02 PST
+
+
+### Implementation Changes
+- Remove unused message exports. ([#7280](https://github.com/googleapis/google-cloud-python/pull/7280))
+- Protoc-generated serialization update. ([#7100](https://github.com/googleapis/google-cloud-python/pull/7100))
+- GAPIC generation fixes: ([#7058](https://github.com/googleapis/google-cloud-python/pull/7058))
+- Pick up order-of-enum fix from GAPIC generator. ([#6881](https://github.com/googleapis/google-cloud-python/pull/6881))
+
+### New Features
+- Add vision v1p4beta1. ([#7438](https://github.com/googleapis/google-cloud-python/pull/7438))
+
+### Documentation
+- Updated client library documentation URLs. ([#7307](https://github.com/googleapis/google-cloud-python/pull/7307))
+- Update copyright headers.
+
+### Internal / Testing Changes
+- Add clarifying comment to blacken nox target. ([#7408](https://github.com/googleapis/google-cloud-python/pull/7408))
+- Copy proto files alongside protoc versions
+- Vision: get system logo tests healthy. ([#7245](https://github.com/googleapis/google-cloud-python/pull/7245))
+- Add protos as an artifact to library. ([#7205](https://github.com/googleapis/google-cloud-python/pull/7205))
+
+## 0.35.2
+
+12-17-2018 17:10 PST
+
+
+### Implementation Changes
+- Import `iam.policy` from `google.api_core`. ([#6741](https://github.com/googleapis/google-cloud-python/pull/6741))
+
+### Documentation
+- Document Python 2 deprecation ([#6910](https://github.com/googleapis/google-cloud-python/pull/6910))
+
+### Internal / Testing Changes
+- Blacken all gen'd libs ([#6792](https://github.com/googleapis/google-cloud-python/pull/6792))
+- Omit local deps ([#6701](https://github.com/googleapis/google-cloud-python/pull/6701))
+- Run black at end of synth.py ([#6698](https://github.com/googleapis/google-cloud-python/pull/6698))
+- Run Black on Generated libraries ([#6666](https://github.com/googleapis/google-cloud-python/pull/6666))
+- Add templates for flake8, coveragerc, noxfile, and black. ([#6642](https://github.com/googleapis/google-cloud-python/pull/6642))
+
 ## 0.35.1
 
 11-21-2018 11:25 PST
